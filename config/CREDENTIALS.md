@@ -35,9 +35,7 @@
 | Campo | Valor |
 |-------|-------|
 | Login | `oortiz` |
-| Clave | Pendiente de definir por Oscar |
-
-*(actualizar cuando Oscar decida la clave definitiva)*
+| Clave | `Oscar3031` |
 
 ---
 
