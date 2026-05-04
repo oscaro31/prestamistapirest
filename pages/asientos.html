@@ -1,0 +1,87 @@
+<div class="container-fluid py-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0" data-i18n="asientos_contables"><i class="bi bi-journal-richtext"></i> Asientos Contables</h4>
+    <button class="btn btn-primary btn-sm" onclick="nuevoAsiento()" data-i18n="nuevo_asiento"><i class="bi bi-plus-lg"></i> Nuevo Asiento</button>
+  </div>
+  <div class="card mb-3"><div class="card-body">
+    <div class="row g-2 align-items-end">
+      <div class="col-auto"><label class="form-label small">Desde</label><input type="date" class="form-control form-control-sm" id="asFiltroDesde"></div>
+      <div class="col-auto"><label class="form-label small">Hasta</label><input type="date" class="form-control form-control-sm" id="asFiltroHasta"></div>
+      <div class="col-auto"><label class="form-label small" data-i18n="modulo">Modulo</label>
+        <select class="form-select form-select-sm" id="asFiltroModulo"><option value="">Todos</option></select>
+      </div>
+      <div class="col-auto">
+        <button class="btn btn-primary btn-sm" onclick="cargarAsientos()"><i class="bi bi-search"></i> Buscar</button>
+        <button class="btn btn-outline-secondary btn-sm" onclick="limpiarFiltrosAsientos()"><i class="bi bi-x-lg"></i> Limpiar</button>
+      </div>
+    </div>
+  </div></div>
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-sm table-hover mb-0">
+        <thead><tr>
+          <th>#</th><th data-i18n="fecha">Fecha</th><th data-i18n="concepto">Concepto</th><th>Comp.</th>
+          <th class="text-end">Debito</th><th class="text-end">Credito</th><th style="width:80px" data-i18n="accion">Accion</th>
+        </tr></thead>
+        <tbody id="asBody"><tr><td colspan="7" class="text-center text-muted" data-i18n="sin_datos">Sin datos</td></tr></tbody>
+      </table>
+    </div>
+    <div class="card-footer d-flex justify-content-between align-items-center" id="asPaginacion" style="display:none!important">
+      <small id="asInfo"></small>
+      <nav><ul class="pagination pagination-sm mb-0" id="asPagination"></ul></nav>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="modalAsiento" tabindex="-1" data-bs-backdrop="static"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+  <div class="modal-header" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);color:white">
+    <h5 class="modal-title" id="maTitulo"><i class="bi bi-journal-plus"></i> Nuevo Asiento</h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+  </div>
+  <div class="modal-body">
+    <div class="row g-3">
+      <div class="col-4"><label class="form-label fw-bold" data-i18n="fecha">Fecha</label><input type="date" class="form-control" id="maFecha"></div>
+      <div class="col-4"><label class="form-label fw-bold" data-i18n="comprobante">Comprobante</label><select class="form-select" id="maComprobante"></select></div>
+    </div>
+    <div class="mb-3 mt-2"><label class="form-label fw-bold" data-i18n="concepto">Concepto</label><input class="form-control" id="maConcepto" placeholder="Descripcion"></div>
+    <hr>
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <span class="fw-bold">Detalles</span>
+      <button class="btn btn-success btn-sm" onclick="agregarLineaAsiento()"><i class="bi bi-plus-lg"></i> Agregar Linea</button>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-sm table-bordered mb-0">
+        <thead><tr><th style="width:45%" data-i18n="cuenta_contable">Cuenta</th><th style="width:20%">Debito</th><th style="width:20%">Credito</th><th style="width:30px"></th></tr></thead>
+        <tbody id="maDetalles"></tbody>
+      </table>
+    </div>
+    <div class="d-flex justify-content-between fw-bold mt-1">
+      <span>Totales:</span>
+      <span id="maTotalDebe">0.00</span>
+      <span id="maTotalHaber">0.00</span>
+      <span id="maDiferencia" class="text-success">0.00</span>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="cancelar"><i class="bi bi-x-lg"></i></button>
+    <button class="btn btn-primary" onclick="guardarAsiento()" data-i18n="guardar"><i class="bi bi-save"></i></button>
+  </div>
+</div></div></div>
+<div class="modal fade" id="modalVerAsiento" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+  <div class="modal-header" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);color:white">
+    <h5 class="modal-title"><i class="bi bi-eye"></i> Asiento #<span id="mvaId"></span></h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+  </div>
+  <div class="modal-body">
+    <div class="row mb-2"><div class="col-4"><strong>Fecha:</strong> <span id="mvaFecha"></span></div>
+    <div class="col-4"><strong>Comprobante:</strong> <span id="mvaComprobante"></span></div></div>
+    <div class="mb-3"><strong>Concepto:</strong> <span id="mvaConcepto"></span></div>
+    <div class="table-responsive">
+      <table class="table table-sm table-bordered mb-0">
+        <thead><tr><th>Codigo</th><th data-i18n="cuenta_contable">Cuenta</th><th class="text-end">Debito</th><th class="text-end">Credito</th></tr></thead>
+        <tbody id="mvaDetalles"></tbody>
+        <tfoot><tr class="fw-bold"><td colspan="2">Totales</td><td class="text-end" id="mvaTotalDebe"></td><td class="text-end" id="mvaTotalHaber"></td></tr></tfoot>
+      </table>
+    </div>
+  </div>
+  <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button></div>
+</div></div></div>
