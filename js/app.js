@@ -314,7 +314,7 @@ function ea(){
     cargarTemaGlobal();aplicarPermisos();
     setTimeout(aplicarSidebarCompactGlobal,200);
     cargarIdiomaGlobal();aplicarIdioma();
-    injectDashboardHTML();ld();
+    injectDashboardHTML();if(typeof aplicarIdioma==='function')aplicarIdioma();ld();
     g('cargos/list',function(e,d){if(!e)cgs=d;});
     g('config/list',function(e,d){
         if(d)for(var i=0;i<d.length;i++){
@@ -475,15 +475,15 @@ function aplicarPermisosDesde(items){
         else if(pg==='config-contable'){if(typeof cargarConfigContable==='function')cargarConfigContable();else{var s=document.createElement('script');s.src='js/config-contable.js?'+Date.now();s.onload=function(){cargarConfigContable()};document.body.appendChild(s);}}
         else if(pg==='reportes-contables'){if(typeof cargarReportesContables==='function')cargarReportesContables();else{var s=document.createElement('script');s.src='js/reportes-contables.js?'+Date.now();s.onload=function(){cargarReportesContables()};document.body.appendChild(s);}}
         else if(pg==='perfil'){
-        injectPerfilHTML();
+        injectPerfilHTML();if(typeof aplicarIdioma==='function')aplicarIdioma();
         if(typeof cargarPerfil==='function' && user) cargarPerfil();
         else if(user){
-            injectPerfilHTML();
+            injectPerfilHTML();if(typeof aplicarIdioma==='function')aplicarIdioma();
             document.getElementById('pfNombre') && (document.getElementById('pfNombre').value=user.nombre);
             document.getElementById('pfLogin') && (document.getElementById('pfLogin').value=user.login);
             document.getElementById('pfCargo') && (document.getElementById('pfCargo').value=user.cargo_nombre||'');
         }
-    }else if(pg==='dashboard'){injectDashboardHTML();ld();}
+    }else if(pg==='dashboard'){injectDashboardHTML();if(typeof aplicarIdioma==='function')aplicarIdioma();ld();}
     else if(pg==='reimprimir'){lr();}
     aplicarIdioma();
 }
@@ -574,7 +574,7 @@ aplicarIdioma();
                     cargarTemaGlobal();aplicarPermisos();
     setTimeout(aplicarSidebarCompactGlobal,200);
                     cargarIdiomaGlobal();aplicarIdioma();
-                    setTimeout(function(){injectDashboardHTML();ld();},100);
+                    setTimeout(function(){injectDashboardHTML();if(typeof aplicarIdioma==='function')aplicarIdioma();ld();},100);
                     (function(){
                         var xx=new XMLHttpRequest();
                         xx.open('GET',API+'config/list',true);
