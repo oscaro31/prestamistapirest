@@ -52,11 +52,11 @@ try {
     require_once __DIR__ . '/routes/config.php';
     require_once __DIR__ . '/routes/dashboard.php';
     require_once __DIR__ . '/routes/setup.php';
+    require_once __DIR__ . '/routes/auth.php';
 
     switch ($route) {
         // AUTH (sin token)
         case 'auth/login':
-            require __DIR__ . '/routes/auth.php';
             login($body);
             break;
 
