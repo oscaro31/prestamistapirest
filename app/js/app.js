@@ -489,9 +489,10 @@ function aplicarPermisosDesde(items){
         n.style.display=(items[p]===false||items[p]===undefined)?'none':'';
     });
     document.querySelectorAll('.ni[onclick*="nextElementSibling"]').forEach(function(n){
-        n.style.display='';
+        var p=n.getAttribute('data-p');
+        n.style.display=(items[p]===false||items[p]===undefined)?'none':'';
         var sub=n.nextElementSibling;
-        if(sub){
+        if(sub && n.style.display!='none'){
             sub.querySelectorAll('.ni').forEach(function(c){c.style.display='';});
         }
     });
