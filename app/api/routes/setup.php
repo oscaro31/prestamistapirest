@@ -32,7 +32,14 @@ function createPermissionsTable() {
         $idcargo = (int)$cargo['idcargo'];
         foreach ($permisos as $permiso) {
             // Si es admin (idcargo=1), todos los permisos en 1
-            $valor = ($idcargo === 1) ? 1 : 0;
+            // Si es usuario (idcargo=2), permisos de contabilidad en 1 también
+            if ($idcargo === 1) {
+                $valor = 1;
+            } elseif ($idcargo === 2 && in_array($permiso, ['asientos', 'plan-cuentas', 'config-contable', 'reportes-contables'])) {
+                $valor = 1;
+            } else {
+                $valor = 0;
+            }
             $stmt = $pdo->prepare("INSERT IGNORE INTO usuario_cargo (idcargo, permiso, valor) VALUES (?, ?, ?)");
             $stmt->execute([$idcargo, $permiso, $valor]);
         }

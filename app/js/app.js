@@ -472,6 +472,11 @@ function aplicarPermisos(){
                 defaults['plan-cuentas']=true;defaults.asientos=true;
                 defaults['config-contable']=true;defaults['reportes-contables']=true;
             }
+            if(user.idcargo==2){
+                // Usuario: ve todo menos config, usuarios, monedas
+                defaults['plan-cuentas']=true;defaults.asientos=true;
+                defaults['config-contable']=true;defaults['reportes-contables']=true;
+            }
             _permisosCache={idcargo:user.idcargo, permisos:defaults};
             aplicarPermisosDesde(defaults);
         }
