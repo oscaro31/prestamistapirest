@@ -260,7 +260,7 @@ function injectDashboardHTML() {
                         <i class="bi bi-people fs-4 text-secondary"></i>
                     </div>
                     <h6 class="text-muted mb-1 small" data-i18n="usuarios_activos">Usuarios</h6>
-                    <h3 class="mb-0 fw-bold" id="dUsuarios">0</h3>
+                    <h3 class="mb-0 fw-bold" id="dUsuarios" style="color:#0d6efd">0</h3>
                 </div>
             </div>
         </div>
