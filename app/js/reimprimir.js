@@ -112,13 +112,25 @@ function rrc(id){
         rec+='-----------------------------\n';
         rec+='CUOTAS PAGADAS\n';
         rec+='-----------------------------\n';
+        var totalConMora=0;
         for(var ci=0;ci<(p.cuotas||[]).length;ci++){
             var c=p.cuotas[ci];
             if(c.Estado==='Pagado'){
                 var num=c.NroCuota||c.numero_cuota||(ci+1);
                 var m=parseFloat(c.MontoCuota||0);
-                rec+='Cuota #'+num+': RD$ '+fm(m)+'\n';
+                var mora=parseFloat(c.MoraCalculada||0);
+                var totalCuota=m+mora;
+                totalConMora+=totalCuota;
+                var linea='Cuota #'+num+': RD$ '+fm(totalCuota);
+                var fmSel=localStorage.getItem('formato_mora_recibo')||'detalle';
+                if(fmSel==='detalle'&&mora>0)linea+=' ('+fm(mora)+' mora '+_pctMoraTxt+')';
+                rec+=linea+'\n';
             }
+        }
+        var fmSel=localStorage.getItem('formato_mora_recibo')||'detalle';
+        if(fmSel==='resumen'&&(totalConMora-totalPagado)>0){
+            rec+='-----------------------------\n';
+            rec+='Se le cobró un '+_pctMoraTxt+' de mora\n';
         }
         rec+='-----------------------------\n';
         rec+='CUOTAS PENDIENTES\n';
