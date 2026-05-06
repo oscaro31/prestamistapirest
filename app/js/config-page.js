@@ -34,9 +34,9 @@ function lg(){
             }
             if(cl==='tipomora')document.getElementById('cfgTipoMora').value=c.valor;
             if(cl==='mostrarganancias'||cl==='MostrarGanancias'){var cb=document.getElementById('cfgMostrarGanancias');if(cb)cb.checked=c.valor==='1';}
-            if(cl==='empresa_nombre')document.getElementById('empresaNombre').value=c.valor;
-            if(cl==='empresa_direccion')document.getElementById('empresaDir').value=c.valor;
-            if(cl==='empresa_telefono')document.getElementById('empresaTel').value=c.valor;
+            if(cl==='empresa_nombre'){var e=document.getElementById('empresaNombre');if(e)e.value=c.valor;}
+            if(cl==='empresa_direccion'){var e=document.getElementById('empresaDir');if(e)e.value=c.valor;}
+            if(cl==='empresa_telefono'){var e=document.getElementById('empresaTel');if(e)e.value=c.valor;}
             if(cl==='moneda_default'){var msId=c.valor;window._monedaSelectId=msId;cargarMonedasDefaultSymbol(msId);}
         }
         document.getElementById('cfgMora').value=ma;
