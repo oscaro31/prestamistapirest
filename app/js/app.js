@@ -610,6 +610,8 @@ function imprimirRecibo(c,formato){
     }
     var html='<html><head><title>Recibo</title><style>'+css+'</style></head><body>';
     if(formato==='boleta'){
+        // Normalizar saltos de linea (\n literal o real)
+        c=c.replace(/\\n/g,'\n');
         var lines=c.split('\n');
         html+='<div class="recibo">';
         html+='<h1>'+lines[0].trim()+'</h1>';
