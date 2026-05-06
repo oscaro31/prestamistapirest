@@ -1,10 +1,10 @@
 <?php
 function listUsers() {
     $pdo = getDB();
-    $stmt = $pdo->query("SELECT u.*, c.nombre as cargo_nombre, td.Nombre as tipo_documento_nombre
-                         FROM usuario u
-                         LEFT JOIN Cargos c ON c.idcargo = u.idcargo
-                         LEFT JOIN TipoDocumento td ON td.idtipodocumento = u.idtipodocumento
+    $stmt = $pdo->query("SELECT u.*, c.nombre as cargo_nombre, e.nombre as empresa_nombre
+                         FROM usuarios u
+                         LEFT JOIN cargos c ON c.idcargo = u.idcargo
+                         LEFT JOIN empresas e ON e.idempresa = u.idempresa
                          ORDER BY u.fecha_creacion DESC");
     $users = $stmt->fetchAll();
     // Remove clave from output

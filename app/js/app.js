@@ -317,6 +317,20 @@ function ea(){
     
     document.getElementById('srole').textContent=user.cargo_nombre||'';
     if(user.avatar)document.getElementById('userAvatar').src=user.avatar;
+    
+    // Mostrar menu segun rol
+    if(user.rol==='superadmin'){
+        document.getElementById('menuNormal').style.display='none';
+        document.getElementById('menuSuperadmin').style.display='block';
+        document.getElementById('srole').textContent+=' (Superadmin)';
+        // Ocultar notificaciones para superadmin (aun no implementadas)
+        var bell=document.getElementById('notifBell');
+        if(bell)bell.style.display='none';
+    }else{
+        document.getElementById('menuNormal').style.display='block';
+        document.getElementById('menuSuperadmin').style.display='none';
+    }
+    
     cargarTemaGlobal();aplicarPermisos();
     setTimeout(aplicarSidebarCompactGlobal,200);
     cargarIdiomaGlobal();aplicarIdioma();
@@ -522,7 +536,8 @@ function sp(pg){
     document.querySelectorAll('.ni').forEach(function(n){n.classList.remove('act');});
     var n=document.querySelector('.ni[data-p="'+pg+'"]');
     if(n)n.classList.add('act');
-    var titles={dashboard:'dashboard',prestamos:'registro',reimprimir:'historial',clientes:'clientes',monedas:'monedas',usuarios:'usuarios',config:'preferencias',perfil:'perfil','plan-cuentas':'plan_cuentas',asientos:'asientos_contables','config-contable':'config_contable','reportes-contables':'reportes_contables'};
+    var titles={dashboard:'dashboard',prestamos:'registro',reimprimir:'historial',clientes:'clientes',monedas:'monedas',usuarios:'usuarios',config:'preferencias',perfil:'perfil','plan-cuentas':'plan_cuentas',asientos:'asientos_contables','config-contable':'config_contable','reportes-contables':'reportes_contables',
+        'sa-dashboard':'Dashboard Global','sa-empresas':'Empresas','sa-usuarios':'Usuarios Globales'};
     document.getElementById('pt').textContent=__(titles[pg]||pg);
     if(typeof aplicarIdioma==='function')aplicarIdioma();
     if(pg==='prestamos'){
@@ -580,6 +595,17 @@ function sp(pg){
         }
     }else if(pg==='dashboard'){injectDashboardHTML();if(typeof aplicarIdioma==='function')aplicarIdioma();ld();cargarNotificaciones();}
     else if(pg==='reimprimir'){injectReimprimirHTML();lr();}
+    // Paginas superadmin
+    else if(pg==='sa-dashboard'){
+        if(!document.getElementById('p-sa-dashboard'))document.getElementById('content').insertAdjacentHTML('beforeend',saDashboardHTML());
+        saDashboardLoad();
+    }else if(pg==='sa-empresas'){
+        if(!document.getElementById('p-sa-empresas'))document.getElementById('content').insertAdjacentHTML('beforeend',saEmpresasHTML());
+        saEmpresasLoad();
+    }else if(pg==='sa-usuarios'){
+        if(!document.getElementById('p-sa-usuarios'))document.getElementById('content').insertAdjacentHTML('beforeend',saUsuariosHTML());
+        saUsuariosLoad();
+    }
     aplicarIdioma();
     setTimeout(function(){if(typeof aplicarIdioma==='function')aplicarIdioma();},200);
 }
@@ -810,3 +836,113 @@ window._initApp=function(){
     else if(document.getElementById('p-dashboard')) sp('dashboard');
     else sp('dashboard');
 };
+
+// ============================================
+// SUPERADMIN VIEWS
+// ============================================
+function saDashboardHTML(){
+    return '<div class="pg act" id="p-sa-dashboard"><div class="container-fluid p-4"><h4><i class="bi bi-server"></i> Dashboard Global</h4><div class="row g-3 mt-2"><div class="col-md-4"><div class="card border-0 shadow-sm"><div class="card-body text-center py-4"><h5><i class="bi bi-building"></i></h5><h3 id="saTotalEmpresas">0</h3><small class="text-muted">Empresas</small></div></div></div><div class="col-md-4"><div class="card border-0 shadow-sm"><div class="card-body text-center py-4"><h5><i class="bi bi-people-fill"></i></h5><h3 id="saTotalUsuarios">0</h3><small class="text-muted">Usuarios</small></div></div></div><div class="col-md-4"><div class="card border-0 shadow-sm"><div class="card-body text-center py-4"><h5><i class="bi bi-check-circle"></i></h5><h3 id="saBdActivas">0</h3><small class="text-muted">BD Configuradas</small></div></div></div></div><div class="table-responsive mt-3"><table class="table table-hover"><thead><tr><th>Empresa</th><th>Slug</th><th>Estado</th><th>BD</th></tr></thead><tbody id="saEmpresasBody"><tr><td colspan="4" class="text-muted text-center">Cargando...</td></tr></tbody></table></div></div></div>';
+}
+function saDashboardLoad(){
+    g("empresas/list",function(e,d){
+        if(e||!d)return;
+        document.getElementById("saTotalEmpresas").textContent=d.length||0;
+        var conBD=d.filter(function(x){return x.tiene_config>0});
+        document.getElementById("saBdActivas").textContent=conBD.length||0;
+        var h="";
+        d.forEach(function(r){
+            h+="<tr><td>"+r.nombre+"</td><td>"+r.slug+"</td><td><span class=\"badge bg-"+(r.activo?"success\">Activa":"secondary\">Inactiva")+"</span></td><td>"+(r.tiene_config>0?'<span class="badge bg-success">Configurada</span>':'<span class="badge bg-warning">Sin config</span>')+"</td></tr>";
+        });
+        document.getElementById("saEmpresasBody").innerHTML=h||'<tr><td colspan="4" class="text-muted text-center">Sin empresas</td></tr>';
+        // Usuarios total
+        g("users/list",function(e2,d2){
+            document.getElementById("saTotalUsuarios").textContent=d2?d2.length:0;
+        });
+    });
+}
+
+function saEmpresasHTML(){
+    return '<div class="pg act" id="p-sa-empresas"><div class="container-fluid p-4"><div class="d-flex justify-content-between mb-3"><h4><i class="bi bi-building"></i> Empresas</h4><button class="btn btn-primary btn-sm" onclick="saEmpresaModal(0)"><i class="bi bi-plus"></i> Nueva</button></div><div class="table-responsive"><table class="table table-hover"><thead><tr><th>#</th><th>Nombre</th><th>Slug</th><th>Estado</th><th>BD</th><th>Acciones</th></tr></thead><tbody id="saEmpBody"><tr><td colspan="6" class="text-muted text-center">Cargando...</td></tr></tbody></table></div></div></div>';
+}
+function saEmpresasLoad(){
+    g("empresas/list",function(e,d){
+        if(e||!d){document.getElementById("saEmpBody").innerHTML='<tr><td colspan="6" class="text-danger">'+e+'</td></tr>';return;}
+        var h="";
+        d.forEach(function(r){
+            h+="<tr><td>"+r.idempresa+"</td><td>"+r.nombre+"</td><td>"+r.slug+"</td><td><span class=\"badge bg-"+(r.activo?"success\">Activa":"secondary\">Inactiva")+"</span></td>"+
+               "<td>"+(r.tiene_config>0?'<span class="badge bg-success">Configurada</span>':'<span class="badge bg-warning">Sin config</span>')+"</td>"+
+               "<td><button class=\"btn btn-sm btn-outline-primary\" onclick=\"saEmpresaModal("+r.idempresa+")\"><i class=\"bi bi-gear\"></i></button></td></tr>";
+        });
+        document.getElementById("saEmpBody").innerHTML=h||'<tr><td colspan="6" class="text-muted text-center">Sin empresas registradas</td></tr>';
+    });
+}
+function saEmpresaModal(id){
+    // Modal para crear/editar empresa + config BD
+    var t=id?'Editar Empresa #'+id:'Nueva Empresa';
+    var html='<div class="modal fade" id="saEmpModal"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5>'+t+'</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">'+
+        '<div class="mb-3"><label>Nombre</label><input class="form-control" id="saEmpNombre" value=""></div>'+
+        '<div class="mb-3"><label>Slug</label><input class="form-control" id="saEmpSlug" value=""><small class="text-muted">Identificador unico (ej: mi-empresa)</small></div>'+
+        '<hr><h6>Configuracion BD</h6>'+
+        '<div class="mb-3"><label>Host</label><input class="form-control" id="saBDHost" value="localhost"></div>'+
+        '<div class="row g-2"><div class="col-4"><label>Puerto</label><input class="form-control" id="saBDPuerto" value="3306"></div>'+
+        '<div class="col-8"><label>Base de Datos</label><input class="form-control" id="saBDDbname" value=""></div></div>'+
+        '<div class="mb-3"><label>Usuario BD</label><input class="form-control" id="saBDUser" value=""></div>'+
+        '<div class="mb-3"><label>Contrasena BD</label><input type="password" class="form-control" id="saBDPass" value=""></div>'+
+        '<button class="btn btn-outline-success btn-sm" onclick="saTestConexion()"><i class="bi bi-plug"></i> Probar Conexion</button>'+
+        '</div><div class="modal-footer">'+
+        '<button class="btn btn-success" onclick="saGuardarEmpresa('+id+')"><i class="bi bi-check"></i> Guardar</button></div></div></div></div>';
+    // Si existe removerlo
+    var old=document.getElementById('saEmpModal');
+    if(old)old.remove();
+    document.body.insertAdjacentHTML('beforeend',html);
+    if(id>0){
+        g("empresas/list",function(e,d){
+            if(e||!d)return;
+            var r=d.find(function(x){return x.idempresa==id;});
+            if(r){
+                document.getElementById('saEmpNombre').value=r.nombre;
+                document.getElementById('saEmpSlug').value=r.slug;
+            }
+        });
+    }
+    var modal=new bootstrap.Modal(document.getElementById('saEmpModal'));
+    modal.show();
+}
+function saTestConexion(){
+    var data={host:document.getElementById('saBDHost').value,puerto:document.getElementById('saBDPuerto').value,dbname:document.getElementById('saBDDbname').value,dbuser:document.getElementById('saBDUser').value,dbpass:document.getElementById('saBDPass').value};
+    if(!data.host||!data.dbname){mostrarToast('Complete los campos de BD','warning');return;}
+    p("empresas/test-conexion",data,function(e,r){
+        if(e)mostrarToast(e,'danger');
+        else mostrarToast((r||{}).message||'Conexion exitosa','success');
+    });
+}
+function saGuardarEmpresa(id){
+    var data={idempresa:id,nombre:document.getElementById('saEmpNombre').value,slug:document.getElementById('saEmpSlug').value};
+    // Agregar datos BD si se ingresaron
+    var h=document.getElementById('saBDHost');
+    if(h&&h.value){
+        data.host=h.value;
+        data.puerto=document.getElementById('saBDPuerto').value;
+        data.dbname=document.getElementById('saBDDbname').value;
+        data.dbuser=document.getElementById('saBDUser').value;
+        data.dbpass=document.getElementById('saBDPass').value;
+    }
+    p("empresas/save",data,function(e,r){
+        if(e)mostrarToast(e,'danger');
+        else{mostrarToast('Empresa guardada','success');document.getElementById('saEmpModal').querySelector('.btn-close').click();saEmpresasLoad();}
+    });
+}
+
+function saUsuariosHTML(){
+    return '<div class="pg act" id="p-sa-usuarios"><div class="container-fluid p-4"><h4><i class="bi bi-people-fill"></i> Usuarios Globales</h4><div class="table-responsive mt-3"><table class="table table-hover"><thead><tr><th>#</th><th>Nombre</th><th>Login</th><th>Email</th><th>Empresa</th><th>Rol</th><th>Estado</th></tr></thead><tbody id="saUserBody"><tr><td colspan="7" class="text-muted text-center">Cargando...</td></tr></tbody></table></div></div></div>';
+}
+function saUsuariosLoad(){
+    g("users/list",function(e,d){
+        if(e||!d){document.getElementById("saUserBody").innerHTML='<tr><td colspan="7" class="text-danger">'+e+'</td></tr>';return;}
+        var h="";
+        d.forEach(function(r){
+            h+="<tr><td>"+r.idusuario+"</td><td>"+(r.nombre||'')+" "+(r.apellido||'')+"</td><td>"+r.login+"</td><td>"+(r.email||'')+"</td><td>"+(r.empresa_nombre||'')+"</td><td><span class=\"badge bg-"+(r.rol==='superadmin'?'danger':'primary')+"\">"+(r.rol||'usuario')+"</span></td><td><span class=\"badge bg-"+(r.activo==1||r.activo==='1'?'success\">Activo':'secondary\">Inactivo")+"</span></td></tr>";
+        });
+        document.getElementById("saUserBody").innerHTML=h||'<tr><td colspan="7" class="text-muted text-center">Sin usuarios</td></tr>';
+    });
+}

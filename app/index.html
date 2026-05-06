@@ -36,6 +36,7 @@
 <div id="app" style="display:none">
 <nav class="sb" id="sb" style="width:250px">
 <div class="sh"><img src="images/logo.jpg"><div><h6>Prestamist</h6><small id="srole"></small></div></div>
+<div id="menuNormal">
 <div class="ni act" data-p="dashboard" onclick="sp('dashboard')"><i class="bi bi-speedometer2"></i><span class="nt" data-i18n="dashboard">Dashboard</span></div>
 <div class="ni" data-p="prestamos" onclick="var ns=this.nextElementSibling;var r=this.getBoundingClientRect();ns.style.top=r.top+'px';ns.style.left=r.right+5+'px';ns.style.display=ns.style.display=='block'?'none':'block'"><i class="bi bi-cash-stack"></i><span class="nt" data-i18n="prestamos">Prestamos</span> <i class="bi bi-chevron-down" style="margin-left:auto;font-size:.7rem"></i></div>
 <div class="n-sub" style="display:none">
@@ -56,6 +57,15 @@
 <div class="n-sub" style="display:none">
 <div class="ni" data-p="usuarios" onclick="sp('usuarios')"><i class="bi bi-person-gear"></i><span class="nt" data-i18n="usuarios">Usuarios</span></div>
 <div class="ni" data-p="config" onclick="sp('config')"><i class="bi bi-sliders"></i><span class="nt" data-i18n="preferencias">Preferencias</span></div>
+</div>
+</div>
+
+<div id="menuSuperadmin" style="display:none">
+<div class="ni act" data-p="sa-dashboard" onclick="sp('sa-dashboard')"><i class="bi bi-server"></i><span class="nt">Dashboard</span></div>
+<div class="ni" data-p="sa-empresas" onclick="sp('sa-empresas')"><i class="bi bi-building"></i><span class="nt">Empresas</span></div>
+<div class="ni" data-p="sa-usuarios" onclick="sp('sa-usuarios')"><i class="bi bi-people-fill"></i><span class="nt">Usuarios</span></div>
+<div class="ni" data-p="config" onclick="sp('config')"><i class="bi bi-gear"></i><span class="nt">Config</span></div>
+<div class="ni" data-p="perfil" onclick="sp('perfil')"><i class="bi bi-person-circle"></i><span class="nt">Perfil</span></div>
 </div>
 </nav>
 
