@@ -196,7 +196,30 @@ try {
         case 'dashboard/resumen':
             $authUser = validateToken();
             require __DIR__ . '/routes/dashboard.php';
+            generarNotificaciones();
             resumen();
+            break;
+        case 'notificaciones/list':
+            $authUser = validateToken();
+            $pdo = getDB();
+            $stmt = $pdo->prepare("SELECT n.* FROM notificaciones n WHERE n.idusuario = ? AND n.leida = 0 ORDER BY n.fecha DESC LIMIT 20");
+            $stmt->execute([$authUser['idusuario']]);
+            $notis = $stmt->fetchAll();
+            jsonResponse($notis);
+            break;
+        case 'notificaciones/marcar-leida':
+            $authUser = validateToken();
+            $id = (int)($body['idnotificacion'] ?? 0);
+            if (!$id) jsonError('idnotificacion requerido');
+            $pdo = getDB();
+            $pdo->prepare("UPDATE notificaciones SET leida = 1 WHERE idnotificacion = ? AND idusuario = ?")->execute([$id, $authUser['idusuario']]);
+            jsonResponse(['success' => true]);
+            break;
+        case 'notificaciones/marcar-todas':
+            $authUser = validateToken();
+            $pdo = getDB();
+            $pdo->prepare("UPDATE notificaciones SET leida = 1 WHERE idusuario = ?")->execute([$authUser['idusuario']]);
+            jsonResponse(['success' => true]);
             break;
 
         // CONFIG

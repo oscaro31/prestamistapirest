@@ -138,3 +138,44 @@ function resumen() {
         'UltimosPrestamos' => $ultimos,
     ]);
 }
+
+// ============================================================
+// NOTIFICACIONES AUTOMÁTICAS
+// ============================================================
+
+function generarNotificaciones() {
+    global $authUser;
+    if (!$authUser) return;
+    $pdo = getDB();
+    
+    // 1. Cuotas vencidas hoy (no notificadas aún)
+    $vencidas = $pdo->query("SELECT pd.IdPrestamoDetalle, pd.IdPrestamo, pd.NroCuota, pd.MontoCuota, pd.FechaPago,
+                                   c.Nombre as cliente_nombre, c.Apellido as cliente_apellido
+                            FROM PrestamoDetalle pd
+                            JOIN Prestamo p ON p.IdPrestamo = pd.IdPrestamo
+                            JOIN Cliente c ON c.IdCliente = p.IdCliente
+                            WHERE pd.Estado = 'Pendiente' AND pd.FechaPago < CURDATE()
+                            AND NOT EXISTS (SELECT 1 FROM notificaciones WHERE idref = pd.IdPrestamoDetalle AND tipo = 'vencida')
+                            ORDER BY pd.FechaPago ASC LIMIT 5")->fetchAll();
+    foreach ($vencidas as $v) {
+        $dias = (int)((time() - strtotime($v['FechaPago'])) / 86400);
+        $msg = $v['cliente_nombre'] . ' ' . $v['cliente_apellido'] . ' debe cuota #' . $v['NroCuota'] . ' (RD$' . number_format($v['MontoCuota'],2) . ') desde hace ' . $dias . ' días';
+        $pdo->prepare("INSERT IGNORE INTO notificaciones (idusuario, tipo, mensaje, idref, fecha) VALUES (?, 'vencida', ?, ?, NOW())")
+            ->execute([$authUser['idusuario'], $msg, $v['IdPrestamoDetalle']]);
+    }
+    
+    // 2. Cuotas próximas (2 días)
+    $proximas = $pdo->query("SELECT pd.IdPrestamoDetalle, pd.IdPrestamo, pd.NroCuota, pd.MontoCuota, pd.FechaPago,
+                                   c.Nombre as cliente_nombre, c.Apellido as cliente_apellido
+                            FROM PrestamoDetalle pd
+                            JOIN Prestamo p ON p.IdPrestamo = pd.IdPrestamo
+                            JOIN Cliente c ON c.IdCliente = p.IdCliente
+                            WHERE pd.Estado = 'Pendiente' AND pd.FechaPago BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 2 DAY)
+                            AND NOT EXISTS (SELECT 1 FROM notificaciones WHERE idref = pd.IdPrestamoDetalle AND tipo = 'proxima')
+                            ORDER BY pd.FechaPago ASC LIMIT 5")->fetchAll();
+    foreach ($proximas as $p) {
+        $msg = 'Cuota #' . $p['NroCuota'] . ' de ' . $p['cliente_nombre'] . ' ' . $p['cliente_apellido'] . ' vence el ' . $p['FechaPago'] . ' (RD$' . number_format($p['MontoCuota'],2) . ')';
+        $pdo->prepare("INSERT IGNORE INTO notificaciones (idusuario, tipo, mensaje, idref, fecha) VALUES (?, 'proxima', ?, ?, NOW())")
+            ->execute([$authUser['idusuario'], $msg, $p['IdPrestamoDetalle']]);
+    }
+}

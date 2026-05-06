@@ -61,15 +61,24 @@
 
 <div class="tb">
 <div><button class="tg" onclick="ts()"><i class="bi bi-list"></i></button> <span class="tt" id="pt" data-i18n="dashboard">Dashboard</span></div>
-<div class="dropdown">
-<div class="ug">
-<button class="ub" onclick="toggleDrop()"><img src="images/logo.jpg" id="userAvatar" style="width:28px;height:28px;border-radius:50%;object-fit:cover"> <span id="uname"></span> <i class="bi bi-chevron-down" id="dropIcon"></i></button>
-<div class="um" id="userDrop">
-<a href="#" onclick="sp('perfil');hideDrop()"><i class="bi bi-person"></i> <span data-i18n="perfil">Perfil</span></a>
-<hr>
-<a href="#" class="dg" onclick="cs()"><i class="bi bi-box-arrow-right"></i> <span data-i18n="cerrar">Cerrar Sesion</span></a>
-</div>
-</div>
+<div class="d-flex align-items-center gap-2">
+    <div class="dropdown" id="notifContainer">
+        <button class="ub position-relative" onclick="toggleNotif()" id="notifBtn" title="Notificaciones">
+            <i class="bi bi-bell fs-5"></i>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notifBadge" style="font-size:10px;display:none">0</span>
+        </button>
+        <div class="um" id="notifDrop" style="width:350px;max-height:400px;overflow-y:auto;right:0;left:auto"></div>
+    </div>
+    <div class="dropdown">
+        <div class="ug">
+            <button class="ub" onclick="toggleDrop()"><img src="images/logo.jpg" id="userAvatar" style="width:28px;height:28px;border-radius:50%;object-fit:cover"> <span id="uname"></span> <i class="bi bi-chevron-down" id="dropIcon"></i></button>
+            <div class="um" id="userDrop">
+                <a href="#" onclick="sp('perfil');hideDrop()"><i class="bi bi-person"></i> <span data-i18n="perfil">Perfil</span></a>
+                <hr>
+                <a href="#" class="dg" onclick="cs()"><i class="bi bi-box-arrow-right"></i> <span data-i18n="cerrar">Cerrar Sesion</span></a>
+            </div>
+        </div>
+    </div>
 </div>
 </div>
 

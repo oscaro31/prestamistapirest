@@ -321,6 +321,7 @@ function ea(){
     setTimeout(aplicarSidebarCompactGlobal,200);
     cargarIdiomaGlobal();aplicarIdioma();
     injectDashboardHTML();if(typeof aplicarIdioma==='function')aplicarIdioma();ld();
+    setTimeout(cargarNotificaciones,200);
     g('cargos/list',function(e,d){if(!e)cgs=d;});
     g('config/list',function(e,d){
         if(d)for(var i=0;i<d.length;i++){
@@ -331,6 +332,69 @@ function ea(){
         }
     });
 }
+
+// ===== NOTIFICACIONES =====
+var _notifAbierto = false;
+
+function cargarNotificaciones(){
+    g('notificaciones/list', function(e,d){
+        var badge = document.getElementById('notifBadge');
+        var drop = document.getElementById('notifDrop');
+        if(e || !d || d.length===0){
+            if(badge) badge.style.display='none';
+            if(drop) drop.innerHTML = '<div class="p-3 text-muted text-center small">Sin notificaciones</div>';
+            return;
+        }
+        var noLeidas = d.filter(function(n){ return !n.leida; }).length;
+        if(badge){
+            if(noLeidas > 0){
+                badge.textContent = noLeidas;
+                badge.style.display = 'inline';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+        if(drop){
+            var html = '<div class="d-flex justify-content-between align-items-center p-2 border-bottom"><strong class="small">Notificaciones</strong><button class="btn btn-sm btn-link p-0" onclick="marcarTodasLeidas()">'+__('marcar_todas')||'Marcar todas' +'</button></div>';
+            d.forEach(function(n){
+                var icono = n.tipo==='vencida' ? 'bi-exclamation-triangle text-danger' : (n.tipo==='proxima' ? 'bi-clock text-warning' : 'bi-info-circle text-primary');
+                var bg = n.leida ? '' : 'bg-light';
+                html += '<div class="p-2 border-bottom ' + bg + ' d-flex justify-content-between align-items-start"><div><i class="bi ' + icono + ' me-2"></i><span class="small">' + n.mensaje + '</span></div>';
+                if(!n.leida) html += '<button class="btn btn-sm btn-link p-0 ms-2" onclick="marcarNotifLeida('+n.idnotificacion+')"><i class="bi bi-check"></i></button>';
+                html += '</div>';
+            });
+            drop.innerHTML = html;
+        }
+    });
+}
+
+function toggleNotif(){
+    _notifAbierto = !_notifAbierto;
+    var drop = document.getElementById('notifDrop');
+    if(drop) drop.classList.toggle('show', _notifAbierto);
+}
+
+function marcarNotifLeida(id){
+    p('notificaciones/marcar-leida', {idnotificacion: id}, function(e,d){
+        cargarNotificaciones();
+    });
+}
+
+function marcarTodasLeidas(){
+    p('notificaciones/marcar-todas', {}, function(e,d){
+        cargarNotificaciones();
+    });
+}
+
+// Cerrar panel al hacer clic fuera
+document.addEventListener('click', function(e){
+    var container = document.getElementById('notifContainer');
+    if(container && !container.contains(e.target) && _notifAbierto){
+        _notifAbierto = false;
+        var drop = document.getElementById('notifDrop');
+        if(drop) drop.classList.remove('show');
+    }
+});
 
 // Logout
 function cs(){
@@ -503,7 +567,7 @@ function sp(pg){
             document.getElementById('pfLogin') && (document.getElementById('pfLogin').value=user.login);
             document.getElementById('pfCargo') && (document.getElementById('pfCargo').value=user.cargo_nombre||'');
         }
-    }else if(pg==='dashboard'){injectDashboardHTML();if(typeof aplicarIdioma==='function')aplicarIdioma();ld();}
+    }else if(pg==='dashboard'){injectDashboardHTML();if(typeof aplicarIdioma==='function')aplicarIdioma();ld();cargarNotificaciones();}
     else if(pg==='reimprimir'){injectReimprimirHTML();lr();}
     aplicarIdioma();
     setTimeout(function(){if(typeof aplicarIdioma==='function')aplicarIdioma();},200);
@@ -606,7 +670,7 @@ aplicarIdioma();
                     cargarTemaGlobal();aplicarPermisos();
     setTimeout(aplicarSidebarCompactGlobal,200);
                     cargarIdiomaGlobal();aplicarIdioma();
-                    setTimeout(function(){injectDashboardHTML();if(typeof aplicarIdioma==='function')aplicarIdioma();ld();},100);
+                    setTimeout(function(){injectDashboardHTML();if(typeof aplicarIdioma==='function')aplicarIdioma();ld();cargarNotificaciones();},100);
                     (function(){
                         var xx=new XMLHttpRequest();
                         xx.open('GET',API+'config/list',true);

@@ -82,7 +82,7 @@ ganancias:'Ganancias',vence:'Vence',inicio_pago:'Inicio Pago',nuevo_prestamo:'Nu
 ganancias:'Ganancias',vence:'Vence',inicio_pago:'Inicio Pago',nuevo_prestamo:'Nuevo Préstamo',nuevo_cliente:'Nuevo Cliente',nuevo_usuario:'Nuevo Usuario',nueva_moneda:'Nueva Moneda',limite_ayuda:'Dejar vacío para sin límite',limite_prestamos_activos:'Préstamos Activos Máx.',limite_prestamos_activos_ayuda:'Máximo de préstamos activos simultáneos',moneda_default:'Moneda por Defecto',mora_activa:'Mora Activa',porcentaje_mora:'% Mora Diario',dias_gracia:'Días de Gracia',limite_prestamo:'Límite Máx Préstamo',tipo_mora:'Tipo de Mora',formato_recibo:'Formato Recibo',mostrar_ganancias:'Mostrar Ganancias',total_debe:'Total Debe',total_haber:'Total Haber',diferencia:'Diferencia',detalles:'Detalles',descripcion:'Descripción',
 amortizacion:'Amortizaci\u00F3n',ninguno:'Ninguno',tipo_doc:'Tipo Documento',simbolo:'S\u00EDmbolo',
 datos_perfil:'Datos del Perfil',num_documento:'Nro. Documento',recordarme:'Recordarme',modulo:'M\u00F3dulo',
-sidebar_compacto:'Sidebar Compacto',cambiar:'Cambiar',semanal:'Semanal',quincenal:'Quincenal',mensual:'Mensual',
+marcar_todas:'Marcar todas',sidebar_compacto:'Sidebar Compacto',cambiar:'Cambiar',semanal:'Semanal',quincenal:'Quincenal',mensual:'Mensual',
 plazo:'Plazo'
 };
 
@@ -124,7 +124,7 @@ proximas:'Upcoming',por_cobrar:'To Collect',ganancias:'Earnings',vence:'Due',ini
 nuevo_prestamo:'New Loan',nuevo_cliente:'New Client',nuevo_usuario:'New User',nueva_moneda:'New Currency',limite_ayuda:'Leave empty for no limit',limite_prestamos_activos:'Max Active Loans',limite_prestamos_activos_ayuda:'Maximum simultaneous active loans',seleccionar:'Select...',nro_cuotas:'Installments',fecha_inicio:'Start Date',moneda_default:'Default Currency',mora_activa:'Active Late Fee',porcentaje_mora:'% Daily Late Fee',dias_gracia:'Grace Days',limite_prestamo:'Max Loan Limit',tipo_mora:'Late Fee Type',formato_recibo:'Receipt Format',mostrar_ganancias:'Show Earnings',total_debe:'Total Debit',total_haber:'Total Credit',diferencia:'Difference',detalles:'Details',descripcion:'Description',
 datos:'Details',amortizacion:'Amortization',ninguno:'None',tipo_doc:'Doc. Type',simbolo:'Symbol',
 datos_perfil:'Profile Data',num_documento:'Doc. Number',recordarme:'Remember Me',modulo:'Module',
-sidebar_compacto:'Compact Sidebar',cambiar:'Change',semanal:'Weekly',quincenal:'Biweekly',mensual:'Monthly',
+marcar_todas:'Mark all read',sidebar_compacto:'Compact Sidebar',cambiar:'Change',semanal:'Weekly',quincenal:'Biweekly',mensual:'Monthly',
 plazo:'Term'
 };
 
@@ -175,7 +175,7 @@ nuevo_prestamo:'Nouveau Pr\u00EAt',seleccionar:'S\u00E9lectionner...',nro_cuotas
 nuevo_prestamo:'Nouveau Prêt',nuevo_cliente:'Nouveau Client',nuevo_usuario:'Nouvel Utilisateur',nueva_moneda:'Nouvelle Devise',limite_ayuda:'Laisser vide pour aucune limite',limite_prestamos_activos:'Prêt Actifs Max.',limite_prestamos_activos_ayuda:'Maximum de prêts actifs simultanés',seleccionar:'Sélectionner...',nro_cuotas:'Nb Échéances',moneda_default:'Monnaie par Défaut',mora_activa:'Pénalité Active',porcentaje_mora:'% Pénalité/Jour',dias_gracia:'Jours de Grâce',limite_prestamo:'Montant Max Prêt',tipo_mora:'Type Pénalité',formato_recibo:'Format Reçu',mostrar_ganancias:'Afficher Revenus',total_debe:'Total Débit',total_haber:'Total Crédit',diferencia:'Différence',detalles:'Détails',descripcion:'Description',
 tipo_doc:'Type Document',simbolo:'Symbole',datos_perfil:'Donn\u00E9es du Profil',
 num_documento:'N\u00B0 Document',recordarme:'Se souvenir',modulo:'Module',
-sidebar_compacto:'Barre Lat\u00E9rale Compacte',cambiar:'Changer',permisos:'Autorisations',semanal:'Hebdomadaire',
+marcar_todas:'Tout marquer',sidebar_compacto:'Barre Lat\u00E9rale Compacte',cambiar:'Changer',permisos:'Autorisations',semanal:'Hebdomadaire',
 quincenal:'Bimensuel',mensual:'Mensuel',plazo:'Dur\u00E9e'
 };
 
@@ -223,7 +223,7 @@ vence:'Vence',inicio_pago:'In\u00EDcio Pagamento',nuevo_prestamo:'Novo Empr\u00E
 vence:'Vence',inicio_pago:'Início Pagamento',nuevo_prestamo:'Novo Empréstimo',nuevo_cliente:'Novo Cliente',nuevo_usuario:'Novo Usuário',nueva_moneda:'Nova Moeda',limite_ayuda:'Deixe vazio para sem limite',limite_prestamos_activos:'Empréstimos Ativos Máx.',limite_prestamos_activos_ayuda:'Máximo de empréstimos ativos simultâneos',moneda_default:'Moeda Padrão',mora_activa:'Multa Ativa',porcentaje_mora:'% Multa Diária',dias_gracia:'Dias de Graça',limite_prestamo:'Limite Máx Empréstimo',tipo_mora:'Tipo de Multa',formato_recibo:'Formato Recibo',mostrar_ganancias:'Mostrar Ganhos',total_debe:'Total Débito',total_haber:'Total Crédito',diferencia:'Diferença',detalles:'Detalhes',descripcion:'Descrição',
 datos:'Dados',amortizacion:'Amortiza\u00E7\u00E3o',ninguno:'Nenhum',tipo_doc:'Tipo Documento',
 simbolo:'S\u00EDmbolo',datos_perfil:'Dados do Perfil',num_documento:'N\u00B0 Documento',
-recordarme:'Lembrar-me',detalles:'Detalhes',sidebar_compacto:'Sidebar Compacto',cambiar:'Alterar',permisos:'Permiss\u00F5es',
+marcar_todas:'Marcar todas',recordarme:'Lembrar-me',detalles:'Detalhes',sidebar_compacto:'Sidebar Compacto',cambiar:'Alterar',permisos:'Permiss\u00F5es',
 semanal:'Semanal',quincenal:'Quinzenal',mensual:'Mensal',plazo:'Prazo'
 };
 
