@@ -190,7 +190,7 @@ function vp(id) {
         document.getElementById('vpMonto').textContent = fms(p.MontoPrestamo);
         document.getElementById('vpInteres').textContent = p.InteresPorcentaje + '%';
         document.getElementById('vpCuotas').textContent = p.NroCuotas;
-        document.getElementById('vpEstado').textContent = p.Estado || '-';
+        document.getElementById('vpEstado').textContent = __estado(p.Estado) || p.Estado || '-';
         document.getElementById('vpEstado').className = 'badge ' + (p.Estado === 'Cancelado' ? 'bg-success' : 'bg-warning text-dark');
         document.getElementById('vpFecha').textContent = p.FechaInicioPago || p.fecha_inicio || '-';
         var total = parseFloat(p.ValorTotal || p.ValorPorCuota * p.NroCuotas || 0);
