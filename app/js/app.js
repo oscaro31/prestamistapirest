@@ -500,10 +500,13 @@ var _permisosCache=null;
 function aplicarPermisosDesde(items){
     document.querySelectorAll('.ni[data-p]').forEach(function(n){
         var p=n.getAttribute('data-p');
+        // No ocultar menús de superadmin
+        if(p.indexOf('sa-')===0) return;
         n.style.display=(items[p]===false||items[p]===undefined)?'none':'';
     });
     document.querySelectorAll('.ni[onclick*="nextElementSibling"]').forEach(function(n){
         var p=n.getAttribute('data-p');
+        if(p.indexOf('sa-')===0) return;
         n.style.display=(items[p]===false||items[p]===undefined)?'none':'';
         var sub=n.nextElementSibling;
         if(sub && n.style.display!='none'){
