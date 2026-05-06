@@ -11,6 +11,7 @@ function resumen() {
 
     $totalCuotasPendientes = (int)$pdo->query("SELECT COUNT(*) FROM PrestamoDetalle WHERE Estado = 'Pendiente'")->fetchColumn();
     $totalUsuarios = (int)$pdo->query("SELECT COUNT(*) FROM usuario")->fetchColumn();
+    $usuariosActivos = (int)$pdo->query("SELECT COUNT(*) FROM usuario WHERE activo = 1")->fetchColumn();
     $interesTotal = (float)$pdo->query("SELECT COALESCE(SUM(ValorInteres), 0) FROM Prestamo")->fetchColumn();
     $montoPendiente = (float)$pdo->query("SELECT COALESCE(SUM(MontoCuota), 0) FROM PrestamoDetalle WHERE Estado = 'Pendiente'")->fetchColumn();
 
@@ -121,6 +122,7 @@ function resumen() {
         'CuotasProximas' => (string)$cuotasProximas,
         'MontoProximo' => number_format($montoProximo, 2, '.', ''),
         'TotalUsuarios' => (string)$totalUsuarios,
+        'UsuariosActivos' => (string)$usuariosActivos,
         'InteresTotal' => number_format($interesTotal, 2, '.', ''),
         'MontoPendiente' => number_format($montoPendiente, 2, '.', ''),
         'MostrarGanancias' => '1',
