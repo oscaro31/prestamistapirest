@@ -1,5 +1,6 @@
 var cfgCache = {};
 var _vpIds=[],_montosPagar=[],_pagarTodo=true,_vpChecks=[],_vpPrestamoIdGlobal=0;
+var _pctMoraTxt='';
 var _ppData = [];
 var _ppPage = 0;
 var _ppPageSize = 10;
@@ -357,7 +358,7 @@ function pagarCuotas(id) {
                         }
                         totalRec += montoCuo;
                         var txtMonto = fms(montoCuo);
-                        if (moraCuo > 0) txtMonto += ' (mora: ' + fms(moraCuo) + ')';
+                        if (moraCuo > 0) txtMonto += ' (' + fms(moraCuo) + ' mora ' + _pctMoraTxt + ')';
                         paidNumbers.push({num: p.cuotas[di].NroCuota||p.cuotas[di].numero_cuota||(di+1), monto: txtMonto});
                     }
                 }
@@ -450,6 +451,7 @@ function generarRecibo(contenido) {
                 if (cl === 'empresa_direccion') ed = d[i].valor;
                 if (cl === 'empresa_telefono') et = d[i].valor;
                 if (cl === 'formato_recibo') fmt = d[i].valor;
+                if (cl === 'porcentaje_mora') _pctMoraTxt = d[i].valor + '%';
             }
         }
         var r = '\\n';
