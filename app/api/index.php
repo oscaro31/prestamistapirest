@@ -120,6 +120,7 @@ try {
         // RECIBOS (historial de pagos para reimprimir)
         case 'recibos/list':
             $authUser = validateToken();
+            $idrecibo = (int)($_GET['idrecibo'] ?? 0);
             $idprestamo = (int)($_GET['idprestamo'] ?? 0);
             $desde = $_GET['desde'] ?? '';
             $hasta = $_GET['hasta'] ?? '';
@@ -130,6 +131,10 @@ try {
                     JOIN Cliente c ON c.IdCliente = p.IdCliente";
             $params = [];
             $where = [];
+            if ($idrecibo > 0) {
+                $where[] = "r.idrecibo = ?";
+                $params[] = $idrecibo;
+            }
             if ($idprestamo > 0) {
                 $where[] = "r.idprestamo = ?";
                 $params[] = $idprestamo;
@@ -143,7 +148,8 @@ try {
                 $params[] = $hasta;
             }
             if (!empty($where)) $sql .= " WHERE " . implode(' AND ', $where);
-            $sql .= " ORDER BY r.fecha_creacion DESC LIMIT 100";
+            $sql .= " ORDER BY r.fecha_creacion DESC";
+            if ($idrecibo == 0) $sql .= " LIMIT 100";
             $stmt = $pdo->prepare($sql);
             $stmt->execute($params);
             jsonResponse($stmt->fetchAll());
