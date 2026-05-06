@@ -117,6 +117,26 @@ try {
             changePassword($body);
             break;
 
+        // RECIBOS (historial de pagos para reimprimir)
+        case 'recibos/list':
+            $authUser = validateToken();
+            $idprestamo = (int)($_GET['idprestamo'] ?? 0);
+            $pdo = getDB();
+            $sql = "SELECT r.*, c.Nombre as cliente_nombre, c.Apellido as cliente_apellido, p.MontoPrestamo
+                    FROM recibos r
+                    JOIN Prestamo p ON p.IdPrestamo = r.idprestamo
+                    JOIN Cliente c ON c.IdCliente = p.IdCliente";
+            $params = [];
+            if ($idprestamo > 0) {
+                $sql .= " WHERE r.idprestamo = ?";
+                $params[] = $idprestamo;
+            }
+            $sql .= " ORDER BY r.fecha_creacion DESC LIMIT 100";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+            jsonResponse($stmt->fetchAll());
+            break;
+        
         // CLIENTES
         case 'clientes/list':
             $authUser = validateToken();
@@ -314,6 +334,23 @@ try {
         case 'setup/permissions':
             // Sin token — ruta de bootstrap interno
             createPermissionsTable();
+            break;
+        case 'setup/create-recibos':
+            $pdo = getDB();
+            $pdo->exec("CREATE TABLE IF NOT EXISTS recibos (
+                idrecibo INT AUTO_INCREMENT PRIMARY KEY,
+                idprestamo INT NOT NULL,
+                idusuario INT NOT NULL,
+                tipo_pago VARCHAR(20) DEFAULT 'completo',
+                monto_total DECIMAL(18,2) NOT NULL,
+                monto_mora DECIMAL(18,2) DEFAULT 0,
+                nro_cuotas_pagadas INT DEFAULT 0,
+                detalle_cuotas TEXT,
+                fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (idprestamo) REFERENCES Prestamo(IdPrestamo) ON DELETE CASCADE,
+                FOREIGN KEY (idusuario) REFERENCES usuario(idusuario) ON DELETE CASCADE
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+            jsonResponse(['success'=>true,'message'=>'Tabla recibos creada']);
             break;
         
         // CONTABILIDAD

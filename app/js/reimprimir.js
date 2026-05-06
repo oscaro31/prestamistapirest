@@ -1,153 +1,104 @@
-var rbClientesCargados=false;
-var _ppPageRb=0,_ppPageSizeRb=10,_rbData=[];
+var _rrPage=0,_rrPageSize=10,_rrData=[];
 
 function lr(){
-    var waitEl=setInterval(function(){
-        if(document.getElementById('rbCliente')){
-            clearInterval(waitEl);
-            if(!rbClientesCargados){
-                g('clientes/list',function(ee,dd){
-                    var sel=document.getElementById('rbCliente');
-                    if(!ee&&dd){
-                        for(var i=0;i<dd.length;i++){
-                            sel.innerHTML+='<option value="'+dd[i].IdCliente+'">'+dd[i].Nombre+' '+(dd[i].Apellido||'')+'</option>';
-                        }
-                        rbClientesCargados=true;
-                    }
-                    buscar();
-                });
-            }else{
-                buscar();
-            }
-        }
-    },50);
+    buscar();
 }
 
 function lb(){
-    document.getElementById('rbCliente').value='';
-    document.getElementById('rbDesde').value='';
-    document.getElementById('rbHasta').value='';
+    document.getElementById('rrCliente').value='';
+    document.getElementById('rrDesde').value='';
+    document.getElementById('rrHasta').value='';
     buscar();
 }
 
 function buscar(){
+    // Cargar porcentaje de mora
+    g('config/list',function(ec,dc){
+        if(!ec&&dc){
+            for(var i=0;i<dc.length;i++){
+                if(dc[i].Clave.toLowerCase()==='porcentaje_mora'){
+                    localStorage.setItem('pctMoraTxt',dc[i].valor+'%');
+                }
+            }
+        }
+    });
     var q='';
-    var cl=document.getElementById('rbCliente').value;
-    var ds=document.getElementById('rbDesde').value;
-    var hs=document.getElementById('rbHasta').value;
-    if(cl)q+='&IdCliente='+cl;
-    if(ds)q+='&desde='+ds;
-    if(hs)q+='&hasta='+hs;
-    g('prestamos/list'+q,function(e,d){
-        if(e){document.getElementById('rbody').innerHTML='<tr><td colspan="7" class="text-danger">'+e+'</td></tr>';return;}
-        _rbData=d||[];
-        _ppPageRb=0;
-        ppRenderRb();
+    var cl=document.getElementById('rrCliente');
+    if(cl&&cl.value)q+='&idprestamo='+cl.value;
+    if(!q)q='';
+    g('recibos/list'+q,function(e,d){
+        if(e){document.getElementById('rrbody').innerHTML='<tr><td colspan="7" class="text-danger">'+e+'</td></tr>';return;}
+        _rrData=d||[];
+        _rrPage=0;
+        ppRender();
     });
 }
 
-function ppRenderRb(){
-    var d=_rbData;
+function ppRender(){
+    var d=_rrData;
     if(!d||d.length===0){
-        document.getElementById('rbody').innerHTML='<tr><td colspan="7" class="text-muted text-center">'+__('sin_datos')+'</td></tr>';
-        document.getElementById('rbPagination').innerHTML='';
+        document.getElementById('rrbody').innerHTML='<tr><td colspan="7" class="text-muted text-center">'+__('sin_datos')+'</td></tr>';
+        document.getElementById('rrPagination').innerHTML='';
         return;
     }
     var total=d.length;
-    var from=_ppPageRb*_ppPageSizeRb;
-    var to=Math.min(from+_ppPageSizeRb,total);
-    var page=_ppPageSizeRb>0?d.slice(from,to):d;
+    var from=_rrPage*_rrPageSize;
+    var to=Math.min(from+_rrPageSize,total);
+    var page=_rrPageSize>0?d.slice(from,to):d;
     var h='';
     for(var i=0;i<page.length;i++){
-        var p=page[i];
-        var totalP=0;
-        if(p.cuotas){for(var j=0;j<p.cuotas.length;j++){if(p.cuotas[j].Estado==='Pagado')totalP++;}}
-        var badgeClass='bg-secondary';
-        if(p.Estado==='Cancelado'||p.Estado==='Pagado')badgeClass='bg-success';
-        else if(p.Estado==='Vencido')badgeClass='bg-danger';
-        else badgeClass='bg-warning';
-        h+='<tr><td>'+p.IdPrestamo+'</td><td>'+(p.cliente_nombre||'')+' '+(p.cliente_apellido||'')+'</td><td>'+(p.moneda_simbolo||'RD$')+' '+fm(p.MontoPrestamo)+'</td><td>'+totalP+'/'+p.NroCuotas+'</td><td>'+(p.FechaCreacion?p.FechaCreacion.substring(0,10):'')+'</td><td><span class="badge '+badgeClass+'">'+p.Estado+'</span></td><td><button class="btn btn-sm btn-outline-secondary" onclick="rrc('+p.IdPrestamo+')"><i class="bi bi-printer"></i></button></td></tr>';
+        var r=page[i];
+        var tipo=r.tipo_pago==='completo'?'Completo':'Parcial';
+        var fecha=r.fecha_creacion?r.fecha_creacion.substring(0,16):'-';
+        var mon='RD$';
+        h+='<tr><td>'+r.idrecibo+'</td><td>'+fecha+'</td><td>#'+r.idprestamo+' '+(r.cliente_nombre||'')+' '+(r.cliente_apellido||'')+'</td><td>'+tipo+'</td><td>'+r.nro_cuotas_pagadas+'</td><td>'+mon+' '+fm(r.monto_total)+'</td><td><button class="btn btn-sm btn-outline-secondary" onclick="rrc('+r.idrecibo+')"><i class="bi bi-printer"></i></button></td></tr>';
     }
-    document.getElementById('rbody').innerHTML=h;
-    var totalPages=Math.ceil(total/_ppPageSizeRb)||1;
-    var pgHtml='<div class="d-flex justify-content-between align-items-center mt-2 px-2"><div class="text-muted small">'+__('mostrando')+' '+Math.min(from+1,total)+'-'+to+' '+__('de')+' '+total+'</div><div class="d-flex align-items-center gap-1"><select class="form-select form-select-sm" style="width:auto" onchange="_ppPageSizeRb=parseInt(this.value);_ppPageRb=0;ppRenderRb()">';
-    [10,25,50,100].forEach(function(s){pgHtml+='<option value="'+s+'"'+(_ppPageSizeRb===s?' selected':'')+'>'+s+'</option>';});
-    pgHtml+='<option value="0"'+(_ppPageSizeRb===0?' selected':'')+'>'+__('todos')+'</option></select>';
-    pgHtml+='<button class="btn btn-sm btn-outline-secondary" onclick="_ppPageRb=Math.max(0,_ppPageRb-1);ppRenderRb()" '+(from<=0?'disabled':'')+'><i class="bi bi-chevron-left"></i></button>';
-    pgHtml+='<span class="small mx-1">'+(_ppPageRb+1)+'/'+totalPages+'</span>';
-    pgHtml+='<button class="btn btn-sm btn-outline-secondary" onclick="_ppPageRb=Math.min('+(totalPages-1)+',_ppPageRb+1);ppRenderRb()" '+(to>=total?'disabled':'')+'><i class="bi bi-chevron-right"></i></button>';
+    document.getElementById('rrbody').innerHTML=h;
+    var totalPages=Math.ceil(total/_rrPageSize)||1;
+    var pgHtml='<div class="d-flex justify-content-between align-items-center mt-2 px-2"><div class="text-muted small">'+__('mostrando')+' '+Math.min(from+1,total)+'-'+to+' '+__('de')+' '+total+'</div><div class="d-flex align-items-center gap-1"><select class="form-select form-select-sm" style="width:auto" onchange="_rrPageSize=parseInt(this.value);_rrPage=0;ppRender()">';
+    [10,25,50,100].forEach(function(s){pgHtml+='<option value="'+s+'"'+(_rrPageSize===s?' selected':'')+'>'+s+'</option>';});
+    pgHtml+='<option value="0"'+(_rrPageSize===0?' selected':'')+'>'+__('todos')+'</option></select>';
+    pgHtml+='<button class="btn btn-sm btn-outline-secondary" onclick="_rrPage=Math.max(0,_rrPage-1);ppRender()" '+(from<=0?'disabled':'')+'><i class="bi bi-chevron-left"></i></button>';
+    pgHtml+='<span class="small mx-1">'+(_rrPage+1)+'/'+totalPages+'</span>';
+    pgHtml+='<button class="btn btn-sm btn-outline-secondary" onclick="_rrPage=Math.min('+(totalPages-1)+',_rrPage+1);ppRender()" '+(to>=total?'disabled':'')+'><i class="bi bi-chevron-right"></i></button>';
     pgHtml+='</div></div>';
-    document.getElementById('rbPagination').innerHTML=pgHtml;
+    document.getElementById('rrPagination').innerHTML=pgHtml;
 }
 
-function rrc(id){
-    g('prestamos/list&IdPrestamo='+id,function(e,d){
+function rrc(idrecibo){
+    g('recibos/list&idrecibo='+idrecibo,function(e,d){
         if(e||!d||d.length===0){alert('Error');return;}
-        var p=d[0];
-        var numsPagadas=[];var numsPendientes=[];var totalPagado=0;
-        for(var ci=0;ci<(p.cuotas||[]).length;ci++){
-            var c=p.cuotas[ci];var n=c.NroCuota||c.numero_cuota||(ci+1);
-            if(c.Estado==='Pagado'){numsPagadas.push(n);totalPagado+=parseFloat(c.MontoCuota||0)+parseFloat(c.MoraCalculada||0);}
-            else{numsPendientes.push(n);}
-        }
-        function rangoStr(arr){
-            if(!arr||arr.length===0)return 'Ninguna';
-            var parts=[];var start=arr[0],end=arr[0];
-            for(var ci=1;ci<=arr.length;ci++){
-                if(ci<arr.length&&arr[ci]===end+1){end=arr[ci];}
-                else{parts.push(start===end?'':start+'-'+end);if(ci<arr.length){start=arr[ci];end=arr[ci];}}
-            }
-            return parts.join(', ');
-        }
-        var rec='COMPROBANTE DE PAGO\n';
-        rec+='==============================\n';
-        rec+='Prestamo #'+p.IdPrestamo+'\n';
-        rec+='Cliente: '+(p.cliente_nombre||'')+' '+(p.cliente_apellido||'')+'\n';
-        rec+='Monto: '+(p.moneda_simbolo||'RD$')+' '+fm(p.MontoPrestamo)+'\n';
-        rec+='Interes: '+p.InteresPorcentaje+'% | Cuotas: '+p.NroCuotas+'\n';
-        rec+='Estado: '+p.Estado+'\n';
-        rec+='-----------------------------\n';
-        rec+='Cuotas Pagadas: '+rangoStr(numsPagadas)+'\n';
-        rec+='Cuotas Pendientes: '+rangoStr(numsPendientes)+'\n';
-        rec+='-----------------------------\n';
-        rec+='CUOTAS PAGADAS\n';
-        rec+='-----------------------------\n';
-        var totalConMora=0;
-        for(var ci=0;ci<(p.cuotas||[]).length;ci++){
-            var c=p.cuotas[ci];
-            if(c.Estado==='Pagado'){
-                var num=c.NroCuota||c.numero_cuota||(ci+1);
-                var m=parseFloat(c.MontoCuota||0);
-                var mora=parseFloat(c.MoraCalculada||0);
-                var totalCuota=m+mora;
-                totalConMora+=totalCuota;
-                var linea='Cuota #'+num+': RD$ '+fm(totalCuota);
-                var fmSel=localStorage.getItem('formato_mora_recibo')||'detalle';
-                if(fmSel==='detalle'&&mora>0)linea+=' ('+fm(mora)+' mora '+_pctMoraTxt+')';
-                rec+=linea+'\n';
-            }
-        }
-        var fmSel=localStorage.getItem('formato_mora_recibo')||'detalle';
-        if(fmSel==='resumen'&&(totalConMora-totalPagado)>0){
+        var r=d[0];
+        // Cargar datos del prestamo para obtener cliente y detalle
+        g('prestamos/list&IdPrestamo='+r.idprestamo,function(e2,p){
+            if(e2||!p||p.length===0) p=[{}];
+            var prest=p[0];
+            var f=new Date().toLocaleDateString('es-DO');
+            var hh=new Date().toLocaleTimeString('es-DO');
+            var rec='COMPROBANTE DE PAGO\n';
+            rec+='==============================\n';
+            rec+='Recibo #'+r.idrecibo+'\n';
+            rec+='Prestamo #'+r.idprestamo+'\n';
+            rec+='Fecha: '+f+' '+hh+'\n';
+            rec+='Cliente: '+(prest.cliente_nombre||r.cliente_nombre||'')+' '+(prest.cliente_apellido||r.cliente_apellido||'')+'\n';
+            rec+='Monto Prestamo: '+(prest.moneda_simbolo||'RD$')+' '+fm(r.MontoPrestamo||prest.MontoPrestamo||0)+'\n';
             rec+='-----------------------------\n';
-            rec+='Se le cobró un '+_pctMoraTxt+' de mora\n';
-        }
-        rec+='-----------------------------\n';
-        rec+='CUOTAS PENDIENTES\n';
-        rec+='-----------------------------\n';
-        var pendCount=0;
-        for(var ci=0;ci<(p.cuotas||[]).length;ci++){
-            var c=p.cuotas[ci];
-            if(c.Estado!=='Pagado'){
-                pendCount++;
-                var num=c.NroCuota||c.numero_cuota||(ci+1);
-                var m=parseFloat(c.MontoCuota||0);
-                rec+='Cuota #'+num+': RD$ '+fm(m)+'\n';
+            rec+='PAGO '+(r.tipo_pago==='completo'?'COMPLETO':'PARCIAL')+'\n';
+            rec+='-----------------------------\n';
+            // Mostrar detalle de cuotas
+            var cuotas=r.detalle_cuotas?r.detalle_cuotas.split(','):[];
+            for(var ci=0;ci<cuotas.length;ci++){
+                rec+='Cuota '+cuotas[ci]+'\n';
             }
-        }
-        if(pendCount===0)rec+='Todas las cuotas estan pagadas\n';
-        rec+='-----------------------------\n';
-        rec+='Total Pagado: RD$ '+fm(totalPagado)+'\n';
-        generarRecibo(rec);
+            rec+='-----------------------------\n';
+            rec+='Total Pagado: '+fm(r.monto_total)+'\n';
+            if(parseFloat(r.monto_mora)>0){
+                rec+='Mora: '+fm(r.monto_mora)+'\n';
+                rec+='Se le cobró un '+localStorage.getItem('pctMoraTxt')+' de mora\n';
+            }
+            rec+='==============================\n';
+            rec+='Pago realizado correctamente!\n';
+            generarRecibo(rec);
+        });
     });
 }

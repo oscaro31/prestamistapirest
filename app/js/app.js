@@ -756,15 +756,15 @@ function injectConfigHTML(){
 }
 function injectReimprimirHTML(){
     var el=document.getElementById('p-reimprimir');
-    if(el){el.innerHTML='<div class="container-fluid p-4"><div class="card"><div class="card-body"><div class="row g-3 mb-3"><div class="col-md-4"><label class="form-label" data-i18n="cliente">Cliente</label><select class="form-select" id="rbCliente"><option value="">'+__('seleccionar')+'</option></select></div><div class="col-md-3"><label class="form-label" data-i18n="fecha_desde">Desde</label><input type="date" class="form-control" id="rbDesde"></div><div class="col-md-3"><label class="form-label" data-i18n="fecha_hasta">Hasta</label><input type="date" class="form-control" id="rbHasta"></div><div class="col-md-2 d-flex align-items-end"><button class="btn btn-primary w-100" onclick="buscar()"><i class="bi bi-search"></i> '+__('buscar')+'</button></div></div><div class="table-responsive"><table class="table table-hover"><thead><tr><th>#</th><th data-i18n="cliente">Cliente</th><th data-i18n="monto">Monto</th><th data-i18n="cuotas">Cuotas</th><th data-i18n="fecha">Fecha</th><th data-i18n="estado">Estado</th><th data-i18n="accion">Acción</th></tr></thead><tbody id="rbody"></tbody></table></div><div id="rbPagination"></div></div></div></div>';el.dataset.loaded='1';}
-    // Cargar clientes en el select inmediatamente
+    if(el){el.innerHTML='<div class="container-fluid p-4"><div class="card"><div class="card-body"><div class="row g-3 mb-3"><div class="col-md-4"><label class="form-label" data-i18n="prestamo">Prestamo</label><select class="form-select" id="rrCliente"><option value="">'+__('todos')+'</option></select></div><div class="col-md-3"><label class="form-label" data-i18n="fecha_desde">Desde</label><input type="date" class="form-control" id="rrDesde"></div><div class="col-md-3"><label class="form-label" data-i18n="fecha_hasta">Hasta</label><input type="date" class="form-control" id="rrHasta"></div><div class="col-md-2 d-flex align-items-end"><button class="btn btn-primary w-100" onclick="buscar()"><i class="bi bi-search"></i> '+__('buscar')+'</button></div></div><div class="table-responsive"><table class="table table-hover"><thead><tr><th>#</th><th data-i18n="fecha">Fecha</th><th data-i18n="cliente">Cliente</th><th data-i18n="tipo">Tipo</th><th data-i18n="cuotas">Cuotas</th><th data-i18n="monto_total">Total</th><th data-i18n="accion">Acción</th></tr></thead><tbody id="rrbody"></tbody></table></div><div id="rrPagination"></div></div></div></div>';el.dataset.loaded='1';}
+    // Cargar prestamos en el select
     setTimeout(function(){
-        var sel=document.getElementById('rbCliente');
+        var sel=document.getElementById('rrCliente');
         if(sel && sel.options.length<=1){
-            g('clientes/list',function(ee,dd){
+            g('prestamos/list',function(ee,dd){
                 if(!ee&&dd){
                     for(var i=0;i<dd.length;i++){
-                        sel.innerHTML+='<option value="'+dd[i].IdCliente+'">'+dd[i].Nombre+' '+(dd[i].Apellido||'')+'</option>';
+                        sel.innerHTML+='<option value="'+dd[i].IdPrestamo+'">#'+dd[i].IdPrestamo+' '+(dd[i].cliente_nombre||'')+' '+(dd[i].cliente_apellido||'')+'</option>';
                     }
                 }
             });

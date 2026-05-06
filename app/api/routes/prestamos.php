@@ -188,8 +188,36 @@ function pagarCuotas($body) {
         // Si no quedan cuotas pendientes, marcar préstamo como Cancelado
         $stmt = $pdo->prepare("SELECT COUNT(*) FROM PrestamoDetalle WHERE IdPrestamo = ? AND Estado = 'Pendiente'");
         $stmt->execute([$idPrestamo]);
-        if ($stmt->fetchColumn() == 0) {
+        $cancelar = ($stmt->fetchColumn() == 0);
+        if ($cancelar) {
             $pdo->prepare("UPDATE Prestamo SET Estado = 'Cancelado' WHERE IdPrestamo = ?")->execute([$idPrestamo]);
+        }
+        
+        // Registrar en tabla recibos
+        global $authUser;
+        $idusuario = $authUser ? (int)$authUser['idusuario'] : 0;
+        $totalMonto = 0;
+        $totalMora = 0;
+        $detalleCuotas = [];
+        $stmtDet = $pdo->prepare("SELECT NroCuota, MontoCuota, COALESCE(MoraCalculada, 0) as Mora FROM PrestamoDetalle WHERE IdPrestamoDetalle = ?");
+        foreach ($ids as $idDet) {
+            $idDet = (int)trim($idDet);
+            if ($idDet <= 0) continue;
+            $stmtDet->execute([$idDet]);
+            $r = $stmtDet->fetch();
+            if ($r) {
+                $m = (float)$r['MontoCuota'] + (float)$r['Mora'];
+                $totalMonto += $m;
+                $totalMora += (float)$r['Mora'];
+                $detalleCuotas[] = '#' . $r['NroCuota'] . '=' . number_format($m, 2, '.', '');
+            }
+        }
+        $detalleStr = implode(',', $detalleCuotas);
+        $nroCuotas = count($detalleCuotas);
+        $tipoPago = ($nroCuotas >= (int)$pdo->query("SELECT NroCuotas FROM Prestamo WHERE IdPrestamo = $idPrestamo")->fetchColumn()) ? 'completo' : 'parcial';
+        if ($nroCuotas > 0) {
+            $stmtR = $pdo->prepare("INSERT INTO recibos (idprestamo, idusuario, tipo_pago, monto_total, monto_mora, nro_cuotas_pagadas, detalle_cuotas) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $stmtR->execute([$idPrestamo, $idusuario, $tipoPago, $totalMonto, $totalMora, $nroCuotas, $detalleStr]);
         }
 
         // Generar asiento contable automático
