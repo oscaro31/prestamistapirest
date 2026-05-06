@@ -1,0 +1,527 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Prestamist API",
+    "description": "API de gestión de préstamos. Requiere autenticación mediante token Bearer para todas las rutas excepto login.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Soporte Prestamist"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://prestamist.optecnology.com/api/index.php",
+      "description": "Servidor de producción"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "hex",
+        "description": "Token obtenido de auth/login. Formato: Bearer <token>"
+      }
+    }
+  },
+  "security": [
+    { "BearerAuth": [] }
+  ],
+  "paths": {
+    "/?route=auth/login": {
+      "post": {
+        "tags": ["Autenticación"],
+        "summary": "Iniciar sesión",
+        "description": "Obtiene un token JWT-like (hex) para autenticar el resto de peticiones.",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["login", "clave"],
+                "properties": {
+                  "login": { "type": "string", "example": "oortiz" },
+                  "clave": { "type": "string", "example": "Oscar3031" },
+                  "remember": { "type": "boolean", "description": "Recordar sesión por 30 días (default: 1 día)", "example": false }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login exitoso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "token": { "type": "string", "description": "Token de autenticación" },
+                        "user": {
+                          "type": "object",
+                          "properties": {
+                            "idusuario": { "type": "integer" },
+                            "nombre": { "type": "string" },
+                            "login": { "type": "string" },
+                            "idcargo": { "type": "integer" },
+                            "cargo_nombre": { "type": "string" },
+                            "activo": { "type": "boolean" }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Credenciales inválidas" },
+          "429": { "description": "Demasiados intentos. Espere 15 minutos." }
+        }
+      }
+    },
+    "/?route=auth/validate": {
+      "get": {
+        "tags": ["Autenticación"],
+        "summary": "Validar token actual",
+        "description": "Verifica que el token sea válido y devuelve datos del usuario.",
+        "responses": {
+          "200": { "description": "Token válido, datos del usuario" },
+          "401": { "description": "Token inválido o expirado" }
+        }
+      }
+    },
+    "/?route=users/list": {
+      "get": {
+        "tags": ["Usuarios"],
+        "summary": "Listar usuarios",
+        "description": "Obtiene todos los usuarios del sistema. Requiere token.",
+        "responses": {
+          "200": { "description": "Lista de usuarios" }
+        }
+      }
+    },
+    "/?route=users/create": {
+      "post": {
+        "tags": ["Usuarios"],
+        "summary": "Crear usuario",
+        "description": "Crea un nuevo usuario. Requiere permiso 'usuarios'.",
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["login", "nombre", "clave"],
+                "properties": {
+                  "login": { "type": "string", "example": "nuevousuario" },
+                  "nombre": { "type": "string" },
+                  "apellido": { "type": "string" },
+                  "clave": { "type": "string" },
+                  "idcargo": { "type": "integer", "description": "1=Admin, 2=Usuario, 3=Vendedor", "example": 2 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Usuario creado" },
+          "403": { "description": "Permiso denegado" }
+        }
+      }
+    },
+    "/?route=users/update": {
+      "post": {
+        "tags": ["Usuarios"],
+        "summary": "Actualizar usuario",
+        "description": "Actualiza datos de un usuario. Admin puede modificar cualquier usuario; los usuarios solo pueden modificar su propio perfil.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["idusuario"],
+                "properties": {
+                  "idusuario": { "type": "integer" },
+                  "nombre": { "type": "string" },
+                  "email": { "type": "string" },
+                  "telefono": { "type": "string" },
+                  "preferencias": { "type": "string", "description": "JSON con preferencias (tema, idioma, sidebar)" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Actualizado" },
+          "403": { "description": "No tienes permiso para modificar este usuario" }
+        }
+      }
+    },
+    "/?route=users/password": {
+      "post": {
+        "tags": ["Usuarios"],
+        "summary": "Cambiar contraseña",
+        "description": "Cambia la clave de un usuario. Admin puede cambiar cualquier clave; usuarios solo la propia.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["idusuario", "clave"],
+                "properties": {
+                  "idusuario": { "type": "integer" },
+                  "clave": { "type": "string" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/?route=users/toggle": {
+      "post": {
+        "tags": ["Usuarios"],
+        "summary": "Activar/Desactivar usuario",
+        "description": "Cambia el estado activo/inactivo de un usuario. Requiere permiso 'usuarios'.",
+        "responses": {
+          "200": { "description": "Estado cambiado" },
+          "403": { "description": "Permiso denegado" }
+        }
+      }
+    },
+    "/?route=clientes/list": {
+      "get": {
+        "tags": ["Clientes"],
+        "summary": "Listar clientes",
+        "responses": { "200": { "description": "Lista de clientes" } }
+      }
+    },
+    "/?route=clientes/get": {
+      "get": {
+        "tags": ["Clientes"],
+        "summary": "Obtener cliente por documento",
+        "parameters": [
+          { "name": "NroDocumento", "in": "query", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Datos del cliente" } }
+      }
+    },
+    "/?route=clientes/create": {
+      "post": {
+        "tags": ["Clientes"],
+        "summary": "Crear cliente",
+        "description": "Requiere permiso 'clientes'.",
+        "responses": {
+          "201": { "description": "Cliente creado" },
+          "403": { "description": "Permiso denegado" }
+        }
+      }
+    },
+    "/?route=clientes/update": {
+      "post": {
+        "tags": ["Clientes"],
+        "summary": "Actualizar cliente",
+        "description": "Requiere permiso 'clientes'.",
+        "responses": { "200": { "description": "Actualizado" } }
+      }
+    },
+    "/?route=clientes/delete": {
+      "post": {
+        "tags": ["Clientes"],
+        "summary": "Eliminar cliente",
+        "description": "Requiere permiso 'clientes'.",
+        "responses": { "200": { "description": "Eliminado" } }
+      }
+    },
+    "/?route=monedas/list": {
+      "get": {
+        "tags": ["Monedas"],
+        "summary": "Listar monedas",
+        "responses": { "200": { "description": "Lista de monedas con tasas" } }
+      }
+    },
+    "/?route=monedas/create": {
+      "post": {
+        "tags": ["Monedas"],
+        "summary": "Crear moneda",
+        "description": "Requiere permiso 'monedas'.",
+        "responses": {
+          "201": { "description": "Moneda creada" },
+          "403": { "description": "Permiso denegado" }
+        }
+      }
+    },
+    "/?route=monedas/update": {
+      "post": {
+        "tags": ["Monedas"],
+        "summary": "Actualizar moneda",
+        "description": "Requiere permiso 'monedas'.",
+        "responses": { "200": { "description": "Actualizado" } }
+      }
+    },
+    "/?route=monedas/delete": {
+      "post": {
+        "tags": ["Monedas"],
+        "summary": "Eliminar moneda",
+        "description": "Requiere permiso 'monedas'.",
+        "responses": { "200": { "description": "Eliminado" } }
+      }
+    },
+    "/?route=prestamos/list": {
+      "get": {
+        "tags": ["Préstamos"],
+        "summary": "Listar préstamos",
+        "parameters": [
+          { "name": "IdPrestamo", "in": "query", "schema": { "type": "integer" } },
+          { "name": "NroDocumento", "in": "query", "schema": { "type": "string" } },
+          { "name": "cliente", "in": "query", "schema": { "type": "string" } },
+          { "name": "desde", "in": "query", "schema": { "type": "string", "format": "date" } },
+          { "name": "hasta", "in": "query", "schema": { "type": "string", "format": "date" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de préstamos con cuotas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "IdPrestamo": { "type": "integer" },
+                          "cliente_nombre": { "type": "string" },
+                          "MontoPrestamo": { "type": "number" },
+                          "ValorTotal": { "type": "number" },
+                          "Estado": { "type": "string" },
+                          "FechaCreacion": { "type": "string" },
+                          "cuotas": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "NroCuota": { "type": "integer" },
+                                "MontoCuota": { "type": "number" },
+                                "MontoPagado": { "type": "number" },
+                                "FechaPago": { "type": "string" },
+                                "Estado": { "type": "string" },
+                                "vencida": { "type": "boolean" }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/?route=prestamos/create": {
+      "post": {
+        "tags": ["Préstamos"],
+        "summary": "Crear préstamo",
+        "description": "Requiere permiso 'prestamos'. Genera las cuotas automáticamente según el tipo de cuota.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["IdCliente", "IdMoneda", "MontoPrestamo", "NroCuotas"],
+                "properties": {
+                  "IdCliente": { "type": "integer" },
+                  "IdMoneda": { "type": "integer" },
+                  "MontoPrestamo": { "type": "number" },
+                  "InteresPorcentaje": { "type": "number" },
+                  "NroCuotas": { "type": "integer" },
+                  "FechaInicioPago": { "type": "string", "format": "date" },
+                  "ValorPorCuota": { "type": "number" },
+                  "ValorTotal": { "type": "number" },
+                  "IdTipoCuota": { "type": "integer", "description": "1=Semanal, 2=Quincenal, 3=Mensual", "example": 3 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Préstamo creado, devuelve IdPrestamo" },
+          "403": { "description": "Permiso denegado" }
+        }
+      }
+    },
+    "/?route=prestamos/pagar": {
+      "post": {
+        "tags": ["Préstamos"],
+        "summary": "Pagar cuotas",
+        "description": "Marca cuotas como pagadas y guarda MontoPagado. Requiere permiso 'prestamos'.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["IdPrestamo", "detallesIds"],
+                "properties": {
+                  "IdPrestamo": { "type": "integer" },
+                  "detallesIds": { "type": "string", "description": "IDs separados por coma de PrestamoDetalle a pagar" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Pago realizado" },
+          "403": { "description": "Permiso denegado" }
+        }
+      }
+    },
+    "/?route=dashboard/resumen": {
+      "get": {
+        "tags": ["Dashboard"],
+        "summary": "Resumen del dashboard",
+        "description": "Devuelve estadísticas: clientes activos, préstamos, cuotas vencidas/próximas, montos.",
+        "responses": { "200": { "description": "Datos del dashboard" } }
+      }
+    },
+    "/?route=cargo/permissions": {
+      "get": {
+        "tags": ["Roles"],
+        "summary": "Obtener permisos del usuario actual",
+        "description": "Devuelve el mapa de permisos según el cargo del usuario autenticado.",
+        "responses": {
+          "200": {
+            "description": "Permisos del cargo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "permisos": {
+                          "type": "object",
+                          "additionalProperties": { "type": "boolean" }
+                        },
+                        "idcargo": { "type": "integer" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/?route=config/list": {
+      "get": {
+        "tags": ["Configuración"],
+        "summary": "Listar configuración del sistema",
+        "description": "Requiere permiso 'config'.",
+        "responses": { "200": { "description": "Lista de parámetros" } }
+      }
+    },
+    "/?route=config/update": {
+      "post": {
+        "tags": ["Configuración"],
+        "summary": "Actualizar configuración",
+        "description": "Requiere permiso 'config'.",
+        "responses": {
+          "200": { "description": "Configuración actualizada" },
+          "403": { "description": "Permiso denegado" }
+        }
+      }
+    },
+    "/?route=upload/avatar": {
+      "post": {
+        "tags": ["Perfil"],
+        "summary": "Subir avatar",
+        "description": "Sube imagen de perfil para el usuario autenticado. Solo jpg, jpeg, png, gif, webp.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "avatar": { "type": "string", "format": "binary" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Avatar actualizado" }
+        }
+      }
+    },
+    "/?route=plan-cuenta/list": {
+      "get": {
+        "tags": ["Contabilidad"],
+        "summary": "Listar plan de cuentas",
+        "responses": { "200": { "description": "Plan de cuentas" } }
+      }
+    },
+    "/?route=asientos/list": {
+      "get": {
+        "tags": ["Contabilidad"],
+        "summary": "Listar asientos contables",
+        "responses": { "200": { "description": "Asientos contables" } }
+      }
+    },
+    "/?route=reportes/balance-comprobacion": {
+      "get": {
+        "tags": ["Contabilidad"],
+        "summary": "Balance de comprobación",
+        "description": "Reporte contable de balance de comprobación. Requiere permiso 'config'.",
+        "responses": { "200": { "description": "Reporte generado" } }
+      }
+    },
+    "/?route=reportes/libro-diario": {
+      "get": {
+        "tags": ["Contabilidad"],
+        "summary": "Libro diario",
+        "description": "Reporte contable de libro diario. Requiere permiso 'config'.",
+        "responses": { "200": { "description": "Reporte generado" } }
+      }
+    },
+    "/?route=reportes/libro-mayor": {
+      "get": {
+        "tags": ["Contabilidad"],
+        "summary": "Libro mayor",
+        "description": "Reporte contable de libro mayor. Requiere permiso 'config'.",
+        "responses": { "200": { "description": "Reporte generado" } }
+      }
+    },
+    "/?route=reportes/estado-resultados": {
+      "get": {
+        "tags": ["Contabilidad"],
+        "summary": "Estado de resultados",
+        "responses": { "200": { "description": "Reporte generado" } }
+      }
+    },
+    "/?route=reportes/balance-general": {
+      "get": {
+        "tags": ["Contabilidad"],
+        "summary": "Balance general",
+        "responses": { "200": { "description": "Reporte generado" } }
+      }
+    }
+  }
+}

@@ -13,6 +13,11 @@ function cargarMonedasSelect(){
 }
 
 function lg(){
+    // Asegurar que el contenedor base existe
+    var pe=document.getElementById('p-config');
+    if(pe && !document.getElementById('configBody')){
+        pe.innerHTML='<div class="container-fluid p-4"><h3 data-i18n="preferencias">Preferencias</h3><div id="configBody"></div></div>';
+    }
     g('config/list',function(e,d){
         if(e)return;
         var ma='';var pm='';var dg='';var lm='';var fmt='punto-venta';

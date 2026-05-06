@@ -56,7 +56,7 @@ function ppRender() {
 
     var h = '';
     if (!page.length) {
-        h += '<tr><td colspan="7" class="text-center text-muted py-3">Sin datos</td></tr>';
+        h += '<tr><td colspan="8" class="text-center text-muted py-3">Sin datos</td></tr>';
     }
     for (var i = 0; i < page.length; i++) {
         var p = page[i];
@@ -65,6 +65,7 @@ function ppRender() {
             '<td>' + fms(p.MontoPrestamo) + '</td>' +
             '<td>' + p.InteresPorcentaje + '%</td>' +
             '<td>' + p.NroCuotas + '</td>' +
+            '<td>' + (p.FechaInicioPago || p.fecha_inicio || '-') + '</td>' +
             '<td><span class="badge ' + (p.Estado === 'Cancelado' ? 'bg-success' : 'bg-warning text-dark') + '">' + p.Estado + '</span></td>' +
             '<td><button class="btn btn-sm btn-outline-info py-0 px-1" onclick="vp(' + p.IdPrestamo + ')"><i class="bi bi-eye"></i></button> ' +
             '<button class="btn btn-sm btn-outline-secondary py-0 px-1" onclick="ia(' + p.IdPrestamo + ')"><i class="bi bi-printer"></i></button></td></tr>';
@@ -137,7 +138,7 @@ function abrirModalPrestamo() {
 
 function calcularPrestamo() {
     var cl = document.getElementById('npCliente').value;
-    var mt = parseFloat(document.getElementById('npMonto').value) || 0;
+    var mt = getMonVal(document.getElementById('npMonto')) || 0;
     var nc = parseInt(document.getElementById('npCuotas').value) || 0;
     var tasa = parseFloat(document.getElementById('npInteres').value) || 0;
     if (!cl || !mt || !nc) {
@@ -151,7 +152,7 @@ function calcularPrestamo() {
 
 function guardarPrestamo() {
     var cl = document.getElementById('npCliente').value;
-    var mt = parseFloat(document.getElementById('npMonto').value) || 0;
+    var mt = getMonVal(document.getElementById('npMonto')) || 0;
     var nc = parseInt(document.getElementById('npCuotas').value) || 0;
     var tasa = parseFloat(document.getElementById('npInteres').value) || 0;
     var fi = document.getElementById('npFecha').value;
@@ -163,9 +164,10 @@ function guardarPrestamo() {
     }
     var t = Math.round((mt + (mt * tasa / 100 * nc / 12)) * 100) / 100;
     var pc = Math.round((t / nc) * 100) / 100;
+    var tc = document.getElementById('npTipoCuota') ? parseInt(document.getElementById('npTipoCuota').value) : 3;
     p('prestamos/create', {
         IdCliente: parseInt(cl), IdMoneda: (parseInt(localStorage.getItem('moneda_id'))||1), MontoPrestamo: mt,
-        InteresPorcentaje: tasa, NroCuotas: nc, FechaInicioPago: fi,
+        InteresPorcentaje: tasa, NroCuotas: nc, FechaInicioPago: fi, IdTipoCuota: tc,
         FormaDePago: 'Mensual', ValorPorCuota: pc,
         ValorInteres: Math.round((t - mt) * 100) / 100, ValorTotal: t
     }, function(e) {
@@ -458,12 +460,26 @@ function generarRecibo(contenido) {
 }
 
 function abrirNuevoPrestamo(){
-    var m=new bootstrap.Modal(document.getElementById('npModal'));
+    var npEl=document.getElementById('npModal')||document.getElementById('modalPrestamo');
+    if(!npEl){mostrarToast('Error: modal no encontrado','danger');return;}
+    var m=new bootstrap.Modal(npEl);
     // Reset form
     document.getElementById('npCliente').value='';
     document.getElementById('npMonto').value='';
-    document.getElementById('npTasa').value='';
-    document.getElementById('npPlazo').value='';
+    var tasaEl=document.getElementById('npTasa')||document.getElementById('npInteres');
+    if(tasaEl)tasaEl.value='';
+    var plazoEl=document.getElementById('npPlazo')||document.getElementById('npCuotas');
+    if(plazoEl)plazoEl.value='';
     document.getElementById('npTipoCuota').value='3';
+    document.getElementById('npFecha').value=new Date().toISOString().substring(0,10);
+    document.getElementById('npResumen').innerHTML='<span class="text-muted" data-i18n="complete_campos">Complete campos</span>';
+    // Load clients
+    g('clientes/list', function(e, d) {
+        var sel=document.getElementById('npCliente');
+        if(!sel)return;
+        sel.innerHTML='<option value="">Seleccionar...</option>';
+        if(d) for(var i=0;i<d.length;i++) sel.innerHTML+='<option value="'+d[i].IdCliente+'">'+d[i].Nombre+' '+(d[i].Apellido||'')+'</option>';
+    });
     m.show();
+    if(typeof aplicarIdioma==='function')setTimeout(aplicarIdioma,50);
 }

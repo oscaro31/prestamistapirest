@@ -5,6 +5,8 @@ var _ppPageSizeMon = 10;
 var _ppSortColMon = '';
 var _ppSortDirMon = 'asc';
 
+function abrirModalMoneda(){em(0);}
+
 function lm(){
     g('monedas/list',function(e,d){
         if(e){document.getElementById('mbody').innerHTML='<tr><td colspan="4" class="text-danger">'+e+'</td></tr>';return;}
@@ -38,12 +40,7 @@ function ppRenderMonedas(){
         var arrow=_ppSortColMon===col?(_ppSortDirMon==='asc'?'\u25B2':'\u25BC'):'';
         return '<th onclick="ppSortMonedas(\''+col+'\')" style="cursor:pointer;user-select:none">'+label+' '+arrow+'</th>';
     };
-    var h='<thead><tr>';
-    h+=sorter('IdMoneda','#');
-    h+=sorter('Nombre',__('nombre'));
-    h+=sorter('Simbolo',__('simbolo'));
-    h+='<th>'+__('accion')+'</th>';
-    h+='</tr></thead><tbody>';
+    var h='';
     for(var i=0;i<page.length;i++){
         var m=page[i];
         h+='<tr><td>'+m.IdMoneda+'</td><td>'+m.Nombre+'</td><td><strong>'+m.Simbolo+'</strong></td><td><button class="btn btn-sm btn-outline-primary" onclick="em('+m.IdMoneda+')"><i class="bi bi-pencil"></i></button> <button class="btn btn-sm btn-outline-danger" onclick="dm('+m.IdMoneda+')"><i class="bi bi-trash"></i></button></td></tr>';

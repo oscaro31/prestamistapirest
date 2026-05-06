@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Prestamist</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="css/styles.css">
+<link rel="icon" href="images/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login">
+<div class="lc">
+<img src="images/logo.jpg" alt="Prestamist">
+<h2>Prestamist</h2>
+<p class="ld">Sistema de Prestamos</p>
+<div class="mb-3 text-start"><label class="form-label fw-bold" data-i18n="usuario">Usuario</label><input type="text" class="form-control" id="luser" placeholder="Usuario" data-i18n-placeholder="usuario" data-i18n-placeholder="usuario" autocomplete="username"></div>
+<div class="mb-3 text-start"><label class="form-label fw-bold" data-i18n="clave">Clave</label><div class="input-group"><input type="password" class="form-control" id="lpass" placeholder="Clave" autocomplete="current-password"><button class="btn btn-outline-secondary" type="button" id="togglePass" onclick="vt()"><i class="bi bi-eye"></i></button></div></div>
+<div class="mb-3 form-check text-start"><input type="checkbox" class="form-check-input" id="lrem"><label class="form-check-label" for="lrem" data-i18n="recordarme">Recordarme</label></div>
+<div id="lerr" class="alert alert-danger py-2" style="display:none"></div>
+<button class="btn btn-primary w-100" id="lbtn" data-i18n="login" title="Ingresar"><i class="bi bi-box-arrow-in-right"></i></button>
+</div>
+</div>
+
+<!-- APP -->
+<div id="app" style="display:none">
+<nav class="sb" id="sb" style="width:250px">
+<div class="sh"><img src="images/logo.jpg"><div><h6>Prestamist</h6><small id="srole"></small></div></div>
+<div class="ni act" data-p="dashboard" onclick="sp('dashboard')"><i class="bi bi-speedometer2"></i><span class="nt" data-i18n="dashboard">Dashboard</span></div>
+<div class="ni" onclick="var ns=this.nextElementSibling;var r=this.getBoundingClientRect();ns.style.top=r.top+'px';ns.style.left=r.right+5+'px';ns.style.display=ns.style.display=='block'?'none':'block'"><i class="bi bi-cash-stack"></i><span class="nt" data-i18n="prestamos">Prestamos</span> <i class="bi bi-chevron-down" style="margin-left:auto;font-size:.7rem"></i></div>
+<div class="n-sub" style="display:none">
+<div class="ni" data-p="prestamos" onclick="sp('prestamos')"><i class="bi bi-journal-text"></i><span class="nt" data-i18n="registro">Registro</span></div>
+<div class="ni" data-p="reimprimir" onclick="sp('reimprimir')"><i class="bi bi-printer"></i><span class="nt" data-i18n="historial">Historial</span></div>
+</div>
+<div class="ni" data-p="clientes" onclick="sp('clientes')"><i class="bi bi-people"></i><span class="nt" data-i18n="clientes">Clientes</span></div>
+<div class="ni" data-p="monedas" onclick="sp('monedas')"><i class="bi bi-currency-exchange"></i><span class="nt" data-i18n="monedas">Monedas</span></div>
+<div class="ni" onclick="var ns=this.nextElementSibling;var r=this.getBoundingClientRect();ns.style.top=r.top+'px';ns.style.left=r.right+5+'px';ns.style.display=ns.style.display=='block'?'none':'block'"><i class="bi bi-book"></i><span class="nt" data-i18n="contabilidad">Contabilidad</span> <i class="bi bi-chevron-down" style="margin-left:auto;font-size:.7rem"></i></div>
+<div class="n-sub" style="display:none">
+<div class="ni" data-p="plan-cuentas" onclick="sp('plan-cuentas')"><i class="bi bi-list-ul"></i><span class="nt" data-i18n="plan_cuentas">Plan de Cuentas</span></div>
+<div class="ni" data-p="asientos" onclick="sp('asientos')"><i class="bi bi-journal-richtext"></i><span class="nt" data-i18n="asientos_contables">Asientos</span></div>
+<div class="ni" data-p="config-contable" onclick="sp('config-contable')"><i class="bi bi-gear-wide-connected"></i><span class="nt" data-i18n="config_contable">Config. Contable</span></div>
+<div class="ni" data-p="reportes-contables" onclick="sp('reportes-contables')"><i class="bi bi-bar-chart-line"></i><span class="nt" data-i18n="reportes_contables">Reportes</span></div>
+</div>
+<div class="ni" onclick="var ns=this.nextElementSibling;var r=this.getBoundingClientRect();ns.style.top=r.top+'px';ns.style.left=r.right+5+'px';ns.style.display=ns.style.display=='block'?'none':'block'"><i class="bi bi-gear"></i><span class="nt" data-i18n="configuracion">Configuracion</span> <i class="bi bi-chevron-down" style="margin-left:auto;font-size:.7rem"></i></div>
+<div class="n-sub" style="display:none">
+<div class="ni" data-p="usuarios" onclick="sp('usuarios')"><i class="bi bi-person-gear"></i><span class="nt" data-i18n="usuarios">Usuarios</span></div>
+<div class="ni" data-p="config" onclick="sp('config')"><i class="bi bi-sliders"></i><span class="nt" data-i18n="preferencias">Preferencias</span></div>
+</div>
+</nav>
+
+<div class="tb">
+<div><button class="tg" onclick="ts()"><i class="bi bi-list"></i></button> <span class="tt" id="pt" data-i18n="dashboard">Dashboard</span></div>
+<div class="dropdown">
+<div class="ug">
+<button class="ub" onclick="toggleDrop()"><img src="images/logo.jpg" id="userAvatar" style="width:28px;height:28px;border-radius:50%;object-fit:cover"> <span id="uname"></span> <i class="bi bi-chevron-down" id="dropIcon"></i></button>
+<div class="um" id="userDrop">
+<a href="#" onclick="sp('perfil');hideDrop()"><i class="bi bi-person"></i> <span data-i18n="perfil">Perfil</span></a>
+<hr>
+<a href="#" class="dg" onclick="cs()"><i class="bi bi-box-arrow-right"></i> <span data-i18n="cerrar">Cerrar Sesion</span></a>
+</div>
+</div>
+</div>
+</div>
+
+<div class="cw"><div class="ca">
+<div class="pg act" id="p-dashboard">
+<!-- LOADED FROM pages/dashboard.html -->
+</div>
+<div class="pg" id="p-prestamos">
+<!-- LOADED FROM pages/prestamos.html -->
+</div>
+<div class="pg" id="p-clientes">
+<!-- LOADED FROM pages/clientes.html -->
+</div>
+<div class="pg" id="p-monedas">
+<!-- LOADED FROM pages/monedas.html -->
+</div>
+<div class="pg" id="p-usuarios">
+<!-- LOADED FROM pages/usuarios.html -->
+</div>
+<div class="pg" id="p-config">
+<!-- LOADED FROM pages/config.html -->
+</div>
+<div class="pg" id="p-perfil">
+<!-- LOADED FROM pages/perfil.html -->
+</div>
+<div class="pg" id="p-reimprimir">
+<!-- LOADED FROM pages/reimprimir.html -->
+</div>
+<div class="pg" id="p-plan-cuentas">
+<!-- LOADED FROM pages/plan-cuentas.html -->
+</div>
+<div class="pg" id="p-asientos">
+<!-- LOADED FROM pages/asientos.html -->
+</div>
+<div class="pg" id="p-config-contable">
+<!-- LOADED FROM pages/config-contable.html -->
+</div>
+<div class="pg" id="p-reportes-contables">
+<!-- LOADED FROM pages/reportes-contables.html -->
+</div>
+</div></div>
+
+
+
+<!-- Modals -->
+<div class="modal fade" id="modalPrestamo" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);color:white"><h5 class="modal-title" data-i18n="nuevo_prestamo"><i class="bi bi-cash-stack"></i> Nuevo Prestamo</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="mb-3"><label class="form-label fw-bold" data-i18n="cliente">Cliente *</label><select id="npCliente" class="form-select" onchange="calcularPrestamo()"><option data-i18n="seleccionar">Seleccionar...</option></select></div>
+<div class="row g-3"><div class="col-6"><div class="mb-3"><label class="form-label fw-bold" data-i18n="tipo_cuota">Tipo Cuota</label><select id="npTipoCuota" class="form-select" onchange="calcularPrestamo()"><option value="1">Semanal</option><option value="2">Quincenal</option><option value="3" selected>Mensual</option></select></div></div><div class="col-4"><div class="mb-3"><label class="form-label fw-bold" data-i18n="monto">Monto *</label><input type="text" id="npMonto" class="form-control text-end" placeholder="0.00" oninput="monInputLive(this);calcularPrestamo()" onblur="monInputBlur(this)"></div></div></div>
+<div class="row g-3"><div class="col-6"><div class="mb-3"><label class="form-label fw-bold" data-i18n="nro_cuotas">Nro Cuotas *</label><input type="number" id="npCuotas" class="form-control" placeholder="12" oninput="calcularPrestamo()"></div></div><div class="col-6"><div class="mb-3"><label class="form-label fw-bold" data-i18n="interes">Interes %</label><input type="number" id="npInteres" class="form-control" placeholder="0" oninput="calcularPrestamo()" step="0.1"></div></div></div>
+<div class="mb-3"><label class="form-label fw-bold" data-i18n="fecha_inicio">Fecha Inicio</label><input type="date" id="npFecha" class="form-control"></div>
+<div id="npResumen" class="alert alert-info mt-2 text-center"><span class="text-muted">Complete campos</span></div>
+</div>
+<div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="cancelar" title="Cancelar"><i class="bi bi-x-lg"></i></button><button class="btn btn-primary" onclick="guardarPrestamo()" data-i18n="guardar" title="Guardar"><i class="bi bi-save"></i></button></div>
+</div></div></div>
+
+<div class="modal fade" id="modalVerPrestamo" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content">
+<div class="modal-header" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);color:white"><h5 class="modal-title"><i class="bi bi-eye"></i> <span data-i18n="prestamo">Prestamo</span> #<span id="vpId"></span></h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="card mb-3"><div class="card-header fw-bold" style="background:#f8f9fa" data-i18n="datos"><i class="bi bi-info-circle"></i> Datos</div><div class="card-body"><div class="row"><div class="col-md-4 mb-2"><strong data-i18n="cliente">Cliente:</strong> <span id="vpCliente">-</span></div><div class="col-md-2 mb-2"><strong data-i18n="monto">Monto:</strong> <span id="vpMonto">-</span></div><div class="col-md-2 mb-2"><strong data-i18n="interes">Interes:</strong> <span id="vpInteres">-</span></div><div class="col-1 mb-2"><strong data-i18n="cuotas">Cuotas:</strong> <span id="vpCuotas">-</span></div><div class="col-1 mb-2"><strong data-i18n="estado">Estado:</strong> <span id="vpEstado" class="badge">-</span></div><div class="col-2 mb-2"><strong data-i18n="fecha">Fecha:</strong> <span id="vpFecha">-</span></div></div></div></div>
+<div class="card"><div class="card-header d-flex justify-content-between align-items-center" style="background:#f8f9fa"><span class="fw-bold" data-i18n="amortizacion"><i class="bi bi-table"></i> Amortizacion</span><div><button class="btn btn-sm btn-outline-secondary me-1" id="vpSeleccionar" data-i18n="todos" title="Todo"><i class="bi bi-check-all"></i></button><button class="btn btn-sm btn-outline-secondary" id="vpDeseleccionar" data-i18n="ninguno" title="Ninguno"><i class="bi bi-x"></i></button></div></div><div class="card-body p-0"><div class="table-responsive"><table class="table table-sm mb-0"><thead><tr><th>#</th><th data-i18n="fecha">Fecha</th><th data-i18n="monto">Monto</th><th data-i18n="pagado">Pagado</th><th data-i18n="restante">Restante</th><th data-i18n="estado">Estado</th><th data-i18n="pagar">Pagar</th></tr></thead><tbody id="vpBody"></tbody></table></div></div></div></div>
+<div class="modal-footer"><strong id="vpTotal" class="me-auto"></strong><button class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="cerrar_modal" title="Cerrar"><i class="bi bi-x-lg"></i></button><button class="btn btn-success" id="vpAccion"><i class="bi bi-check-circle"></i> Pagar</button></div>
+</div></div></div>
+
+<!-- Modal Cliente -->
+
+<div class="modal fade" id="modalPagoCuotas" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-sm"><div class="modal-content">
+<div class="modal-header" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);color:white"><h5 class="modal-title"><i class="bi bi-cash-coin"></i> <span data-i18n="pago_cuotas">Pago de Cuotas</span></h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="form-check mb-3"><input class="form-check-input" type="checkbox" id="mpPagarTodo" checked onchange="togglePagoTotal()"><label class="form-check-label fw-bold" for="mpPagarTodo" data-i18n="pagar_total">Pagar Total</label></div>
+<div class="mb-3"><label class="form-label fw-bold" data-i18n="monto_pagar">Monto a Pagar</label><input type="text" class="form-control text-end" id="mpMontoPagar" placeholder="0.00" disabled oninput="monInputLive(this)" onblur="monInputBlur(this)"></div>
+<div class="alert alert-info text-center py-2" id="mpResumen">0 cuota(s) seleccionada(s)</div>
+</div>
+<div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="cancelar">Cancelar</button><button class="btn btn-success" onclick="confirmarPagoCuotas()"><i class="bi bi-check-lg"></i> <span data-i18n="pagar">Pagar</span></button></div>
+</div></div></div>
+
+<div class="modal fade" id="modalCliente" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);color:white"><h5 class="modal-title" id="mcTitulo" data-i18n="cliente">Cliente</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="row g-3"><div class="col-6"><label class="form-label" data-i18n="nombre">Nombre *</label><input class="form-control" id="mcNombre" placeholder="Nombre"></div><div class="col-6"><label class="form-label" data-i18n="apellido">Apellido *</label><input class="form-control" id="mcApellido" placeholder="Apellido"></div></div>
+<div class="row g-3"><div class="col-4"><label class="form-label" data-i18n="tipo_doc">Tipo Documento</label><select class="form-select" id="mcTipoDoc" onchange="formatearDoc()"><option value="" data-i18n="seleccionar">Seleccionar...</option></select></div><div class="col-8"><label class="form-label" data-i18n="documento">Nro Documento</label><input class="form-control" id="mcDocumento" placeholder="000-0000000-0" oninput="formatearDoc()"></div></div>
+<div class="row g-3"><div class="col-6"><label class="form-label" data-i18n="telefono">Telefono</label><input class="form-control" id="mcTelefono" placeholder="809-000-0000" oninput="formatearTel()"></div><div class="col-6"><label class="form-label" data-i18n="email">Correo</label><input class="form-control" id="mcCorreo" placeholder="cliente@email.com"></div></div>
+<div class="mb-3"><label class="form-label" data-i18n="direccion">Direccion</label><input class="form-control" id="mcDireccion" placeholder="Dirección"></div>
+</div>
+<div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="cancelar" title="Cancelar"><i class="bi bi-x-lg"></i></button><button class="btn btn-primary" onclick="guardarCliente()" data-i18n="guardar" title="Guardar"><i class="bi bi-save"></i></button></div>
+</div></div></div>
+
+<!-- Modal Moneda -->
+<div class="modal fade" id="modalMoneda" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);color:white"><h5 class="modal-title" id="mmTitulo">Moneda</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="mb-3"><label class="form-label" data-i18n="nombre">Nombre *</label><input class="form-control" id="mmNombre" placeholder="Ej: Peso Dominicano"></div>
+<div class="mb-3"><label class="form-label" data-i18n="simbolo">Simbolo *</label><input class="form-control" id="mmSimbolo" placeholder="Ej: RD$"></div>
+</div>
+<div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="cancelar" title="Cancelar"><i class="bi bi-x-lg"></i></button><button class="btn btn-primary" onclick="guardarMoneda()" data-i18n="guardar" title="Guardar"><i class="bi bi-save"></i></button></div>
+</div></div></div>
+
+<!-- Modal Confirmacion -->
+<div class="modal fade" id="modalConfirm" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-sm"><div class="modal-content">
+<div class="modal-header" style="background:#dc3545;color:white"><h6 class="modal-title" id="mcTitulo"><i class="bi bi-exclamation-triangle"></i> <span data-i18n="confirmar">Confirmar</span></h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+<div class="modal-body text-center py-4">
+<i class="bi bi-question-circle" style="font-size:3rem;color:#dc3545"></i>
+<p class="mt-2 mb-0" id="mcMsg">Esta seguro?</p>
+</div>
+<div class="modal-footer justify-content-center">
+<button class="btn btn-secondary btn-sm" data-bs-dismiss="modal" data-i18n="cancelar" title="Cancelar"><i class="bi bi-x-lg"></i></button>
+<button class="btn btn-danger btn-sm" id="mcBtnConfirm"><i class="bi bi-trash"></i> <span data-i18n="eliminar">Eliminar</span></button>
+</div>
+</div></div></div>
+
+<!-- Modal Usuario -->
+<div class="modal fade" id="modalUsuario" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);color:white"><h5 class="modal-title" id="muTitulo" data-i18n="usuario">Usuario</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="row g-3"><div class="col-2"><img src="images/logo.jpg" id="muAvatar" style="width:48px;height:48px;border-radius:50%;object-fit:cover;cursor:pointer" onclick="document.getElementById('muAvatarFile').click()" title="Click para cambiar"></div><div class="col-5"><label class="form-label" data-i18n="nombre">Nombre *</label><input class="form-control" id="muNombre" placeholder="Nombre"></div><div class="col-5"><label class="form-label">Apellido</label><input class="form-control" id="muApellido" placeholder="Apellido"></div></div>
+<input type="file" id="muAvatarFile" accept="image/*" style="display:none" onchange="subirAvatarUsuario()">
+<div class="row g-3"><div class="col-4"><label class="form-label" data-i18n="tipo_doc">Tipo Documento</label><select class="form-select" id="muTipoDoc"><option value="" data-i18n="seleccionar">Seleccionar...</option></select></div><div class="col-8"><label class="form-label" data-i18n="documento">Nro Documento</label><input class="form-control" id="muDocumento" placeholder="000-0000000-0" oninput="formatearDocMu()"></div></div>
+<div class="row g-3"><div class="col-6"><label class="form-label" data-i18n="telefono">Telefono</label><input class="form-control" id="muTelefono" placeholder="809-000-0000" oninput="formatearTelMu()"></div><div class="col-6"><label class="form-label">Email</label><input class="form-control" id="muEmail" placeholder="usuario@email.com"></div></div>
+<div class="mb-3"><label class="form-label" data-i18n="direccion">Direccion</label><input class="form-control" id="muDireccion" placeholder="Dirección"></div>
+<div class="mb-3"><label class="form-label">Cargo</label><select class="form-select" id="muCargo"><option value="1">Administrador</option><option value="2" selected data-i18n="usuario">Usuario</option><option value="3">Vendedor</option></select></div>
+<div class="mb-3"><label class="form-label">Login *</label><input class="form-control" id="muLogin" placeholder="Usuario" data-i18n-placeholder="usuario" data-i18n-placeholder="usuario" readonly></div>
+<div class="mb-3" id="muClaveGroup"><label class="form-label" data-i18n="clave">Clave</label><input type="password" class="form-control" id="muClave" placeholder="Clave"></div>
+</div>
+<div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="cancelar" title="Cancelar"><i class="bi bi-x-lg"></i></button><button class="btn btn-primary" onclick="guardarUsuario()" data-i18n="guardar" title="Guardar"><i class="bi bi-save"></i></button></div>
+</div></div></div>
+
+<!-- Modal Password -->
+<div class="modal fade" id="modalPassword" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-sm"><div class="modal-content">
+<div class="modal-header" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);color:white"><h6 class="modal-title" id="mpTitulo">Cambiar Clave</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="mb-3"><label class="form-label" data-i18n="nueva_clave">Nueva Clave *</label><input type="password" class="form-control" id="mpClave" placeholder="Minimo 4 caracteres"></div>
+</div>
+<div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="cancelar" title="Cancelar"><i class="bi bi-x-lg"></i></button><button class="btn btn-primary" onclick="guardarPassword()" data-i18n="cambiar_clave" title="Cambiar Clave"><i class="bi bi-key"></i></button></div>
+</div></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script src="js/config-page.js"></script>
+<script>
+// Load page content on startup (async)
+var _pagesToLoad=8,_pagesLoaded=0;
+function cargarPagina(id, file){
+    var x=new XMLHttpRequest();
+    x.open('GET', 'pages/'+file, true);
+    x.onreadystatechange=function(){
+        if(x.readyState===4){
+            if(x.status===200){
+                document.getElementById('p-'+id).innerHTML=x.responseText;
+            }
+            _pagesLoaded++;
+            if(_pagesLoaded>=_pagesToLoad){
+                restoreLastPage();
+            }
+        }
+    };
+    x.send();
+}
+cargarPagina('dashboard','dashboard.html');
+cargarPagina('prestamos','prestamos.html');
+cargarPagina('clientes','clientes.html');
+cargarPagina('monedas','monedas.html');
+cargarPagina('usuarios','usuarios.html');
+cargarPagina('config','config.html');
+cargarPagina('perfil','perfil.html');
+cargarPagina('reimprimir','reimprimir.html');
+cargarPagina('plan-cuentas','plan-cuentas.html');
+cargarPagina('asientos','asientos.html');
+cargarPagina('config-contable','config-contable.html');
+cargarPagina('reportes-contables','reportes-contables.html');
+// Restore last page (deferred until all pages loaded)
+var _lastPageDeferred=localStorage.getItem('lastPage');
+function restoreLastPage(){
+    if(_lastPageDeferred) sp(_lastPageDeferred);
+    else sp('dashboard');
+}
+// (restore handled by restoreLastPage() after async load completes)
+</script>
+<script src="js/dashboard.js"></script>
+<script src="js/clientes.js"></script>
+<script src="js/monedas.js"></script>
+<script src="js/usuarios.js"></script>
+<script src="js/prestamos.js"></script>
+<script src="js/perfil.js"></script>
+<script src="js/reimprimir.js"></script>
+<script src="js/plan-cuentas.js"></script>
+<script src="js/asientos.js"></script>
+<script src="js/config-contable.js"></script>
+<script src="js/reportes-contables.js"></script>
+<div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer" style="z-index:9999"></div>
+
+<script>
+var confirmCb=null;
+function confirmar(msg,cb){
+    document.getElementById('mcMsg').textContent=msg;
+    confirmCb=cb;
+    document.getElementById('mcBtnConfirm').onclick=function(){
+        bootstrap.Modal.getInstance(document.getElementById('modalConfirm')).hide();
+        if(confirmCb)confirmCb();
+    };
+    new bootstrap.Modal(document.getElementById('modalConfirm')).show();
+}
+function mostrarToast(msg,tipo){
+    tipo=tipo||'success';
+    var iconos={success:'bi-check-circle-fill text-success',danger:'bi-x-circle-fill text-danger',warning:'bi-exclamation-triangle-fill text-warning',info:'bi-info-circle-fill text-primary'};
+    var ic=iconos[tipo]||iconos.info;
+    var html='<div class="toast align-items-center text-bg-'+tipo+' border-0" role="alert" data-bs-delay="3000">';
+    html+='<div class="d-flex"><div class="toast-body"><i class="bi '+ic+' me-2"></i>'+msg+'</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div></div>';
+    var c=document.getElementById('toastContainer');
+    c.innerHTML=html;
+    var t=new bootstrap.Toast(c.querySelector('.toast'));
+    t.show();
+}
+
+document.addEventListener('keydown',function(e){
+    if(e.key==='Enter'&&document.getElementById('login').style.display!=='none'){
+        document.getElementById('lbtn').click();
+    }
+});
+</script>
+
+<button id="backToTop" class="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Volver arriba"><i class="bi bi-arrow-up"></i></button>
+<div class="ft">&copy;2026 <a href="https://optecnology.com/" target="_blank">OP Tecnology</a> - Prestamist</div>
+<script>
+document.addEventListener('click',function(e){
+  var subs=document.querySelectorAll('.n-sub');
+  for(var i=0;i<subs.length;i++){
+    var parent=subs[i].previousElementSibling;
+    if(!parent.contains(e.target) && !subs[i].contains(e.target)){
+      subs[i].style.display='none';
+    }
+  }
+  // Close n-sub when clicking on a submenu item
+  var ni=e.target.closest('.n-sub .ni');
+  if(ni){
+    var sub=ni.closest('.n-sub');
+    if(sub) sub.style.display='none';
+  }
+});
+</script>
+<div class="modal fade" id="modalPrestamo" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
+<div class="modal-header" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);color:white"><h5 class="modal-title" data-i18n="nuevo_prestamo"><i class="bi bi-cash-stack"></i> Nuevo Prestamo</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="mb-3"><label class="form-label fw-bold" data-i18n="cliente">Cliente *</label><select id="npCliente" class="form-select" onchange="calcularPrestamo()"><option data-i18n="seleccionar">Seleccionar...</option></select></div>
+<div class="row g-3"><div class="col-6"><div class="mb-3"><label class="form-label fw-bold" data-i18n="tipo_cuota">Tipo Cuota</label><select id="npTipoCuota" class="form-select" onchange="calcularPrestamo()"><option value="1">Semanal</option><option value="2">Quincenal</option><option value="3" selected>Mensual</option></select></div></div><div class="col-4"><div class="mb-3"><label class="form-label fw-bold" data-i18n="monto">Monto *</label><input type="text" id="npMonto" class="form-control text-end" placeholder="0.00" oninput="monInputLive(this);calcularPrestamo()" onblur="monInputBlur(this)"></div></div></div>
+<div class="row g-3"><div class="col-6"><div class="mb-3"><label class="form-label fw-bold" data-i18n="nro_cuotas">Nro Cuotas *</label><input type="number" id="npCuotas" class="form-control" placeholder="12" oninput="calcularPrestamo()"></div></div><div class="col-6"><div class="mb-3"><label class="form-label fw-bold" data-i18n="interes">Interes %</label><input type="number" id="npInteres" class="form-control" placeholder="0" oninput="calcularPrestamo()" step="0.1"></div></div></div>
+<div class="mb-3"><label class="form-label fw-bold" data-i18n="fecha_inicio">Fecha Inicio</label><input type="date" id="npFecha" class="form-control"></div>
+<div id="npResumen" class="alert alert-info mt-2 text-center"><span class="text-muted">Complete campos</span></div>
+</div>
+<div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="cancelar" title="Cancelar"><i class="bi bi-x-lg"></i></button><button class="btn btn-primary" onclick="guardarPrestamo()" data-i18n="guardar" title="Guardar"><i class="bi bi-save"></i></button></div>
+</div></div></div>
+
+<div class="modal fade" id="modalVerPrestamo" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content">
+<div class="modal-header" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);color:white"><h5 class="modal-title"><i class="bi bi-eye"></i> <span data-i18n="prestamo">Prestamo</span> #<span id="vpId"></span></h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="card mb-3"><div class="card-header fw-bold" style="background:#f8f9fa" data-i18n="datos"><i class="bi bi-info-circle"></i> Datos</div><div class="card-body"><div class="row"><div class="col-md-4 mb-2"><strong data-i18n="cliente">Cliente:</strong> <span id="vpCliente">-</span></div><div class="col-md-2 mb-2"><strong data-i18n="monto">Monto:</strong> <span id="vpMonto">-</span></div><div class="col-md-2 mb-2"><strong data-i18n="interes">Interes:</strong> <span id="vpInteres">-</span></div><div class="col-1 mb-2"><strong data-i18n="cuotas">Cuotas:</strong> <span id="vpCuotas">-</span></div><div class="col-1 mb-2"><strong data-i18n="estado">Estado:</strong> <span id="vpEstado" class="badge">-</span></div><div class="col-2 mb-2"><strong data-i18n="fecha">Fecha:</strong> <span id="vpFecha">-</span></div></div></div></div>
+<div class="card"><div class="card-header d-flex justify-content-between align-items-center" style="background:#f8f9fa"><span class="fw-bold" data-i18n="amortizacion"><i class="bi bi-table"></i> Amortizacion</span><div><button class="btn btn-sm btn-outline-secondary me-1" id="vpSeleccionar" data-i18n="todos" title="Todo"><i class="bi bi-check-all"></i></button><button class="btn btn-sm btn-outline-secondary" id="vpDeseleccionar" data-i18n="ninguno" title="Ninguno"><i class="bi bi-x"></i></button></div></div><div class="card-body p-0"><div class="table-responsive"><table class="table table-sm mb-0"><thead><tr><th>#</th><th data-i18n="fecha">Fecha</th><th data-i18n="monto">Monto</th><th data-i18n="pagado">Pagado</th><th data-i18n="restante">Restante</th><th data-i18n="estado">Estado</th><th data-i18n="pagar">Pagar</th></tr></thead><tbody id="vpBody"></tbody></table></div></div></div></div>
+<div class="modal-footer"><strong id="vpTotal" class="me-auto"></strong><button class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="cerrar_modal" title="Cerrar"><i class="bi bi-x-lg"></i></button><button class="btn btn-success" id="vpAccion"><i class="bi bi-check-circle"></i> Pagar</button></div>
+</div></div></div>
+
+<!-- Modal Cliente -->
+
+<div class="modal fade" id="modalPagoCuotas" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-sm"><div class="modal-content">
+<div class="modal-header" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);color:white"><h5 class="modal-title"><i class="bi bi-cash-coin"></i> <span data-i18n="pago_cuotas">Pago de Cuotas</span></h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="form-check mb-3"><input class="form-check-input" type="checkbox" id="mpPagarTodo" checked onchange="togglePagoTotal()"><label class="form-check-label fw-bold" for="mpPagarTodo" data-i18n="pagar_total">Pagar Total</label></div>
+<div class="mb-3"><label class="form-label fw-bold" data-i18n="monto_pagar">Monto a Pagar</label><input type="text" class="form-control text-end" id="mpMontoPagar" placeholder="0.00" disabled oninput="monInputLive(this)" onblur="monInputBlur(this)"></div>
+<div class="alert alert-info text-center py-2" id="mpResumen">0 cuota(s) seleccionada(s)</div>
+</div>
+<div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="cancelar">Cancelar</button><button class="btn btn-success" onclick="confirmarPagoCuotas()"><i class="bi bi-check-lg"></i> <span data-i18n="pagar">Pagar</span></button></div>
+</div></div></div>
+
+<div class="modal fade" id="modalCliente" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+<div class="modal-header" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);color:white"><h5 class="modal-title" id="mcTitulo" data-i18n="cliente">Cliente</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+<div class="modal-body">
+<div class="row g-3"><div class="col-6"><label class="form-label" data-i18n="nombre">Nombre *</label><input class="form-control" id="mcNombre" placeholder="Nombre"></div><div class="col-6"><label class="form-label" data-i18n="apellido">Apellido *</label><input class="form-control" id="mcApellido" placeholder="Apellido"></div></div>
+<div class="row g-3"><div class="col-4"><label class="form-label" data-i18n="tipo_doc">Tipo Documento</label><select class="form-select" id="mcTipoDoc" onchange="formatearDoc()"><option value="" data-i18n="seleccionar">Seleccionar...</option></select></div><div class="col-8"><label class="form-label" data-i18n="documento">Nro Documento</label><input class="form-control" id="mcDocumento" placeholder="000-0000000-0" oninput="formatearDoc()"></div></div>
+<div class="row g-3"><div class="col-6"><label class="form-label" data-i18n="telefono">Telefono</label><input class="form-control" id="mcTelefono" placeholder="809-000-0000" oninput="formatearTel()"></div><div class="col-6"><label class="form-label" data-i18n="email">Correo</label><input class="form-control" id="mcCorreo" placeholder="cliente@email.com"></div></div>
+<div class="mb-3"><label class="form-label" data-i18n="direccion">Direccion</label><input class="form-control" id="mcDireccion" placeholder="Dirección"></div>
+</div>
+
+</body>
+</html>

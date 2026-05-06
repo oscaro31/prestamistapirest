@@ -142,9 +142,10 @@ function listAsientos($body) {
     $limit = max(1, min(100, (int)($body['limit'] ?? 50)));
     $offset = ($page - 1) * $limit;
     
-    $sql = "SELECT a.*, tc.nombre AS tipocomprobante_nombre, tc.abreviatura
+    $sql = "SELECT a.*, tc.nombre AS tipocomprobante_nombre, tc.abreviatura, u.nombre AS usuario_nombre
             FROM asiento_contable a
             LEFT JOIN tipo_comprobante tc ON a.idtipocomprobante = tc.idtipocomprobante
+            LEFT JOIN usuario u ON u.idusuario = a.idusuarioregistro
             $whereSQL
             ORDER BY a.fecha DESC, a.idasiento DESC
             LIMIT $limit OFFSET $offset";
@@ -163,8 +164,7 @@ function listAsientos($body) {
     unset($r);
     
     jsonResponse([
-        'success' => true,
-        'data' => $rows,
+        'list' => $rows,
         'total' => $total,
         'page' => $page,
         'pages' => ceil($total / $limit)
@@ -220,6 +220,15 @@ function createAsiento($body) {
         $pdo->rollBack();
         throw $e;
     }
+}
+
+function anularAsiento($body) {
+    $pdo = getDB();
+    $idasiento = (int)($body['idasiento'] ?? 0);
+    if (!$idasiento) jsonError('ID requerido', 400);
+    $stmt = $pdo->prepare("UPDATE asiento_contable SET idtipoestados = 2 WHERE idasiento = ?");
+    $stmt->execute([$idasiento]);
+    jsonResponse(['success' => true, 'message' => 'Asiento anulado']);
 }
 
 function getAsiento($body) {
@@ -467,69 +476,62 @@ function libroMayor($body) {
     $fecha_desde = $body['fecha_desde'] ?? date('Y-01-01');
     $fecha_hasta = $body['fecha_hasta'] ?? date('Y-m-d');
     
-    if (!$idcuenta) {
-        jsonError('Se requiere idcuenta', 400);
-    }
-    
-    $sql = "SELECT a.idasiento, a.fecha, a.concepto, d.debe, d.haber,
-            tc.abreviatura
-            FROM asiento_contable a
-            JOIN asiento_detalle d ON a.idasiento = d.idasiento
-            LEFT JOIN tipo_comprobante tc ON a.idtipocomprobante = tc.idtipocomprobante
-            WHERE d.idcuenta = ? AND a.fecha BETWEEN ? AND ?
-            ORDER BY a.fecha, a.idasiento";
-    
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([$idcuenta, $fecha_desde, $fecha_hasta]);
-    $movimientos = $stmt->fetchAll();
-    
-    // Get cuenta info
-    $cuenta = $pdo->prepare("SELECT * FROM plan_cuenta WHERE idcuenta = ?");
-    $cuenta->execute([$idcuenta]);
-    $info = $cuenta->fetch();
-    
-    // Get saldo anterior
-    $saldoAnt = $pdo->prepare("SELECT COALESCE(SUM(CASE WHEN p.naturaleza='Debe' THEN d.debe - d.haber ELSE d.haber - d.debe END), 0)
-        FROM asiento_detalle d
-        JOIN asiento_contable a ON d.idasiento = a.idasiento
-        JOIN plan_cuenta p ON d.idcuenta = p.idcuenta
-        WHERE d.idcuenta = ? AND a.fecha < ?");
-    $saldoAnt->execute([$idcuenta, $fecha_desde]);
-    $saldoAnterior = (float)$saldoAnt->fetchColumn();
-    
-    // Calculate running balance
-    $saldo = $saldoAnterior;
-    foreach ($movimientos as &$m) {
-        $debe = (float)$m['debe'];
-        $haber = (float)$m['haber'];
-        if ($info['naturaleza'] === 'Debe') {
-            $saldo += $debe - $haber;
-        } else {
-            $saldo += $haber - $debe;
+    if ($idcuenta) {
+        $sql = "SELECT a.idasiento, a.fecha, a.concepto, d.debe, d.haber, d.idcuenta,
+                pc.codigo, pc.nombre, pc.naturaleza,
+                tc.abreviatura
+                FROM asiento_contable a
+                JOIN asiento_detalle d ON a.idasiento = d.idasiento
+                JOIN plan_cuenta pc ON d.idcuenta = pc.idcuenta
+                LEFT JOIN tipo_comprobante tc ON a.idtipocomprobante = tc.idtipocomprobante
+                WHERE d.idcuenta = ? AND a.fecha BETWEEN ? AND ?
+                ORDER BY a.fecha, a.idasiento";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$idcuenta, $fecha_desde, $fecha_hasta]);
+        $movimientos = $stmt->fetchAll();
+        $cuenta = $pdo->prepare("SELECT * FROM plan_cuenta WHERE idcuenta = ?");
+        $cuenta->execute([$idcuenta]);
+        $info = $cuenta->fetch();
+        $saldoAnt = $pdo->prepare("SELECT COALESCE(SUM(CASE WHEN p.naturaleza='Debe' THEN d.debe - d.haber ELSE d.haber - d.debe END), 0) FROM asiento_detalle d JOIN asiento_contable a ON d.idasiento = a.idasiento JOIN plan_cuenta p ON d.idcuenta = p.idcuenta WHERE d.idcuenta = ? AND a.fecha < ?");
+        $saldoAnt->execute([$idcuenta, $fecha_desde]);
+        $saldoAnterior = (float)$saldoAnt->fetchColumn();
+        $saldo = $saldoAnterior;
+        foreach ($movimientos as &$m) {
+            $debe = (float)$m['debe'];
+            $haber = (float)$m['haber'];
+            if ($info['naturaleza'] === 'Debe') $saldo += $debe - $haber;
+            else $saldo += $haber - $debe;
+            $m['saldo'] = $saldo;
         }
-        $m['saldo'] = $saldo;
+        unset($m);
+        $totalDebe = $totalHaber = 0;
+        foreach ($movimientos as $m) { $totalDebe += (float)$m['debe']; $totalHaber += (float)$m['haber']; }
+        jsonResponse(['success'=>true,'data'=>['cuenta'=>$info?:[],'saldo_anterior'=>$saldoAnterior,'movimientos'=>$movimientos,'total_debe'=>$totalDebe,'total_haber'=>$totalHaber,'saldo_final'=>$saldo]]);
+    } else {
+        $cuentas = $pdo->query("SELECT idcuenta, codigo, nombre, naturaleza FROM plan_cuenta WHERE activo=1 ORDER BY codigo")->fetchAll();
+        $resultados = [];
+        foreach ($cuentas as $cta) {
+            $stmt = $pdo->prepare("SELECT a.idasiento, a.fecha, a.concepto, d.debe, d.haber, pc.codigo, pc.nombre, pc.naturaleza, tc.abreviatura FROM asiento_contable a JOIN asiento_detalle d ON a.idasiento = d.idasiento JOIN plan_cuenta pc ON d.idcuenta = pc.idcuenta LEFT JOIN tipo_comprobante tc ON a.idtipocomprobante = tc.idtipocomprobante WHERE d.idcuenta = ? AND a.fecha BETWEEN ? AND ? ORDER BY a.fecha");
+            $stmt->execute([$cta['idcuenta'], $fecha_desde, $fecha_hasta]);
+            $movs = $stmt->fetchAll();
+            $saldoAnt = $pdo->prepare("SELECT COALESCE(SUM(CASE WHEN p.naturaleza='Debe' THEN d.debe - d.haber ELSE d.haber - d.debe END), 0) FROM asiento_detalle d JOIN asiento_contable a ON d.idasiento = a.idasiento JOIN plan_cuenta p ON d.idcuenta = p.idcuenta WHERE d.idcuenta = ? AND a.fecha < ?");
+            $saldoAnt->execute([$cta['idcuenta'], $fecha_desde]);
+            $saldoAnterior = (float)$saldoAnt->fetchColumn();
+            $saldo = $saldoAnterior;
+            foreach ($movs as &$m) {
+                $debe = (float)$m['debe'];
+                $haber = (float)$m['haber'];
+                if ($cta['naturaleza'] === 'Debe') $saldo += $debe - $haber;
+                else $saldo += $haber - $debe;
+                $m['saldo'] = $saldo;
+            }
+            unset($m);
+            $td = 0; $th = 0;
+            foreach ($movs as $mm) { $td += (float)$mm['debe']; $th += (float)$mm['haber']; }
+            $resultados[] = ['cuenta'=>$cta, 'saldo_anterior'=>$saldoAnterior, 'movimientos'=>$movs, 'total_debe'=>$td, 'total_haber'=>$th, 'saldo_final'=>$saldo];
+        }
+        jsonResponse(['success'=>true,'data'=>['cuentas'=>$resultados]]);
     }
-    unset($m);
-    
-    // Totals
-    $totalDebe = 0;
-    $totalHaber = 0;
-    foreach ($movimientos as $m) {
-        $totalDebe += (float)$m['debe'];
-        $totalHaber += (float)$m['haber'];
-    }
-    
-    jsonResponse([
-        'success' => true,
-        'data' => [
-            'cuenta' => $info,
-            'saldo_anterior' => $saldoAnterior,
-            'movimientos' => $movimientos,
-            'total_debe' => $totalDebe,
-            'total_haber' => $totalHaber,
-            'saldo_final' => $saldo,
-        ]
-    ]);
 }
 
 function estadoResultados($body) {

@@ -56,10 +56,9 @@ function fillPerfilFields(){
     if(document.getElementById('pfTipoDoc')) cargarTipoDocSelect();
     cargarSelectorTemas();
     cargarSelectorIdioma();
-    if(user.avatar){
-        if(document.getElementById('pfAvatar')) document.getElementById('pfAvatar').src=user.avatar;
-        if(document.getElementById('userAvatar')) document.getElementById('userAvatar').src=user.avatar;
-    }
+    var av=avatarUrl(user.avatar);
+    if(document.getElementById('pfAvatar')) document.getElementById('pfAvatar').src=av;
+    if(document.getElementById('userAvatar')) document.getElementById('userAvatar').src=av;
     var prefs=JSON.parse(user.preferencias||'{}');
     temaActual=prefs.tema||'';
     if(prefs.idioma)L=prefs.idioma;
@@ -105,17 +104,19 @@ function cargarSelectorIdioma(){
 
 function seleccionarIdioma(id){
     L=id;
+    localStorage.setItem('idioma',id);
     aplicarIdioma();
     cargarSelectorIdioma();
     // guardar en preferencias
     var prefs=JSON.parse(user.preferencias||'{}');
     prefs.idioma=id;
+    user.preferencias=JSON.stringify(prefs);
+    // Sincronizar localStorage/sessionStorage
+    var st=localStorage.getItem('prestamist_user');if(st){try{var u=JSON.parse(st);u.preferencias=user.preferencias;localStorage.setItem('prestamist_user',JSON.stringify(u));}catch(e){}}
+    st=sessionStorage.getItem('prestamist_user');if(st){try{var u=JSON.parse(st);u.preferencias=user.preferencias;sessionStorage.setItem('prestamist_user',JSON.stringify(u));}catch(e){}}
     p('users/update',{idusuario:user.idusuario,preferencias:JSON.stringify(prefs)},function(e){
         if(e)mostrarToast('Error al guardar idioma','danger');
-        else{
-            user.preferencias=JSON.stringify(prefs);
-            mostrarToast('Idioma cambiado a '+__(id=='en'?'Ingles':id=='fr'?'Frances':'Espanol'),'success');
-        }
+        else mostrarToast('Idioma cambiado a '+__(id=='en'?'Ingles':id=='fr'?'Frances':'Espanol'),'success');
     });
 }
 
@@ -126,12 +127,13 @@ function seleccionarTema(id){
     // guardar en preferencias del usuario
     var prefs=JSON.parse(user.preferencias||'{}');
     prefs.tema=id;
+    user.preferencias=JSON.stringify(prefs);
+    // Sincronizar localStorage/sessionStorage
+    var st=localStorage.getItem('prestamist_user');if(st){try{var u=JSON.parse(st);u.preferencias=user.preferencias;localStorage.setItem('prestamist_user',JSON.stringify(u));}catch(e){}}
+    st=sessionStorage.getItem('prestamist_user');if(st){try{var u=JSON.parse(st);u.preferencias=user.preferencias;sessionStorage.setItem('prestamist_user',JSON.stringify(u));}catch(e){}}
     p('users/update',{idusuario:user.idusuario,preferencias:JSON.stringify(prefs)},function(e){
         if(e)mostrarToast('Error al guardar tema','danger');
-        else{
-            user.preferencias=JSON.stringify(prefs);
-            mostrarToast('Tema aplicado y guardado','success');
-        }
+        else mostrarToast('Tema aplicado y guardado','success');
     });
 }
 
@@ -157,8 +159,8 @@ function subirAvatar(){
         try{var j=JSON.parse(x.responseText)}catch(e){j={error:'Error'}}
         if(j.data&&j.data.avatar){
             user.avatar=j.data.avatar;
-            document.getElementById('pfAvatar').src=j.data.avatar;
-            document.getElementById('userAvatar').src=j.data.avatar;
+            document.getElementById('pfAvatar').src=avatarUrl(j.data.avatar);
+            document.getElementById('userAvatar').src=avatarUrl(j.data.avatar);
             mostrarToast('Avatar actualizado','success');
         }else mostrarToast(j.error||'Error al subir','danger');
     };
@@ -200,6 +202,11 @@ function guardarSidebarCompactPerfil(){
     var prefs=JSON.parse(user.preferencias||'{}');
     prefs.sidebar=checked?'compact':'full';
     user.preferencias=JSON.stringify(prefs);
+    // Guardar en localStorage para que persista al recargar
+    var st=localStorage.getItem('prestamist_user');
+    if(st){try{var u=JSON.parse(st);u.preferencias=user.preferencias;localStorage.setItem('prestamist_user',JSON.stringify(u));}catch(e){}}
+    st=sessionStorage.getItem('prestamist_user');
+    if(st){try{var u=JSON.parse(st);u.preferencias=user.preferencias;sessionStorage.setItem('prestamist_user',JSON.stringify(u));}catch(e){}}
     p('users/update',{idusuario:user.idusuario,preferencias:JSON.stringify(prefs)},function(e){
         if(!e && typeof aplicarSidebarCompactGlobal==='function') aplicarSidebarCompactGlobal();
     });

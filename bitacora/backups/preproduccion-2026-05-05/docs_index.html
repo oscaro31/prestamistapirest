@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prestamist API - Documentación</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f4f6fa; }
+    
+    #login-screen {
+      display: flex; justify-content: center; align-items: center;
+      min-height: 100vh; background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
+    }
+    .login-box {
+      background: #fff; border-radius: 16px; padding: 40px; width: 380px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    }
+    .login-box h1 { font-size: 1.5rem; color: #1a1a2e; margin-bottom: 8px; text-align: center; }
+    .login-box p { color: #6c757d; font-size: 0.85rem; text-align: center; margin-bottom: 24px; }
+    .login-box label { display: block; font-size: 0.8rem; color: #333; margin-bottom: 4px; font-weight: 500; }
+    .login-box input {
+      width: 100%; padding: 10px 12px; border: 1px solid #dee2e6; border-radius: 8px;
+      font-size: 0.9rem; margin-bottom: 16px;
+    }
+    .login-box input:focus { outline: none; border-color: #0f3460; box-shadow: 0 0 0 3px rgba(15,52,96,0.1); }
+    .login-box button {
+      width: 100%; padding: 12px; background: #0f3460; color: #fff; border: none;
+      border-radius: 8px; font-size: 0.9rem; cursor: pointer; font-weight: 600;
+    }
+    .login-box button:hover { background: #16213e; }
+    .login-box .error { color: #dc3545; font-size: 0.8rem; text-align: center; margin-top: 12px; display: none; }
+    .login-box .loading { text-align: center; display: none; margin-top: 12px; color: #6c757d; }
+    .login-box .info { color: #6c757d; font-size: 0.75rem; text-align: center; margin-top: 16px; }
+
+    #api-screen { display: none; }
+    .top-bar {
+      background: #1a1a2e; color: #fff; padding: 10px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .top-bar h2 { font-size: 1rem; font-weight: 500; }
+    .top-bar button {
+      background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2);
+      padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;
+    }
+    .top-bar button:hover { background: rgba(255,255,255,0.2); }
+    #swagger-ui { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+  </style>
+</head>
+<body>
+  <div id="login-screen">
+    <div class="login-box">
+      <h1>🔒 Documentación API</h1>
+      <p>Inicia sesión para acceder a la documentación interactiva</p>
+      <label for="docUser">Usuario</label>
+      <input type="text" id="docUser" placeholder="usuario" autocomplete="username">
+      <label for="docPass">Contraseña</label>
+      <input type="password" id="docPass" placeholder="••••••••" autocomplete="current-password">
+      <button onclick="doLogin()">Ingresar</button>
+      <div class="error" id="loginError">Credenciales inválidas</div>
+      <div class="loading" id="loginLoading">Validando...</div>
+      <div class="info">Solo personal autorizado</div>
+    </div>
+  </div>
+
+  <div id="api-screen">
+    <div class="top-bar">
+      <h2>📘 Prestamist API - Documentación</h2>
+      <button onclick="doLogout()">Cerrar sesión</button>
+    </div>
+    <div id="swagger-ui"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+  <script>
+    const API = 'https://prestamist.optecnology.com/api/index.php?route=';
+    let docToken = localStorage.getItem('doc_token');
+
+    async function doLogin() {
+      const login = document.getElementById('docUser').value.trim();
+      const clave = document.getElementById('docPass').value.trim();
+      const err = document.getElementById('loginError');
+      const loading = document.getElementById('loginLoading');
+
+      if (!login || !clave) { err.textContent = 'Ingrese usuario y contraseña'; err.style.display = 'block'; return; }
+
+      err.style.display = 'none';
+      loading.style.display = 'block';
+
+      try {
+        const res = await fetch(API + 'auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ login, clave })
+        });
+        const data = await res.json();
+        
+        if (data.error) {
+          err.textContent = data.error;
+          err.style.display = 'block';
+          loading.style.display = 'none';
+          return;
+        }
+
+        docToken = data.data.token;
+        localStorage.setItem('doc_token', docToken);
+        loading.style.display = 'none';
+        showAPI();
+      } catch (e) {
+        err.textContent = 'Error de conexión';
+        err.style.display = 'block';
+        loading.style.display = 'none';
+      }
+    }
+
+    function showAPI() {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('api-screen').style.display = 'block';
+      initSwagger();
+    }
+
+    function doLogout() {
+      docToken = null;
+      localStorage.removeItem('doc_token');
+      document.getElementById('api-screen').style.display = 'none';
+      document.getElementById('login-screen').style.display = 'flex';
+      document.getElementById('docUser').value = '';
+      document.getElementById('docPass').value = '';
+    }
+
+    function initSwagger() {
+      fetch('openapi.json').then(r => r.json()).then(spec => {
+        const ui = SwaggerUIBundle({
+          spec: spec,
+          dom_id: '#swagger-ui',
+          deepLinking: true,
+          presets: [SwaggerUIBundle.presets.apis],
+          plugins: [SwaggerUIBundle.plugins.Topbar],
+          requestInterceptor: (req) => {
+            if (docToken) {
+              req.headers['Authorization'] = 'Bearer ' + docToken;
+            }
+            return req;
+          }
+        });
+      });
+    }
+
+    // Auto-login si ya hay token guardado
+    if (docToken) {
+      fetch(API + 'auth/validate', {
+        headers: { 'Authorization': 'Bearer ' + docToken }
+      }).then(r => r.json()).then(d => {
+        if (d.data && d.data.user) {
+          showAPI();
+        } else {
+          localStorage.removeItem('doc_token');
+        }
+      }).catch(() => {
+        localStorage.removeItem('doc_token');
+      });
+    }
+  </script>
+</body>
+</html>

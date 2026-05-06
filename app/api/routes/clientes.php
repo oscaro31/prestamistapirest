@@ -29,14 +29,18 @@ function createCliente($body) {
     $telefono = trim($body['Telefono'] ?? $body['telefono'] ?? '');
     $direccion = trim($body['Direccion'] ?? $body['direccion'] ?? '');
     $idTipoDoc = (int)($body['IdTipoDocumento'] ?? $body['id_tipo_documento'] ?? 0);
+    $limite = $body['LimiteMaximoPrestamo'] ?? $body['limite_maximo_prestamo'] ?? null;
+    if ($limite !== null) $limite = (float)$limite;
+    $limiteActivos = $body['LimitePrestamosActivos'] ?? $body['limite_prestamos_activos'] ?? null;
+    if ($limiteActivos !== null) $limiteActivos = (int)$limiteActivos;
 
     if (empty($nombre) || empty($apellido)) {
         jsonError('Nombre y Apellido requeridos');
     }
 
     $pdo = getDB();
-    $stmt = $pdo->prepare("INSERT INTO Cliente (NroDocumento, Nombre, Apellido, Correo, Telefono, Direccion, IdTipoDocumento) VALUES (?, ?, ?, ?, ?, ?, ?)");
-    $stmt->execute([$nroDocumento, $nombre, $apellido, $correo, $telefono, $direccion, $idTipoDoc ?: null]);
+    $stmt = $pdo->prepare("INSERT INTO Cliente (NroDocumento, Nombre, Apellido, Correo, Telefono, Direccion, IdTipoDocumento, LimiteMaximoPrestamo, LimitePrestamosActivos) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->execute([$nroDocumento, $nombre, $apellido, $correo, $telefono, $direccion, $idTipoDoc ?: null, $limite, $limiteActivos]);
     jsonResponse(['IdCliente' => (int)$pdo->lastInsertId()], 201);
 }
 
@@ -55,6 +59,16 @@ function updateCliente($body) {
     if (isset($body['IdTipoDocumento']) || isset($body['id_tipo_documento'])) {
         $fields[] = "IdTipoDocumento = ?";
         $params[] = (int)($body['IdTipoDocumento'] ?? $body['id_tipo_documento']);
+    }
+    $limite = $body['LimiteMaximoPrestamo'] ?? $body['limite_maximo_prestamo'] ?? null;
+    if ($limite !== null) {
+        $fields[] = "LimiteMaximoPrestamo = ?";
+        $params[] = $limite === '' ? null : (float)$limite;
+    }
+    $limiteActivos = $body['LimitePrestamosActivos'] ?? $body['limite_prestamos_activos'] ?? null;
+    if ($limiteActivos !== null) {
+        $fields[] = "LimitePrestamosActivos = ?";
+        $params[] = $limiteActivos === '' ? null : (int)$limiteActivos;
     }
     if (empty($fields)) jsonError('Nada que actualizar');
     $params[] = $idcliente;

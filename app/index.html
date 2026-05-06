@@ -6,9 +6,15 @@
 <title>Prestamist</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<link rel="stylesheet" href="styles.css">
-<link rel="icon" href="favicon.ico" type="image/x-icon">
-<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="css/styles.css">
+<link rel="icon" href="images/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+<style>
+.ca,.ca .container-fluid{width:100% !important;max-width:none !important}
+.ca .container-fluid{padding-left:0 !important;padding-right:0 !important}
+@keyframes ti{from{transform:translateX(80px);opacity:0}to{transform:translateX(0);opacity:1}}
+.toast-container{position:fixed;top:20px;right:20px;z-index:9999;min-width:300px}
+</style>
 </head>
 <body>
 
@@ -22,7 +28,7 @@
 <div class="mb-3 text-start"><label class="form-label fw-bold" data-i18n="clave">Clave</label><div class="input-group"><input type="password" class="form-control" id="lpass" placeholder="Clave" autocomplete="current-password"><button class="btn btn-outline-secondary" type="button" id="togglePass" onclick="vt()"><i class="bi bi-eye"></i></button></div></div>
 <div class="mb-3 form-check text-start"><input type="checkbox" class="form-check-input" id="lrem"><label class="form-check-label" for="lrem" data-i18n="recordarme">Recordarme</label></div>
 <div id="lerr" class="alert alert-danger py-2" style="display:none"></div>
-<button class="btn btn-primary w-100" id="lbtn" data-i18n="login" title="Ingresar"><i class="bi bi-box-arrow-in-right"></i></button>
+<button class="btn btn-primary w-100" id="lbtn"><i class="bi bi-box-arrow-in-right"></i> <span data-i18n="login">Ingresar</span></button>
 </div>
 </div>
 
@@ -36,8 +42,16 @@
 <div class="ni" data-p="prestamos" onclick="sp('prestamos')"><i class="bi bi-journal-text"></i><span class="nt" data-i18n="registro">Registro</span></div>
 <div class="ni" data-p="reimprimir" onclick="sp('reimprimir')"><i class="bi bi-printer"></i><span class="nt" data-i18n="historial">Historial</span></div>
 </div>
+
 <div class="ni" data-p="clientes" onclick="sp('clientes')"><i class="bi bi-people"></i><span class="nt" data-i18n="clientes">Clientes</span></div>
 <div class="ni" data-p="monedas" onclick="sp('monedas')"><i class="bi bi-currency-exchange"></i><span class="nt" data-i18n="monedas">Monedas</span></div>
+<div class="ni" onclick="var ns=this.nextElementSibling;var r=this.getBoundingClientRect();ns.style.top=r.top+'px';ns.style.left=r.right+5+'px';ns.style.display=ns.style.display=='block'?'none':'block'"><i class="bi bi-book"></i><span class="nt" data-i18n="contabilidad">Contabilidad</span> <i class="bi bi-chevron-down" style="margin-left:auto;font-size:.7rem"></i></div>
+<div class="n-sub" style="display:none">
+<div class="ni" data-p="plan-cuentas" onclick="sp('plan-cuentas')"><i class="bi bi-list-ul"></i><span class="nt" data-i18n="plan_cuentas">Plan de Cuentas</span></div>
+<div class="ni" data-p="asientos" onclick="sp('asientos')"><i class="bi bi-journal-richtext"></i><span class="nt" data-i18n="asientos_contables">Asientos</span></div>
+<div class="ni" data-p="config-contable" onclick="sp('config-contable')"><i class="bi bi-gear-wide-connected"></i><span class="nt" data-i18n="config_contable">Config. Contable</span></div>
+<div class="ni" data-p="reportes-contables" onclick="sp('reportes-contables')"><i class="bi bi-bar-chart-line"></i><span class="nt" data-i18n="reportes_contables">Reportes</span></div>
+</div>
 <div class="ni" onclick="var ns=this.nextElementSibling;var r=this.getBoundingClientRect();ns.style.top=r.top+'px';ns.style.left=r.right+5+'px';ns.style.display=ns.style.display=='block'?'none':'block'"><i class="bi bi-gear"></i><span class="nt" data-i18n="configuracion">Configuracion</span> <i class="bi bi-chevron-down" style="margin-left:auto;font-size:.7rem"></i></div>
 <div class="n-sub" style="display:none">
 <div class="ni" data-p="usuarios" onclick="sp('usuarios')"><i class="bi bi-person-gear"></i><span class="nt" data-i18n="usuarios">Usuarios</span></div>
@@ -84,6 +98,18 @@
 <div class="pg" id="p-reimprimir">
 <!-- LOADED FROM pages/reimprimir.html -->
 </div>
+<div class="pg" id="p-plan-cuentas">
+<!-- LOADED FROM pages/plan-cuentas.html -->
+</div>
+<div class="pg" id="p-asientos">
+<!-- LOADED FROM pages/asientos.html -->
+</div>
+<div class="pg" id="p-config-contable">
+<!-- LOADED FROM pages/config-contable.html -->
+</div>
+<div class="pg" id="p-reportes-contables">
+<!-- LOADED FROM pages/reportes-contables.html -->
+</div>
 </div></div>
 
 
@@ -128,6 +154,8 @@
 <div class="row g-3"><div class="col-4"><label class="form-label" data-i18n="tipo_doc">Tipo Documento</label><select class="form-select" id="mcTipoDoc" onchange="formatearDoc()"><option value="" data-i18n="seleccionar">Seleccionar...</option></select></div><div class="col-8"><label class="form-label" data-i18n="documento">Nro Documento</label><input class="form-control" id="mcDocumento" placeholder="000-0000000-0" oninput="formatearDoc()"></div></div>
 <div class="row g-3"><div class="col-6"><label class="form-label" data-i18n="telefono">Telefono</label><input class="form-control" id="mcTelefono" placeholder="809-000-0000" oninput="formatearTel()"></div><div class="col-6"><label class="form-label" data-i18n="email">Correo</label><input class="form-control" id="mcCorreo" placeholder="cliente@email.com"></div></div>
 <div class="mb-3"><label class="form-label" data-i18n="direccion">Direccion</label><input class="form-control" id="mcDireccion" placeholder="Dirección"></div>
+<div class="mb-3"><label class="form-label"><i class="bi bi-currency-dollar"></i> Limite Max. Prestamo</label><div class="input-group"><span class="input-group-text">RD$</span><input class="form-control" id="mcLimite" type="number" step="0.01" min="0" placeholder="0.00"><span class="input-group-text">.00</span></div><small class="text-muted" data-i18n="limite_ayuda">Dejar vacio para sin limite</small></div>
+<div class="mb-3"><label class="form-label"><i class="bi bi-layers"></i> <span data-i18n="limite_prestamos_activos">Prestamos Max.</span></label><input class="form-control" id="mcLimiteActivos" type="number" min="0" placeholder="3"><small class="text-muted" data-i18n="limite_prestamos_activos_ayuda">Maximo de prestamos activos simultaneos. Dejar vacio para sin limite</small></div>
 </div>
 <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="cancelar" title="Cancelar"><i class="bi bi-x-lg"></i></button><button class="btn btn-primary" onclick="guardarCliente()" data-i18n="guardar" title="Guardar"><i class="bi bi-save"></i></button></div>
 </div></div></div>
@@ -183,40 +211,47 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="js/config.js"></script>
-<script src="js/app.js"></script>
-<script src="js/config-page.js"></script>
+<script src="js/config-core.js?t=1778038953"></script>
+<script src="js/app.js?v=1778031000"></script>
+<script src="js/config-page.js?v=1778031000"></script>
 <script>
-// Load page content on startup
-function cargarPagina(id, file){
-    var x=new XMLHttpRequest();
-    x.open('GET', 'pages/'+file, false);
-    x.onreadystatechange=function(){
-        if(x.readyState===4&&x.status===200){
-            document.getElementById('p-'+id).innerHTML=x.responseText;
-        }
-    };
-    x.send();
+function vt(){
+    var p=document.getElementById('lpass');
+    var b=document.getElementById('togglePass');
+    if(p.type==='password'){p.type='text';b.innerHTML='<i class="bi bi-eye-slash"></i>';}
+    else{p.type='password';b.innerHTML='<i class="bi bi-eye"></i>';}
 }
-cargarPagina('dashboard','dashboard.html');
-cargarPagina('prestamos','prestamos.html');
-cargarPagina('clientes','clientes.html');
-cargarPagina('monedas','monedas.html');
-cargarPagina('usuarios','usuarios.html');
-cargarPagina('config','config.html');
-cargarPagina('perfil','perfil.html');
-cargarPagina('reimprimir','reimprimir.html');
-// Restore last page
-var lastP=localStorage.getItem('lastPage');
-if(lastP&&lastP!=='dashboard'){setTimeout(function(){sp(lastP);},500);}
+// Load page content on startup (async) - disabled, pages inject via sp()
+var _pagesLoaded=0,_allPages=1,_appStarted=false;
+function cargarPagina(id, file){
+    _pagesLoaded++;
+    if(_pagesLoaded>=_allPages && typeof window._initApp==='function' && !_appStarted){
+        _appStarted=true;
+        setTimeout(function(){window._initApp();},100);
+    }
+}
+cargarPagina('dummy','dummy.html');
 </script>
-<script src="js/dashboard.js"></script>
-<script src="js/clientes.js"></script>
-<script src="js/monedas.js"></script>
-<script src="js/usuarios.js"></script>
-<script src="js/prestamos.js"></script>
-<script src="js/perfil.js"></script>
-<script src="js/reimprimir.js"></script>
+<script src="js/dashboard.js?v=1778031000"></script>
+<script src="js/clientes.js?v=1778031000"></script>
+<script src="js/monedas.js?v=1778031000"></script>
+<script src="js/usuarios.js?v=1778031000"></script>
+<script src="js/prestamos.js?v=1778031000"></script>
+<script src="js/perfil.js?v=1778031000"></script>
+<script src="js/reimprimir.js?v=1778031000"></script>
+<script src="js/plan-cuentas.js?v=1778031000"></script>
+<script src="js/asientos.js?v=1778031000"></script>
+<script src="js/config-contable.js?v=1778031000"></script>
+<script src="js/reportes-contables.js?v=1778031000"></script>
+<script>
+// Fallback: init app if page content loading doesn't fire
+setTimeout(function(){
+    if(typeof window._initApp==='function' && !_appStarted && document.querySelector('.ca')){
+        _appStarted=true;
+        window._initApp();
+    }
+},3000);
+</script>
 <div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer" style="z-index:9999"></div>
 
 <script>
@@ -230,12 +265,35 @@ function confirmar(msg,cb){
     };
     new bootstrap.Modal(document.getElementById('modalConfirm')).show();
 }
+function mostrarModal(id){
+    var el=document.getElementById(id);
+    if(!el)return;
+    var backdrop=document.createElement('div');
+    backdrop.className='modal-backdrop fade show';
+    document.body.appendChild(backdrop);
+    el.classList.add('show');
+    el.style.display='block';
+    document.body.classList.add('modal-open');
+    document.body.style.overflow='hidden';
+    el.querySelectorAll('[data-bs-dismiss="modal"]').forEach(function(b){
+        b.onclick=function(){cerrarModal(id);};
+    });
+}
+function cerrarModal(id){
+    var el=document.getElementById(id);
+    if(!el)return;
+    el.classList.remove('show');
+    el.style.display='none';
+    document.body.classList.remove('modal-open');
+    document.body.style.overflow='';
+    document.querySelectorAll('.modal-backdrop').forEach(function(b){b.remove();});
+}
 function mostrarToast(msg,tipo){
     tipo=tipo||'success';
     var iconos={success:'bi-check-circle-fill text-success',danger:'bi-x-circle-fill text-danger',warning:'bi-exclamation-triangle-fill text-warning',info:'bi-info-circle-fill text-primary'};
     var ic=iconos[tipo]||iconos.info;
-    var html='<div class="toast align-items-center text-bg-'+tipo+' border-0" role="alert" data-bs-delay="3000">';
-    html+='<div class="d-flex"><div class="toast-body"><i class="bi '+ic+' me-2"></i>'+msg+'</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div></div>';
+    var html='<div class="toast align-items-center border-0 fade show" role="alert" data-bs-delay="3000" style="background:'+(tipo==='success'?'#198754':tipo==='danger'?'#dc3545':tipo==='warning'?'#ffc107':'#0d6efd')+';color:white;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.2);animation:slideInToast .3s ease-out">';
+    html+='<div class="d-flex"><div class="toast-body fw-semibold"><i class="bi '+ic+' me-2" style="font-size:1.2rem"></i>'+msg+'</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div></div>';
     var c=document.getElementById('toastContainer');
     c.innerHTML=html;
     var t=new bootstrap.Toast(c.querySelector('.toast'));
@@ -264,7 +322,7 @@ document.addEventListener('click',function(e){
   var ni=e.target.closest('.n-sub .ni');
   if(ni){
     var sub=ni.closest('.n-sub');
-    if(sub) sub.style.display='none';
+    if(sub) setTimeout(function(){sub.style.display='none';},100);
   }
 });
 </script>
@@ -307,7 +365,75 @@ document.addEventListener('click',function(e){
 <div class="row g-3"><div class="col-4"><label class="form-label" data-i18n="tipo_doc">Tipo Documento</label><select class="form-select" id="mcTipoDoc" onchange="formatearDoc()"><option value="" data-i18n="seleccionar">Seleccionar...</option></select></div><div class="col-8"><label class="form-label" data-i18n="documento">Nro Documento</label><input class="form-control" id="mcDocumento" placeholder="000-0000000-0" oninput="formatearDoc()"></div></div>
 <div class="row g-3"><div class="col-6"><label class="form-label" data-i18n="telefono">Telefono</label><input class="form-control" id="mcTelefono" placeholder="809-000-0000" oninput="formatearTel()"></div><div class="col-6"><label class="form-label" data-i18n="email">Correo</label><input class="form-control" id="mcCorreo" placeholder="cliente@email.com"></div></div>
 <div class="mb-3"><label class="form-label" data-i18n="direccion">Direccion</label><input class="form-control" id="mcDireccion" placeholder="Dirección"></div>
+<div class="mb-3"><label class="form-label"><i class="bi bi-currency-dollar"></i> Limite Max. Prestamo</label><div class="input-group"><span class="input-group-text">RD$</span><input class="form-control" id="mcLimite" style="border:0;height:0;padding:0;margin:0;overflow:hidden;position:absolute;left:-9999px" type="number" step="0.01" min="0" placeholder="0.00"><span class="input-group-text" style="border:0;height:0;padding:0;margin:0;overflow:hidden;position:absolute;left:-9999px">.00</span></div><small class="text-muted" data-i18n="limite_ayuda" style="border:0;height:0;padding:0;margin:0;overflow:hidden">Dejar vacio para sin limite</small></div>
+<div class="mb-3" style="border:0;height:0;padding:0;margin:0;overflow:hidden;position:absolute;left:-9999px"><label class="form-label"><i class="bi bi-layers"></i> Prestamos Max.</label><input class="form-control" id="mcLimiteActivos" style="border:0;height:0;padding:0;margin:0;overflow:hidden;position:absolute;left:-9999px" type="number" min="0" placeholder="3"></div>
 </div>
 
+
+<!-- Modal Nuevo Asiento -->
+<div class="modal fade" id="modalAsiento" tabindex="-1">
+<div class="modal-dialog modal-lg modal-dialog-scrollable">
+<div class="modal-content">
+<div class="modal-header" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);color:white">
+<h5 class="modal-title" id="maTitulo"><i class="bi bi-plus-circle"></i> Nuevo Asiento</h5>
+<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+</div>
+<div class="modal-body">
+<div class="row g-2 mb-3">
+<div class="col-md-3"><label class="form-label small">Fecha</label><input type="date" class="form-control form-control-sm" id="maFecha"></div>
+<div class="col-md-3"><label class="form-label small">Comprobante</label><select class="form-select form-select-sm" id="maComprobante"><option value="1">Diario</option><option value="2">Ingreso</option><option value="3">Egreso</option><option value="4">Traspaso</option></select></div>
+<div class="col-md-6"><label class="form-label small">Concepto</label><input type="text" class="form-control form-control-sm" id="maConcepto"></div>
+</div>
+<div class="d-flex justify-content-between align-items-center mb-2"><span class="fw-bold small">Detalles</span><button class="btn btn-sm btn-outline-primary" onclick="agregarLineaAsiento()"><i class="bi bi-plus"></i></button></div>
+<div class="table-responsive"><table class="table table-sm"><thead><tr><th>Cuenta</th><th class="text-end">Debe</th><th class="text-end">Haber</th><th></th></tr></thead><tbody id="maDetalles"></tbody></table></div>
+<div class="d-flex justify-content-end gap-3 mt-2 small"><div>Total Debe: <span id="maTotalDebe" class="fw-bold">0.00</span></div><div>Total Haber: <span id="maTotalHaber" class="fw-bold">0.00</span></div><div>Diferencia: <span id="maDiferencia" class="fw-bold text-success">0.00</span></div></div>
+</div>
+<div class="modal-footer"><button class="btn btn-primary" onclick="guardarAsiento()"><i class="bi bi-save"></i> Guardar</button><button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button></div>
+</div></div></div>
+
+<!-- Modal Ver Asiento -->
+<div class="modal fade" id="modalVerAsiento" tabindex="-1">
+<div class="modal-dialog modal-lg modal-dialog-scrollable">
+<div class="modal-content">
+<div class="modal-header" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);color:white">
+<h5 class="modal-title"><i class="bi bi-eye"></i> Asiento #<span id="mvaId"></span></h5>
+<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+</div>
+<div class="modal-body">
+<div class="row g-2 mb-3">
+<div class="col-md-4"><strong>Fecha:</strong> <span id="mvaFecha"></span></div>
+<div class="col-md-4"><strong>Comprobante:</strong> <span id="mvaComprobante"></span></div>
+<div class="col-12"><strong>Concepto:</strong> <span id="mvaConcepto"></span></div>
+</div>
+<div class="table-responsive"><table class="table table-sm table-hover"><thead><tr><th>Cuenta</th><th>Descripcion</th><th class="text-end">Debe</th><th class="text-end">Haber</th></tr></thead><tbody id="mvaDetalles"></tbody></table></div>
+<div class="d-flex justify-content-end gap-3 fw-bold mt-2"><div>Total Debe:</div><div id="mvaTotalDebe">0.00</div><div>Total Haber:</div><div id="mvaTotalHaber">0.00</div></div>
+</div>
+<div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button></div>
+</div></div></div>
+
+<!-- Scroll to top button -->
+<style>
+#scrollTopBtn{display:none;position:fixed;bottom:24px;right:24px;z-index:9999;width:48px;height:48px;border-radius:50%;border:none;background:linear-gradient(135deg,#0d6efd,#6610f2);color:white;font-size:22px;cursor:pointer;box-shadow:0 4px 15px rgba(13,110,253,.4);transition:box-shadow .3s,transform .3s;opacity:0;}
+#scrollTopBtn:hover{box-shadow:0 6px 20px rgba(13,110,253,.6);transform:scale(1.1);}
+#scrollTopBtn:active{transform:scale(.95);}
+</style>
+<button id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="bi bi-arrow-up"></i></button>
+<script>
+(function(){
+    var btn = document.getElementById('scrollTopBtn');
+    var lastScroll = 0;
+    window.addEventListener('scroll', function(){
+        var show = window.scrollY > 300;
+        if(show && btn.style.display==='none'){
+            btn.style.display='block';
+            btn.animate([{opacity:0,transform:'translateY(20px)scale(.8)'},{opacity:1,transform:'translateY(0)scale(1)'}],{duration:300,easing:'ease-out'});
+            btn.style.opacity='1';
+        } else if(!show && btn.style.display!=='none'){
+            var anim = btn.animate([{opacity:1,transform:'translateY(0)scale(1)'},{opacity:0,transform:'translateY(20px)scale(.8)'}],{duration:200,easing:'ease-in'});
+            anim.onfinish = function(){btn.style.display='none';btn.style.opacity='0';};
+        }
+    });
+})();
+</script>
 </body>
 </html>

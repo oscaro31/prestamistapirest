@@ -1,1 +1,20 @@
-<div class="container-fluid p-4"><h3>Config</h3><div id="mod-config"></div></div>
+<div class="container-fluid p-4">
+<h3 data-i18n="preferencias">Preferencias</h3>
+<div id="configBody">
+<div class="card mb-3"><div class="card-header" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);color:white"><i class="bi bi-building"></i> <span data-i18n="empresa">Empresa</span></div><div class="card-body">
+<div class="row g-3"><div class="col-4"><label class="form-label" data-i18n="nombre">Nombre</label><input class="form-control" id="empresaNombre" placeholder="Prestamist"></div><div class="col-4"><label class="form-label" data-i18n="direccion">Direccion</label><input class="form-control" id="empresaDir" placeholder="Santo Domingo, RD"></div><div class="col-4"><label class="form-label" data-i18n="telefono">Telefono</label><input class="form-control" id="empresaTel" placeholder="809-000-0000"></div></div>
+<div class="mt-2"><label class="form-label" data-i18n="moneda_default">Moneda por Defecto</label><select class="form-select" id="empresaMoneda"><option value="0" data-i18n="seleccionar">Seleccionar...</option></select></div>
+<div class="mt-3"><button class="btn btn-primary btn-sm" onclick="guardarEmpresa()"><i class="bi bi-save"></i> <span data-i18n="guardar">Guardar</span></button> <button class="btn btn-outline-secondary btn-sm" onclick="resetEmpresa()"><i class="bi bi-arrow-counterclockwise"></i> <span data-i18n="restablecer">Restablecer</span></button></div>
+</div></div>
+
+<div class="card mb-3"><div class="card-header" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);color:white"><i class="bi bi-sliders"></i> <span data-i18n="prestamos">Prestamos</span></div><div class="card-body">
+<div class="row g-3"><div class="col-4"><label class="form-label" data-i18n="mora_activa">Mora Activa</label><select class="form-select" id="cfgMora"><option value="1" data-i18n="si">Si</option><option value="0" data-i18n="no">No</option></select></div>
+<div class="col-4"><label class="form-label" data-i18n="porcentaje_mora">% Mora Diario</label><input class="form-control" id="cfgPorcentaje" placeholder="0.5" type="number" step="0.5"></div>
+<div class="col-4"><label class="form-label" data-i18n="dias_gracia">Dias de Gracia</label><input class="form-control" id="cfgGracia" placeholder="3" type="number"></div></div>
+<div class="row g-3 mt-1"><div class="col-4"><label class="form-label" data-i18n="limite_prestamo">Limite Max Prestamo</label><input class="form-control" id="cfgLimite" placeholder="100000" type="number" step="1000"></div>
+<div class="col-4"><label class="form-label" data-i18n="tipo_mora">Tipo de Mora</label><select class="form-select" id="cfgTipoMora"><option value="diaria">Diaria</option><option value="fija">Fija</option></select></div>
+<div class="col-4"><label class="form-label" data-i18n="formato_recibo">Formato Recibo</label><select class="form-select" id="cfgFormato"><option value="punto-venta">Punto de Venta</option><option value="carta">Carta</option></select></div></div>
+<div class="mt-2"><div class="form-check"><input class="form-check-input" type="checkbox" id="cfgMostrarGanancias"><label class="form-check-label" for="cfgMostrarGanancias" data-i18n="mostrar_ganancias">Mostrar Ganancias en Dashboard</label></div></div>
+<div class="mt-3"><button class="btn btn-primary btn-sm" onclick="guardarConfig()"><i class="bi bi-save"></i> <span data-i18n="guardar">Guardar</span></button></div>
+</div></div>
+</div></div>

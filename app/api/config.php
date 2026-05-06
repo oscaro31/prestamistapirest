@@ -3,7 +3,7 @@
 // PrestamistAPI - Database Configuration
 // =============================================
 
-define('DB_HOST', 'srv1716.hstgr.io');
+define('DB_HOST', 'localhost');
 define('DB_NAME', 'u139313903_prestamist');
 define('DB_USER', 'u139313903_prestamist');
 define('DB_PASS', 'r:T+Xgs@R5dMS>U4');

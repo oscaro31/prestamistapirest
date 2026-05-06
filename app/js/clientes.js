@@ -33,7 +33,8 @@ function formatearDoc(){
 
 function lc(){
     g('clientes/list',function(e,d){
-        if(e){document.getElementById('cbody').innerHTML='<tr><td colspan="8" class="text-danger">'+e+'</td></tr>';return;}
+        var cb=document.getElementById('cbody');if(!cb)return;
+        if(e){cb.innerHTML='<tr><td colspan="8" class="text-danger">'+e+'</td></tr>';return;}
         _ppClientes=d||[];
         _ppPageCli=0;
         ppRenderClientes();
@@ -75,23 +76,14 @@ function ppRenderClientes(){
         var arrow=_ppSortColCli===col?(_ppSortDirCli==='asc'?'\u25B2':'\u25BC'):'';
         return '<th onclick="ppSortClientes(\''+col+'\')" style="cursor:pointer;user-select:none">'+label+' '+arrow+'</th>';
     };
-    var h='<thead><tr>';
-    h+=sorter('IdCliente','#');
-    h+='<th>Tipo Doc</th>';
-    h+=sorter('NroDocumento',__('documento'));
-    h+=sorter('Nombre',__('nombre'));
-    h+=sorter('Apellido',__('apellido'));
-    h+=sorter('Correo',__('email'));
-    h+=sorter('Telefono',__('telefono'));
-    h+='<th>'+__('accion')+'</th>';
-    h+='</tr></thead><tbody>';
+        var h='';
     for(var i=0;i<page.length;i++){
         var c=page[i];
         var td=c.tipo_documento_nombre||'';
         h+='<tr><td>'+c.IdCliente+'</td><td>'+td+'</td><td>'+(c.NroDocumento||'')+'</td><td>'+c.Nombre+'</td><td>'+c.Apellido+'</td><td>'+(c.Correo||'')+'</td><td>'+(c.Telefono||'')+'</td><td><button class="btn btn-sm btn-outline-primary" onclick="ec('+c.IdCliente+')"><i class="bi bi-pencil"></i></button></td></tr>';
     }
     h+='</tbody>';
-    document.getElementById('cbody').innerHTML=h||'<tr><td colspan="8" class="text-muted text-center">'+__('sin_datos')+'</td></tr>';
+    var cbEl=document.getElementById('cbody');if(cbEl)cbEl.innerHTML=h||'<tr><td colspan="8" class="text-muted text-center">'+__('sin_datos')+'</td></tr>';
     var totalPages=Math.ceil(total/_ppPageSizeCli)||1;
     var pgHtml='<div class="d-flex justify-content-between align-items-center mt-2 px-2"><div class="text-muted small">'+__('mostrando')+' '+Math.min(from+1,total)+'-'+to+' '+__('de')+' '+total+'</div><div class="d-flex align-items-center gap-1"><select class="form-select form-select-sm" style="width:auto" onchange="_ppPageSizeCli=parseInt(this.value);_ppPageCli=0;ppRenderClientes()">';
     [10,25,50,100].forEach(function(s){pgHtml+='<option value="'+s+'"'+(_ppPageSizeCli===s?' selected':'')+'>'+s+'</option>';});
@@ -122,6 +114,8 @@ function ec(id){
         document.getElementById('mcTelefono').value=c?c.Telefono:'';
         document.getElementById('mcCorreo').value=c?c.Correo:'';
         document.getElementById('mcDireccion').value=c?c.Direccion||'':'';
+        var limEl=document.getElementById('mcLimite');if(limEl)limEl.value=c?(c.LimiteMaximoPrestamo||''):'';
+        var limActEl=document.getElementById('mcLimiteActivos');if(limActEl)limActEl.value=c?(c.LimitePrestamosActivos||''):'';
     }else{
         document.getElementById('mcNombre').value='';
         document.getElementById('mcApellido').value='';
@@ -130,8 +124,11 @@ function ec(id){
         document.getElementById('mcTelefono').value='';
         document.getElementById('mcCorreo').value='';
         document.getElementById('mcDireccion').value='';
+        var limEl=document.getElementById('mcLimite');if(limEl)limEl.value='';
+        var limActEl=document.getElementById('mcLimiteActivos');if(limActEl)limActEl.value='';
     }
     new bootstrap.Modal(document.getElementById('modalCliente')).show();
+    if(typeof aplicarIdioma==='function')setTimeout(aplicarIdioma,50);
 }
 
 function guardarCliente(){
@@ -145,6 +142,8 @@ function guardarCliente(){
     if(!n||!a){alert('Nombre y Apellido requeridos');return;}
     var nom=n+(a?' '+a:'');
     var data={Nombre:n,Apellido:a,NroDocumento:nd,Telefono:t,Correo:e,Direccion:d};
+    var limEl=document.getElementById('mcLimite');if(limEl&&limEl.value.trim())data.LimiteMaximoPrestamo=parseFloat(limEl.value.trim());
+    var limActEl=document.getElementById('mcLimiteActivos');if(limActEl&&limActEl.value.trim())data.LimitePrestamosActivos=parseInt(limActEl.value.trim());
     if(td)data.IdTipoDocumento=parseInt(td);
     if(ecId>0){
         data.IdCliente=ecId;
