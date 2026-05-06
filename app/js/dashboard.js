@@ -15,7 +15,7 @@ function ld(){
         var prestado = parseFloat((d.MontoTotalPrestado || '0').replace(/,/g, ''));
         var pagado = parseFloat((d.PagadoCuotas || '0').replace(/,/g, ''));
         var capitalPendiente = Math.max(0, prestado - pagado);
-        document.getElementById('dCapitalPendiente').textContent = 'RD$' + capitalPendiente.toFixed(2);
+        document.getElementById('dCapitalPendiente').textContent = 'RD$' + fm(capitalPendiente.toFixed(2));
         
         document.getElementById('dVencidas').textContent = d.CuotasVencidas || '0';
         document.getElementById('dProximas').textContent = d.CuotasProximas || '0';
