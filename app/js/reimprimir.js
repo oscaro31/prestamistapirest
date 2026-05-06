@@ -93,8 +93,12 @@ function rrc(idrecibo){
             rec+='-----------------------------\n';
             rec+='Total Pagado: '+fm(r.monto_total)+'\n';
             if(parseFloat(r.monto_mora)>0){
-                rec+='Mora: '+fm(r.monto_mora)+'\n';
-                rec+='Se le cobró un '+localStorage.getItem('pctMoraTxt')+' de mora\n';
+                var pctTxt=localStorage.getItem('pctMoraTxt')||'2%';
+                var fmtMora=localStorage.getItem('formato_mora_recibo')||'detalle';
+                if(fmtMora==='detalle'){
+                    rec+='Mora: '+fm(r.monto_mora)+'\n';
+                }
+                rec+='Se le cobró un '+pctTxt+' de mora\n';
             }
             rec+='==============================\n';
             rec+='Pago realizado correctamente!\n';

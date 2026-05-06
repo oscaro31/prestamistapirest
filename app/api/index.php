@@ -387,8 +387,8 @@ try {
             $idusuario = 1;
             
             // 1. Crear prestamo nuevo
-            $pdo->exec("INSERT INTO Prestamo (IdCliente, IdMoneda, IdUsuario, MontoPrestamo, InteresPorcentaje, NroCuotas, ValorPorCuota, ValorInteres, ValorTotal, Estado)
-                VALUES (1, 1, 1, 50000, 5, 6, 8833.33, 3000, 53000, 'Pendiente')");
+            $pdo->exec("INSERT INTO Prestamo (IdCliente, IdMoneda, MontoPrestamo, InteresPorcentaje, NroCuotas, ValorPorCuota, ValorInteres, ValorTotal, Estado, FechaInicioPago)
+                VALUES (1, 1, 50000, 5, 6, 8833.33, 3000, 53000, 'Pendiente', CURDATE())");
             $idp = (int)$pdo->lastInsertId();
             
             // 2. Generar cuotas
