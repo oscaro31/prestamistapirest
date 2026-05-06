@@ -358,14 +358,27 @@ function pagarCuotas(id) {
                         }
                         totalRec += montoCuo;
                         var txtMonto = fms(montoCuo);
-                        if (moraCuo > 0) txtMonto += ' (' + fms(moraCuo) + ' mora ' + _pctMoraTxt + ')';
-                        paidNumbers.push({num: p.cuotas[di].NroCuota||p.cuotas[di].numero_cuota||(di+1), monto: txtMonto});
+                        paidNumbers.push({num: p.cuotas[di].NroCuota||p.cuotas[di].numero_cuota||(di+1), monto: txtMonto, mora: moraCuo});
                     }
                 }
             }
             if (paidNumbers.length > 0) {
+                var fmtMora = localStorage.getItem('formato_mora_recibo') || 'detalle';
+                var totalMoraRec = 0;
                 for (var ci = 0; ci < paidNumbers.length; ci++) {
-                    rec += 'Cuota #' + paidNumbers[ci].num + ': ' + paidNumbers[ci].monto + '\n';
+                    totalMoraRec += paidNumbers[ci].mora || 0;
+                    if (fmtMora === 'detalle') {
+                        rec += 'Cuota #' + paidNumbers[ci].num + ': ' + paidNumbers[ci].monto;
+                        if (paidNumbers[ci].mora > 0) rec += ' (' + fms(paidNumbers[ci].mora) + ' mora ' + _pctMoraTxt + ')';
+                        rec += '\n';
+                    } else {
+                        var montoSinMora = parseFloat(p.cuotas[di] && p.cuotas[di].MontoCuota || 0);
+                        rec += 'Cuota #' + paidNumbers[ci].num + ': ' + fms(montoSinMora) + '\n';
+                    }
+                }
+                if (fmtMora === 'resumen' && totalMoraRec > 0) {
+                    rec += '---------------------------------\n';
+                    rec += 'Se le cobró un ' + _pctMoraTxt + ' de mora\n';
                 }
             }
             rec += '---------------------------------\n';
@@ -381,6 +394,12 @@ function pagarCuotas(id) {
             if (pendCount === 0) rec += 'Todas las cuotas estan pagadas\n';
             rec += '---------------------------------\n';
             rec += 'Total Pagado Ahora: ' + fms(totalRec) + '\n';
+            var fmtMora = localStorage.getItem('formato_mora_recibo') || 'detalle';
+            var totalMoraRec = 0;
+            for (var ci = 0; ci < (paidNumbers||[]).length; ci++) totalMoraRec += paidNumbers[ci].mora || 0;
+            if (fmtMora === 'resumen' && totalMoraRec > 0) {
+                rec += 'Se le cobró un ' + _pctMoraTxt + ' de mora\n';
+            }
             if (p.MontoPrestamo) rec += 'Monto Original: ' + fms(p.MontoPrestamo) + '\n';
             rec += 'Saldo Restante: ' + fms(restante) + '\n';
             rec += '==============================\n';
@@ -452,6 +471,7 @@ function generarRecibo(contenido) {
                 if (cl === 'empresa_telefono') et = d[i].valor;
                 if (cl === 'formato_recibo') fmt = d[i].valor;
                 if (cl === 'porcentaje_mora') _pctMoraTxt = d[i].valor + '%';
+                if (cl === 'formato_mora_recibo') localStorage.setItem('formato_mora_recibo', d[i].valor);
             }
         }
         var r = '\\n';

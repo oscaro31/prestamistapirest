@@ -28,6 +28,10 @@ function lg(){
             if(cl==='dias_gracia'||cl==='diasgracia')dg=c.valor;
             if(cl==='limite'||cl==='limite_maximo'||cl==='prestamo_maximo')lm=c.valor;
             if(cl==='formato_recibo')fmt=c.valor;
+            if(cl==='formato_mora_recibo'){
+                var el=document.getElementById('cfgFormatoMora');
+                if(el)el.value=c.valor;
+            }
             if(cl==='tipomora')document.getElementById('cfgTipoMora').value=c.valor;
             if(cl==='mostrarganancias'||cl==='MostrarGanancias'){var cb=document.getElementById('cfgMostrarGanancias');if(cb)cb.checked=c.valor==='1';}
             if(cl==='empresa_nombre')document.getElementById('empresaNombre').value=c.valor;
@@ -90,6 +94,8 @@ function guardarConfig(){
     function f(){n--;if(n<=0&&t>0){lg();mostrarToast('Guardado correctamente','success');}}
     var ft=document.getElementById('cfgFormato').value;
     if(ft){n++;t++;(function(v){p('config/update',{Clave:'formato_recibo',valor:v},function(e){if(e)alert(e);else f();});})(ft);}
+    var fmo=document.getElementById('cfgFormatoMora').value;
+    if(fmo){n++;t++;(function(v){p('config/update',{Clave:'formato_mora_recibo',valor:v},function(e){if(e)alert(e);else f();});})(fmo);}
     if(m){n++;t++;(function(v){p('config/update',{Clave:'MoraActiva',valor:v},function(e){if(e)alert(e);else f();});})(m);}
     if(pc){n++;t++;(function(v){p('config/update',{Clave:'PorcentajeMoraDiario',valor:v},function(e){if(e)alert(e);else f();});})(pc);}
     if(g){n++;t++;(function(v){p('config/update',{Clave:'Dias_Gracia',valor:v},function(e){if(e)alert(e);else f();});})(g);}
