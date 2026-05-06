@@ -228,7 +228,14 @@ function abrirModalPagoCuotas(){
     document.getElementById('mpPagarTodo').checked=true;
     document.getElementById('mpMontoPagar').value='';
     document.getElementById('mpMontoPagar').disabled=true;
-    var txt=_vpChecks.length+' '+__('seleccionadas')+' ';
+    var totalCuota=0,totalMora=0;
+    for(var i=0;i<_vpChecks.length;i++){
+        var m=parseFloat(_vpChecks[i].getAttribute('data-mora')||0);
+        var num=_vpChecks[i].getAttribute('data-num')||'?';
+        totalMora+=m;
+    }
+    var txt=_vpChecks.length+' '+__('seleccionadas');
+    if(totalMora>0)txt+=' | Mora: '+fm(totalMora);
     document.getElementById('mpResumen').textContent=txt;
     new bootstrap.Modal(document.getElementById('modalPagoCuotas')).show();
     if(typeof aplicarIdioma==='function')aplicarIdioma();

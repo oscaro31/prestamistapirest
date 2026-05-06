@@ -153,30 +153,32 @@ function pagarCuotas($body) {
             if ($idDetalle <= 0) continue;
             
             // Obtener monto actual de la cuota
-            $stmtCuota = $pdo->prepare("SELECT MontoCuota, COALESCE(MontoPagado, 0) as Pagado FROM PrestamoDetalle WHERE IdPrestamoDetalle = ? AND IdPrestamo = ?");
+            $stmtCuota = $pdo->prepare("SELECT MontoCuota, COALESCE(MontoPagado, 0) as Pagado, COALESCE(MoraCalculada, 0) as Mora FROM PrestamoDetalle WHERE IdPrestamoDetalle = ? AND IdPrestamo = ?");
             $stmtCuota->execute([$idDetalle, $idPrestamo]);
             $cuotaData = $stmtCuota->fetch();
             if (!$cuotaData) continue;
             
             $montoCuota = (float)$cuotaData['MontoCuota'];
             $yaPagado = (float)$cuotaData['Pagado'];
+            $mora = (float)$cuotaData['Mora'];
+            $totalCuota = $montoCuota + $mora;
             
             // Determinar monto a pagar en esta cuota
             if (!$pagarTodo && isset($montosArray[$idx])) {
                 $montoPago = (float)$montosArray[$idx];
             } else {
-                // Pago completo: lo que falte hasta el total
-                $montoPago = $montoCuota - $yaPagado;
+                // Pago completo: montoCuota + mora - lo ya pagado
+                $montoPago = $totalCuota - $yaPagado;
             }
             $montoPago = max(0, $montoPago);
             
             $nuevoPagado = $yaPagado + $montoPago;
-            if ($nuevoPagado >= $montoCuota) {
-                // Cuota pagada completamente
+            if ($nuevoPagado >= $totalCuota) {
+                // Cuota pagada completamente (incluye mora)
                 $stmt = $pdo->prepare("UPDATE PrestamoDetalle SET Estado = 'Pagado', FechaPagado = NOW(), MontoPagado = ? WHERE IdPrestamoDetalle = ? AND IdPrestamo = ?");
-                $stmt->execute([$montoCuota, $idDetalle, $idPrestamo]);
+                $stmt->execute([$totalCuota, $idDetalle, $idPrestamo]);
             } else {
-                // Pago parcial: Actualizar MontoPagado pero mantener Pendiente
+                // Pago parcial
                 $stmt = $pdo->prepare("UPDATE PrestamoDetalle SET MontoPagado = ?, FechaPagado = NOW() WHERE IdPrestamoDetalle = ? AND IdPrestamo = ?");
                 $stmt->execute([$nuevoPagado, $idDetalle, $idPrestamo]);
             }
