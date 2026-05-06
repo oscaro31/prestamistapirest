@@ -85,6 +85,9 @@ function login($body) {
     // Limpiar tokens expirados del usuario
     $pdo->prepare("DELETE FROM tokens WHERE idusuario = ? AND expires_at < NOW()")->execute([$user['idusuario']]);
 
+    // SINGLE SESSION: eliminar todos los tokens anteriores (incluyendo activos)
+    $pdo->prepare("DELETE FROM tokens WHERE idusuario = ?")->execute([$user['idusuario']]);
+
     $stmt = $pdo->prepare("INSERT INTO tokens (idusuario, token, expires_at) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL ? DAY))");
     $stmt->execute([$user['idusuario'], $token, $expireDays]);
 

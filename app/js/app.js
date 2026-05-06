@@ -579,11 +579,14 @@ aplicarIdioma();
             x2.onreadystatechange=function(){
                 if(x2.readyState===4){
                     if(x2.status!==200){
+                        try{var err=JSON.parse(x2.responseText);var msg=err.error||'Sesión expirada';}catch(e){msg='Sesión expirada';}
                         localStorage.removeItem('prestamist_token');
                         localStorage.removeItem('prestamist_user');
                         sessionStorage.removeItem('prestamist_token');
                         sessionStorage.removeItem('prestamist_user');
                         tok=null;user=null;
+                        var le=document.getElementById('lerr');
+                        if(le){le.textContent=msg;le.style.display='block';}
                         return;
                     }
                     document.getElementById('login').style.display='none';

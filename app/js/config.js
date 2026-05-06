@@ -12,12 +12,15 @@ function x(m,r,d,cb){
     x.onreadystatechange=function(){
         if(x.readyState!==4)return;
         if(x.status===401){
+            try{var errMsg=JSON.parse(x.responseText);errMsg=errMsg.error||'Sesión expirada';}catch(e){errMsg='Sesión expirada';}
             localStorage.removeItem('prestamist_token');localStorage.removeItem('prestamist_user');
             sessionStorage.removeItem('prestamist_token');sessionStorage.removeItem('prestamist_user');
             tok=null;user=null;
             document.getElementById('app').style.display='none';
             document.getElementById('login').style.display='';
-            cb('Sesion expirada',null);return;
+            document.getElementById('lerr').textContent=errMsg;
+            document.getElementById('lerr').style.display='block';
+            cb(errMsg,null);return;
         }
         try{var j=JSON.parse(x.responseText)}catch(e){j={error:'Invalid'}}
         if(x.status>=200&&x.status<300&&j.data!==undefined)cb(null,j.data);
