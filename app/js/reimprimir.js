@@ -87,7 +87,7 @@ function rrc(id){
         var numsPagadas=[];var numsPendientes=[];var totalPagado=0;
         for(var ci=0;ci<(p.cuotas||[]).length;ci++){
             var c=p.cuotas[ci];var n=c.NroCuota||c.numero_cuota||(ci+1);
-            if(c.Estado==='Pagado'){numsPagadas.push(n);totalPagado+=parseFloat(c.MontoCuota||0);}
+            if(c.Estado==='Pagado'){numsPagadas.push(n);totalPagado+=parseFloat(c.MontoCuota||0)+parseFloat(c.MoraCalculada||0);}
             else{numsPendientes.push(n);}
         }
         function rangoStr(arr){

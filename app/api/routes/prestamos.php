@@ -186,12 +186,9 @@ function pagarCuotas($body) {
         }
 
         // Si no quedan cuotas pendientes, marcar préstamo como Cancelado
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM PrestamoDetalle WHERE IdPrestamo = ? AND (Estado = 'Pendiente' OR (Estado = 'Pagado' AND MontoPagado < MontoCuota))");
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM PrestamoDetalle WHERE IdPrestamo = ? AND Estado = 'Pendiente'");
         $stmt->execute([$idPrestamo]);
-        // Solo cancelar si todas las cuotas tienen MontoPagado >= MontoCuota
-        $stmt2 = $pdo->prepare("SELECT COUNT(*) FROM PrestamoDetalle WHERE IdPrestamo = ? AND Estado = 'Pendiente' AND MontoPagado >= MontoCuota");
-        $stmt2->execute([$idPrestamo]);
-        if ($stmt->fetchColumn() == 0 && $stmt2->fetchColumn() > 0) {
+        if ($stmt->fetchColumn() == 0) {
             $pdo->prepare("UPDATE Prestamo SET Estado = 'Cancelado' WHERE IdPrestamo = ?")->execute([$idPrestamo]);
         }
 
