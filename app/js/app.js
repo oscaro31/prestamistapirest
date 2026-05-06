@@ -295,16 +295,18 @@ function injectDashboardHTML() {
                 <div class="card-body p-0"><div class="table-responsive"><table class="table table-sm mb-0"><thead><tr><th data-i18n="cliente">Cliente</th><th data-i18n="monto">Monto</th><th data-i18n="fecha">Fecha</th></tr></thead><tbody id="qbodyPagos"><tr><td colspan="3" class="text-muted text-center py-3" data-i18n="sin_datos">Sin datos</td></tr></tbody></table></div></div>
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6" id="dCardUsuariosTabla">
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-white fw-bold" data-i18n="usuarios_activos">Usuarios Activos</div>
                 <div class="card-body p-0"><div class="table-responsive"><table class="table table-sm mb-0"><thead><tr><th data-i18n="usuario">Usuario</th><th data-i18n="cargo">Cargo</th><th data-i18n="estado">Estado</th></tr></thead><tbody id="ubody"><tr><td colspan="3" class="text-muted text-center py-3" data-i18n="sin_datos">Sin datos</td></tr></tbody></table></div></div>
         </div>
     </div>`;
-    // Ocultar card de usuarios activos si no es admin
+    // Ocultar cards de usuarios activos si no es admin
     if(user && user.idcargo && parseInt(user.idcargo)!==1){
         var dc=document.getElementById('dCardUsuarios');
         if(dc)dc.style.display='none';
+        var dt=document.getElementById('dCardUsuariosTabla');
+        if(dt)dt.style.display='none';
     }
 }
 
