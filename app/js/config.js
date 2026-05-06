@@ -1,5 +1,5 @@
 // Prestamist - API Configuration
-var API='https://prestamist.optecnology.com/api/router.php?route=';
+var API='https://prestamist.optecnology.com/api/index.php?route=';
 var tok=null,user=null,cls=[],mds=[],cgs=[];
 
 function gt(){return tok||localStorage.getItem('prestamist_token');}
