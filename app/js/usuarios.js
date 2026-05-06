@@ -29,7 +29,15 @@ function cargarPermisosCargo(idcargo) {
         list.innerHTML = '';
         keys.forEach(function(k) {
             var checked = perms[k] ? 'checked' : '';
-            list.innerHTML += '<div class="form-check form-check-inline"><input class="form-check-input permiso-check" type="checkbox" id="perm_'+k+'" value="'+k+'" '+checked+' onchange="_permisosSeleccionados[this.value]=this.checked"><label class="form-check-label" for="perm_'+k+'">'+k.charAt(0).toUpperCase()+k.slice(1)+'</label></div>';
+            var nombres = {
+                'dashboard':'Dashboard', 'clientes':'Clientes', 'prestamos':'Préstamos',
+                'reimprimir':'Reimprimir', 'monedas':'Monedas', 'usuarios':'Usuarios',
+                'config':'Configuración', 'plan-cuentas':'Plan de Cuentas',
+                'asientos':'Asientos Contables', 'config-contable':'Config. Contable',
+                'reportes-contables':'Reportes Contables'
+            };
+            var label = nombres[k] || k.charAt(0).toUpperCase()+k.slice(1);
+            list.innerHTML += '<div class="form-check" style="min-width:170px"><input class="form-check-input permiso-check" type="checkbox" id="perm_'+k+'" value="'+k+'" '+checked+' onchange="_permisosSeleccionados[this.value]=this.checked"><label class="form-check-label" for="perm_'+k+'">'+label+'</label></div>';
             _permisosSeleccionados[k] = perms[k];
         });
     });

@@ -394,10 +394,11 @@ function aplicarPermisos(){
             aplicarPermisosDesde(d.permisos);
         } else {
             // Fallback: si no se pudieron cargar permisos, inferir desde idcargo
-            var defaults={dashboard:true,prestamos:true,reimprimir:true,clientes:true,perfil:true};
+            var defaults={dashboard:true,clientes:true,prestamos:true,reimprimir:true};
             if(user.idcargo==1){
                 defaults.monedas=true;defaults.usuarios=true;defaults.config=true;
-                defaults['plan-cuentas']=true;defaults.asientos=true;defaults['config-contable']=true;defaults['reportes-contables']=true;
+                defaults['plan-cuentas']=true;defaults.asientos=true;
+                defaults['config-contable']=true;defaults['reportes-contables']=true;
             }
             _permisosCache={idcargo:user.idcargo, permisos:defaults};
             aplicarPermisosDesde(defaults);
@@ -419,8 +420,8 @@ function aplicarPermisosDesde(items){
     });
 }
 function sp(pg){
-        // Redirect non-admin users from restricted pages
-    if((pg==='usuarios'||pg==='config'||pg==='monedas')&&(!user||!user.idcargo||user.idcargo>1)){
+    // Verificar permiso del módulo usando los permisos cargados
+    if(_permisosCache && _permisosCache.permisos && _permisosCache.permisos[pg]===false){
         mostrarToast('Permiso denegado','warning');
         pg='dashboard';
     }

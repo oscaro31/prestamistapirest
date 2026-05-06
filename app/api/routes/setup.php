@@ -18,9 +18,11 @@ function createPermissionsTable() {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
     ");
     
-    // Definir permisos disponibles
+    // Definir permisos disponibles (uno por cada módulo del menú)
     $permisos = [
-        'usuarios', 'clientes', 'prestamos', 'monedas', 'config'
+        'dashboard', 'clientes', 'prestamos', 'reimprimir',
+        'monedas', 'usuarios', 'config',
+        'plan-cuentas', 'asientos', 'config-contable', 'reportes-contables'
     ];
     
     // Obtener todos los cargos

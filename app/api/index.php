@@ -293,47 +293,47 @@ try {
         // CONTABILIDAD
         case 'plan-cuenta/list':
             $authUser = validateToken();
-            requirePermission('config');
+            requirePermission('plan-cuentas');
             $body['_userId'] = (int)$authUser['idusuario'];
             listPlanCuentas($body);
             break;
         case 'plan-cuenta/create':
             $authUser = validateToken();
-            requirePermission('config');
+            requirePermission('plan-cuentas');
             $body['_userId'] = (int)$authUser['idusuario'];
             createPlanCuenta($body);
             break;
         case 'plan-cuenta/update':
             $authUser = validateToken();
-            requirePermission('config');
+            requirePermission('plan-cuentas');
             $body['_userId'] = (int)$authUser['idusuario'];
             updatePlanCuenta($body);
             break;
         case 'plan-cuenta/delete':
             $authUser = validateToken();
-            requirePermission('config');
+            requirePermission('plan-cuentas');
             $body['_userId'] = (int)$authUser['idusuario'];
             deletePlanCuenta($body);
             break;
         case 'asientos/list':
             $authUser = validateToken();
-            requirePermission('config');
+            requirePermission('asientos');
             listAsientos($body);
             break;
         case 'asientos/create':
             $authUser = validateToken();
-            requirePermission('config');
+            requirePermission('asientos');
             $body['_userId'] = (int)$authUser['idusuario'];
             createAsiento($body);
             break;
         case 'asientos/get':
             $authUser = validateToken();
-            requirePermission('config');
+            requirePermission('asientos');
             getAsiento($body);
             break;
         case 'asientos/anular':
             $authUser = validateToken();
-            requirePermission('config');
+            requirePermission('asientos');
             $body['_userId'] = (int)$authUser['idusuario'];
             anularAsiento($body);
             break;
@@ -345,37 +345,37 @@ try {
             break;
         case 'config-contable/list':
             $authUser = validateToken();
-            requirePermission('config');
+            requirePermission('config-contable');
             listConfigContable();
             break;
         case 'config-contable/update':
             $authUser = validateToken();
-            requirePermission('config');
+            requirePermission('config-contable');
             updateConfigContable($body);
             break;
         case 'reportes/balance-comprobacion':
             $authUser = validateToken();
-            requirePermission('config');
+            requirePermission('reportes-contables');
             balanceComprobacion($body);
             break;
         case 'reportes/libro-diario':
             $authUser = validateToken();
-            requirePermission('config');
+            requirePermission('reportes-contables');
             libroDiario($body);
             break;
         case 'reportes/libro-mayor':
             $authUser = validateToken();
-            requirePermission('config');
+            requirePermission('reportes-contables');
             libroMayor($body);
             break;
         case 'reportes/estado-resultados':
             $authUser = validateToken();
-            requirePermission('config');
+            requirePermission('reportes-contables');
             estadoResultados($body);
             break;
         case 'reportes/balance-general':
             $authUser = validateToken();
-            requirePermission('config');
+            requirePermission('reportes-contables');
             balanceGeneral();
             break;
         default:
