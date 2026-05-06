@@ -156,7 +156,7 @@ function guardarPrestamo() {
     var nc = parseInt(document.getElementById('npCuotas').value) || 0;
     var tasa = parseFloat(document.getElementById('npInteres').value) || 0;
     var fi = document.getElementById('npFecha').value;
-    if (!cl || !mt || !nc) { alert('Complete todos los campos'); return; }
+    if (!cl || !mt || !nc) { alert(__('completar')); return; }
     var cfg = cfgCache || {};
     if (cfg['limite'] && mt > parseFloat(cfg['limite'])) {
         alert('El monto excede el limite maximo de RD$' + parseFloat(cfg['limite']).toFixed(2));
@@ -472,7 +472,7 @@ function abrirNuevoPrestamo(){
     if(plazoEl)plazoEl.value='';
     document.getElementById('npTipoCuota').value='3';
     document.getElementById('npFecha').value=new Date().toISOString().substring(0,10);
-    document.getElementById('npResumen').innerHTML='<span class="text-muted" data-i18n="complete_campos">Complete campos</span>';
+    document.getElementById('npResumen').innerHTML='<span class="text-muted">'+__('completar')+'</span>';
     // Load clients
     g('clientes/list', function(e, d) {
         var sel=document.getElementById('npCliente');
