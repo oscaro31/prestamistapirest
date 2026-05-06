@@ -32,7 +32,7 @@ function lg(){
                 var el=document.getElementById('cfgFormatoMora');
                 if(el)el.value=c.valor;
             }
-            if(cl==='tipomora')document.getElementById('cfgTipoMora').value=c.valor;
+            if(cl==='tipomora'){var e=document.getElementById('cfgTipoMora');if(e)e.value=c.valor;}
             if(cl==='mostrarganancias'||cl==='MostrarGanancias'){var cb=document.getElementById('cfgMostrarGanancias');if(cb)cb.checked=c.valor==='1';}
             if(cl==='empresa_nombre'){var e=document.getElementById('empresaNombre');if(e)e.value=c.valor;}
             if(cl==='empresa_direccion'){var e=document.getElementById('empresaDir');if(e)e.value=c.valor;}
