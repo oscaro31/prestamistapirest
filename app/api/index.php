@@ -352,6 +352,36 @@ try {
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
             jsonResponse(['success'=>true,'message'=>'Tabla recibos creada']);
             break;
+        case 'setup/insert-recibos':
+            $pdo = getDB();
+            // Buscar prestamos con cuotas pagadas que aun no tienen recibos
+            $prestamos = $pdo->query("SELECT DISTINCT pd.IdPrestamo FROM PrestamoDetalle pd WHERE pd.Estado = 'Pagado'")->fetchAll(PDO::FETCH_COLUMN);
+            $insertados = 0;
+            foreach ($prestamos as $idp) {
+                $stmt = $pdo->prepare("SELECT COUNT(*) FROM recibos WHERE idprestamo = ?");
+                $stmt->execute([$idp]);
+                if ($stmt->fetchColumn() > 0) continue; // ya tiene recibos
+                // Obtener cuotas pagadas de este prestamo
+                $cuotas = $pdo->prepare("SELECT NroCuota, MontoCuota, COALESCE(MoraCalculada,0) as Mora FROM PrestamoDetalle WHERE IdPrestamo = ? AND Estado = 'Pagado' ORDER BY NroCuota");
+                $cuotas->execute([$idp]);
+                $rows = $cuotas->fetchAll();
+                $totalMonto = 0; $totalMora = 0; $detalles = [];
+                foreach ($rows as $r) {
+                    $m = (float)$r['MontoCuota'] + (float)$r['Mora'];
+                    $totalMonto += $m;
+                    $totalMora += (float)$r['Mora'];
+                    $detalles[] = '#' . $r['NroCuota'] . '=' . number_format($m, 2, '.', '');
+                }
+                $nro = count($detalles);
+                if ($nro == 0) continue;
+                $detStr = implode(',', $detalles);
+                $totalCuotasPrestamo = (int)$pdo->query("SELECT NroCuotas FROM Prestamo WHERE IdPrestamo = $idp")->fetchColumn();
+                $tipo = ($nro >= $totalCuotasPrestamo) ? 'completo' : 'parcial';
+                $pdo->prepare("INSERT INTO recibos (idprestamo, idusuario, tipo_pago, monto_total, monto_mora, nro_cuotas_pagadas, detalle_cuotas) VALUES (?, 1, ?, ?, ?, ?, ?)")->execute([$idp, $tipo, $totalMonto, $totalMora, $nro, $detStr]);
+                $insertados++;
+            }
+            jsonResponse(['success' => true, 'insertados' => $insertados]);
+            break;
         
         // CONTABILIDAD
         case 'plan-cuenta/list':

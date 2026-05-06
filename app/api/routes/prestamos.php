@@ -236,10 +236,16 @@ function pagarCuotas($body) {
             
             // Calcular interés proporcional a las cuotas pagadas
             $interesProporcional = round(($interesTotal / $totalCuotas) * count($ids), 2);
-            $capitalPagado = $totalPagado - $interesProporcional;
+            // Total pagado en las cuotas seleccionadas (sin mora)
+            $totalCuotasPagado = $totalPagado;
+            $moraPagada = $totalMora;
+            $capitalPagado = $totalCuotasPagado - $interesProporcional;
             
-            if ($totalPagado > 0) {
+            if ($totalCuotasPagado > 0) {
                 generarAsientoAutomatico($pdo, 'prestamo_pagado', $idPrestamo, $capitalPagado, $interesProporcional, date('Y-m-d'), $body['_userId'] ?? 0);
+            }
+            if ($moraPagada > 0) {
+                generarAsientoAutomatico($pdo, 'prestamo_mora', $idPrestamo, $moraPagada, 0, date('Y-m-d'), $body['_userId'] ?? 0);
             }
         } catch (Exception $e) {
             // No fallar el pago si no hay config contable
@@ -261,6 +267,7 @@ function generarAsientoAutomatico($pdo, $tipoAccion, $idPrestamo, $montoCapital,
     $moduloMap = [
         'prestamo_creado' => 'prestamo_creado',
         'prestamo_pagado' => 'prestamo_capital_pagado',
+        'prestamo_mora' => 'prestamo_mora',
     ];
     $modulo = $moduloMap[$tipoAccion] ?? $tipoAccion;
     
@@ -281,6 +288,7 @@ function generarAsientoAutomatico($pdo, $tipoAccion, $idPrestamo, $montoCapital,
     $conceptos = [
         'prestamo_creado' => 'Desembolso de préstamo #' . $idPrestamo,
         'prestamo_pagado' => 'Pago de cuota(s) - Préstamo #' . $idPrestamo,
+        'prestamo_mora' => 'Ingreso por mora - Préstamo #' . $idPrestamo,
     ];
     $concepto = $conceptos[$tipoAccion] ?? 'Operación - Préstamo #' . $idPrestamo;
     
@@ -314,6 +322,12 @@ function generarAsientoAutomatico($pdo, $tipoAccion, $idPrestamo, $montoCapital,
                 $detStmt->execute([$idasiento, $idcuentaDebe, $montoInteres, 0]);
                 $detStmt->execute([$idasiento, $idcuentaInteres, 0, $montoInteres]);
             }
+        }
+    } elseif ($tipoAccion === 'prestamo_mora') {
+        // Ingreso por mora: Caja/Banco vs Ingreso por Mora
+        if ($montoCapital > 0) {
+            $detStmt->execute([$idasiento, $idcuentaDebe, $montoCapital, 0]);
+            $detStmt->execute([$idasiento, $idcuentaHaber, 0, $montoCapital]);
         }
     }
 }
