@@ -941,7 +941,15 @@ function saUsuariosLoad(){
         if(e||!d){document.getElementById("saUserBody").innerHTML='<tr><td colspan="7" class="text-danger">'+e+'</td></tr>';return;}
         var h="";
         d.forEach(function(r){
-            h+="<tr><td>"+r.idusuario+"</td><td>"+(r.nombre||'')+" "+(r.apellido||'')+"</td><td>"+r.login+"</td><td>"+(r.email||'')+"</td><td>"+(r.empresa_nombre||'')+"</td><td><span class=\"badge bg-"+(r.rol==='superadmin'?'danger':'primary')+"\">"+(r.rol||'usuario')+"</span></td><td><span class=\"badge bg-"+(r.activo==1||r.activo==='1'?'success\">Activo':'secondary\">Inactivo")+"</span></td></tr>";
+            var rNom=r.nombre||'';
+            var rApe=r.apellido||'';
+            var rEml=r.email||'';
+            var rEmp=r.empresa_nombre||'';
+            var bRol=r.rol==='superadmin'?'danger':'primary';
+            var rRol=r.rol||'usuario';
+            var bAct=r.activo==1||r.activo==='1'?'success':'secondary';
+            var tAct=r.activo==1||r.activo==='1'?'Activo':'Inactivo';
+            h+='<tr><td>'+r.idusuario+'</td><td>'+rNom+' '+rApe+'</td><td>'+r.login+'</td><td>'+rEml+'</td><td>'+rEmp+'</td><td><span class="badge bg-'+bRol+'">'+rRol+'</span></td><td><span class="badge bg-'+bAct+'">'+tAct+'</span></td></tr>';
         });
         document.getElementById("saUserBody").innerHTML=h||'<tr><td colspan="7" class="text-muted text-center">Sin usuarios</td></tr>';
     });
