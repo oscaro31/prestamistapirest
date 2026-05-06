@@ -382,6 +382,36 @@ try {
             }
             jsonResponse(['success' => true, 'insertados' => $insertados]);
             break;
+        case 'setup/datos-prueba-v2':
+            $pdo = getDB();
+            $idusuario = 1;
+            
+            // 1. Crear prestamo nuevo
+            $pdo->exec("INSERT INTO Prestamo (IdCliente, IdMoneda, IdUsuario, MontoPrestamo, InteresPorcentaje, NroCuotas, ValorPorCuota, ValorInteres, ValorTotal, Estado)
+                VALUES (1, 1, 1, 50000, 5, 6, 8833.33, 3000, 53000, 'Pendiente')");
+            $idp = (int)$pdo->lastInsertId();
+            
+            // 2. Generar cuotas
+            $fechaBase = date('Y-m-d', strtotime('-10 days'));
+            for ($i = 1; $i <= 6; $i++) {
+                $fp = date('Y-m-d', strtotime($fechaBase . ' +' . ($i-1) . ' months'));
+                $pdo->prepare("INSERT INTO PrestamoDetalle (IdPrestamo, NroCuota, FechaPago, MontoCuota, Estado, MoraCalculada) VALUES (?, ?, ?, 8833.33, 'Pendiente', 0)")->execute([$idp, $i, $fp]);
+            }
+            
+            // 3. Poner mora a cuotas vencidas (primeras 2)
+            $pdo->prepare("UPDATE PrestamoDetalle SET MoraCalculada = 883.33 WHERE IdPrestamo = ? AND NroCuota = 1")->execute([$idp]);
+            $pdo->prepare("UPDATE PrestamoDetalle SET MoraCalculada = 441.67 WHERE IdPrestamo = ? AND NroCuota = 2")->execute([$idp]);
+            
+            // 4. Pagar cuota 1 sola (con mora) - primer pago
+            $pdo->prepare("UPDATE PrestamoDetalle SET Estado = 'Pagado', MontoPagado = 9716.66, FechaPagado = DATE_SUB(NOW(), INTERVAL 1 DAY) WHERE IdPrestamo = ? AND NroCuota = 1")->execute([$idp]);
+            $pdo->prepare("INSERT INTO recibos (idprestamo, idusuario, tipo_pago, monto_total, monto_mora, nro_cuotas_pagadas, detalle_cuotas) VALUES (?, 1, 'parcial', 9716.66, 883.33, 1, '#1=9716.66')")->execute([$idp]);
+            
+            // 5. Pagar cuota 2 sola (con mora) - segundo pago
+            $pdo->prepare("UPDATE PrestamoDetalle SET Estado = 'Pagado', MontoPagado = 9275.00, FechaPagado = NOW() WHERE IdPrestamo = ? AND NroCuota = 2")->execute([$idp]);
+            $pdo->prepare("INSERT INTO recibos (idprestamo, idusuario, tipo_pago, monto_total, monto_mora, nro_cuotas_pagadas, detalle_cuotas) VALUES (?, 1, 'parcial', 9275.00, 441.67, 1, '#2=9275.00')")->execute([$idp]);
+            
+            jsonResponse(['success' => true, 'idprestamo' => $idp, 'message' => 'Prestamo #'.$idp.' creado con 2 pagos separados (con mora)']);
+            break;
         
         // CONTABILIDAD
         case 'plan-cuenta/list':
