@@ -1,7 +1,7 @@
 <?php
 function listCargos() {
     $pdo = getDB();
-    jsonResponse($pdo->query("SELECT * FROM Cargos ORDER BY nombre")->fetchAll());
+    jsonResponse($pdo->query("SELECT * FROM cargos ORDER BY nombre")->fetchAll());
 }
 
 /**

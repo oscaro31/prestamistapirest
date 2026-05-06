@@ -298,13 +298,25 @@ try {
         // DASHBOARD
         case 'dashboard/resumen':
             $authUser = validateToken();
-            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
-            generarNotificaciones();
-            resumen();
+            if ($authUser['rol'] !== 'superadmin') {
+                $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
+                generarNotificaciones();
+            }
+            $pdo = getDB();
+            if ($authUser['rol'] === 'superadmin') {
+                // Dashboard simplificado para superadmin (usa BD universal)
+                $totalEmpresas = (int)$pdo->query("SELECT COUNT(*) FROM empresas")->fetchColumn();
+                $totalUsuarios = (int)$pdo->query("SELECT COUNT(*) FROM usuarios")->fetchColumn();
+                jsonResponse(['empresas'=>$totalEmpresas,'usuarios'=>$totalUsuarios]);
+            } else {
+                resumen();
+            }
             break;
         case 'notificaciones/list':
             $authUser = validateToken();
-            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
+            if ($authUser['rol'] !== 'superadmin') {
+                $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
+            }
             $pdo = getDB();
             $stmt = $pdo->prepare("SELECT n.* FROM notificaciones n WHERE n.idusuario = ? AND n.leida = 0 ORDER BY n.fecha DESC LIMIT 20");
             $stmt->execute([$authUser['idusuario']]);

@@ -10,8 +10,22 @@ function resumen() {
     $pagadoCuotas = (float)$pdo->query("SELECT COALESCE(SUM(IFNULL(MontoPagado, MontoCuota)), 0) FROM PrestamoDetalle WHERE Estado = 'Pagado'")->fetchColumn();
 
     $totalCuotasPendientes = (int)$pdo->query("SELECT COUNT(*) FROM PrestamoDetalle WHERE Estado = 'Pendiente'")->fetchColumn();
-    $totalUsuarios = (int)$pdo->query("SELECT COUNT(*) FROM usuario")->fetchColumn();
-    $usuariosActivos = (int)$pdo->query("SELECT COUNT(*) FROM usuario WHERE idtipoestatususuarios = 1")->fetchColumn();
+    // Usuarios desde BD universal
+    $totalUsuarios = 0;
+    $usuariosActivos = 0;
+    $usuarios = [];
+    try {
+        $uPdo = getDB(); // getDB() sin _EMPRESA_PDO devuelve universal
+        // Forzar universal temporalmente
+        if (isset($GLOBALS['_EMPRESA_PDO'])) {
+            $tmp = $GLOBALS['_EMPRESA_PDO'];
+            unset($GLOBALS['_EMPRESA_PDO']);
+            $totalUsuarios = (int)getDB()->query("SELECT COUNT(*) FROM usuarios")->fetchColumn();
+            $GLOBALS['_EMPRESA_PDO'] = $tmp;
+        } else {
+            $totalUsuarios = (int)getDB()->query("SELECT COUNT(*) FROM usuarios")->fetchColumn();
+        }
+    } catch (Exception $e) {}
     $interesTotal = (float)$pdo->query("SELECT COALESCE(SUM(ValorInteres), 0) FROM Prestamo")->fetchColumn();
     $montoPendiente = (float)$pdo->query("SELECT COALESCE(SUM(MontoCuota), 0) FROM PrestamoDetalle WHERE Estado = 'Pendiente'")->fetchColumn();
 
@@ -63,16 +77,17 @@ function resumen() {
                               ORDER BY pd.FechaPago DESC LIMIT 10");
     $ultimosPagos = $stmtPagos->fetchAll();
 
-    // Usuarios activos (conectados)
-    $stmtU = $pdo->query("SELECT u.nombre, u.login, c.nombre as cargo_nombre,
-                                  u.idtipoestatususuarios, tu.Nombre as status_nombre
-                          FROM usuario u
-                          LEFT JOIN Cargos c ON c.idcargo = u.idcargo
-                          LEFT JOIN Tipoestatususuarios tu ON tu.idtipoestatususuarios = u.idtipoestatususuarios
-                          WHERE u.idtipoestadosusuarios = 1
-                          ORDER BY u.idtipoestatususuarios ASC LIMIT 10");
-    $usuarios = $stmtU->fetchAll();
-
+    // Usuarios activos (conectados) - desde BD universal
+    $usuarios = [];
+    try {
+        if (isset($GLOBALS['_EMPRESA_PDO'])) {
+            $tmp = $GLOBALS['_EMPRESA_PDO'];
+            unset($GLOBALS['_EMPRESA_PDO']);
+            $uStmt = getDB()->query("SELECT u.nombre, u.login, c.nombre as cargo_nombre FROM usuarios u LEFT JOIN cargos c ON c.idcargo = u.idcargo WHERE u.activo = 1 LIMIT 10");
+            $usuarios = $uStmt->fetchAll();
+            $GLOBALS['_EMPRESA_PDO'] = $tmp;
+        }
+    } catch (Exception $e) {}
     // Prestamos por mes (para grafico)
     $stmtMes = $pdo->query("SELECT DATE_FORMAT(FechaCreacion, '%Y-%m') as mes, COUNT(*) as total, COALESCE(SUM(MontoPrestamo), 0) as monto
                             FROM Prestamo
