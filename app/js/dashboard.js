@@ -112,7 +112,7 @@ function ld(){
             for (var i = 0; i < d.Usuarios.length; i++) {
                 var us = d.Usuarios[i];
                 var estado = us.status_nombre || (us.idtipoestatususuarios == 1 ? 'Online' : 'Offline');
-                var badge = (us.idtipoestatususuarios == 1) ? 'bc' : 'bp';
+                var badge = (us.idtipoestatususuarios == 1) ? 'badge bg-success' : 'badge bg-secondary';
                 usuariosBody += '<tr><td>' + (us.nombre || '') + ' (' + (us.login || '') + ')</td><td>' + (us.cargo_nombre || '-') + '</td><td><span class="badge ' + badge + '">' + estado + '</span></td></tr>';
             }
         } else {

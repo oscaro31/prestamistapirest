@@ -50,7 +50,7 @@ function validateToken() {
     }
     $token = $m[1];
     $pdo = getDB();
-    $stmt = $pdo->prepare("SELECT u.idusuario, u.nombre, u.apellido, u.login, u.idcargo, u.activo, u.preferencias, u.avatar, c.nombre as cargo_nombre, u.idtipoestatususuarios
+    $stmt = $pdo->prepare("SELECT u.idusuario, u.nombre, u.apellido, u.login, u.idcargo, u.preferencias, u.avatar, c.nombre as cargo_nombre, u.idtipoestadosusuarios, u.idtipoestatususuarios
                            FROM tokens t 
                            JOIN usuario u ON u.idusuario = t.idusuario
                            LEFT JOIN Cargos c ON c.idcargo = u.idcargo
