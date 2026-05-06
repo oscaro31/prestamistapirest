@@ -60,6 +60,14 @@ try {
             $authUser = validateToken();
             jsonResponse(['user' => $authUser]);
             break;
+        // AUTH logout
+        case 'auth/logout':
+            $authUser = validateToken();
+            $pdo = getDB();
+            $pdo->prepare("UPDATE usuario SET idtipoestatususuarios = 2 WHERE idusuario = ?")->execute([$authUser['idusuario']]);
+            $pdo->prepare("DELETE FROM tokens WHERE idusuario = ?")->execute([$authUser['idusuario']]);
+            jsonResponse(['success' => true]);
+            break;
 
         // USERS list — cualquiera autenticado
         case 'users/list':

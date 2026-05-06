@@ -111,8 +111,8 @@ function ld(){
         if (d.Usuarios && d.Usuarios.length > 0) {
             for (var i = 0; i < d.Usuarios.length; i++) {
                 var us = d.Usuarios[i];
-                var estado = us.activo ? 'Activo' : 'Inactivo';
-                var badge = us.activo ? 'bc' : 'bp';
+                var estado = us.status_nombre || (us.idtipoestatususuarios == 1 ? 'Online' : 'Offline');
+                var badge = (us.idtipoestatususuarios == 1) ? 'bc' : 'bp';
                 usuariosBody += '<tr><td>' + (us.nombre || '') + ' (' + (us.login || '') + ')</td><td>' + (us.cargo_nombre || '-') + '</td><td><span class="badge ' + badge + '">' + estado + '</span></td></tr>';
             }
         } else {

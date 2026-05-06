@@ -50,7 +50,7 @@ function validateToken() {
     }
     $token = $m[1];
     $pdo = getDB();
-    $stmt = $pdo->prepare("SELECT u.idusuario, u.nombre, u.apellido, u.login, u.idcargo, u.activo, u.preferencias, u.avatar, c.nombre as cargo_nombre
+    $stmt = $pdo->prepare("SELECT u.idusuario, u.nombre, u.apellido, u.login, u.idcargo, u.activo, u.preferencias, u.avatar, c.nombre as cargo_nombre, u.idtipoestatususuarios
                            FROM tokens t 
                            JOIN usuario u ON u.idusuario = t.idusuario
                            LEFT JOIN Cargos c ON c.idcargo = u.idcargo
@@ -58,9 +58,11 @@ function validateToken() {
     $stmt->execute([$token]);
     $user = $stmt->fetch();
     if (!$user) {
+        // Marcar como Offline cuando expira el token
+        $pdo->prepare("UPDATE usuario SET idtipoestatususuarios = 2 WHERE idusuario = (SELECT idusuario FROM tokens WHERE token = ? LIMIT 1)")->execute([$token]);
         jsonError('Token inválido o expirado', 401);
     }
-    if (!$user['activo']) {
+    if ($user['idtipoestadosusuarios'] != 1) {
         jsonError('Usuario desactivado', 403);
     }
     return $user;

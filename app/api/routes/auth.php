@@ -91,7 +91,8 @@ function login($body) {
     $stmt = $pdo->prepare("INSERT INTO tokens (idusuario, token, expires_at) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL ? DAY))");
     $stmt->execute([$user['idusuario'], $token, $expireDays]);
 
-    $pdo->prepare("UPDATE usuario SET ultimo_acceso = NOW() WHERE idusuario = ?")->execute([$user['idusuario']]);
+    // Mark user as Online
+    $pdo->prepare("UPDATE usuario SET idtipoestatususuarios = 1, ultimo_acceso = NOW() WHERE idusuario = ?")->execute([$user['idusuario']]);
 
     jsonResponse([
         'token' => $token,

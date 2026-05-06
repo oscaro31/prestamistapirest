@@ -34,8 +34,8 @@ function createUser($body) {
     if ($stmt->fetchColumn() > 0) jsonError('El login ya existe');
 
     $claveHash = password_hash($clave, PASSWORD_BCRYPT);
-    $stmt = $pdo->prepare("INSERT INTO usuario (nombre, apellido, login, clave, email, idcargo, idtipodocumento, num_documento, telefono, direccion, idtipoestadosusuarios, idtipoestatususuarios, activo)
-                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 1, 1)");
+    $stmt = $pdo->prepare("INSERT INTO usuario (nombre, apellido, login, clave, email, idcargo, idtipodocumento, num_documento, telefono, direccion, idtipoestadosusuarios, idtipoestatususuarios)
+                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 2)");
     $stmt->execute([$nombre, $apellido, $login, $claveHash, $email, $idcargo ?: null, $idtipodocumento, $nrodocumento ?: null, $telefono ?: null, $direccion ?: null]);
     jsonResponse(['idusuario' => (int)$pdo->lastInsertId()], 201);
 }
@@ -69,7 +69,7 @@ function toggleUser($body) {
     if (!$idusuario) jsonError('idusuario requerido');
 
     $pdo = getDB();
-    $pdo->prepare("UPDATE usuario SET activo = NOT activo WHERE idusuario = ?")->execute([$idusuario]);
+    $pdo->prepare("UPDATE usuario SET idtipoestadosusuarios = CASE WHEN idtipoestadosusuarios = 1 THEN 2 ELSE 1 END WHERE idusuario = ?")->execute([$idusuario]);
     $pdo->prepare("DELETE FROM tokens WHERE idusuario = ?")->execute([$idusuario]);
     jsonResponse(['success' => true]);
 }

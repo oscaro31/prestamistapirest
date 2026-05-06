@@ -332,6 +332,8 @@ function ea(){
 
 // Logout
 function cs(){
+    // Notificar al backend que cierra sesion
+    x('POST','auth/logout',{},function(){});
     tok=null;user=null;
     localStorage.removeItem('prestamist_token');
     localStorage.removeItem('prestamist_user');

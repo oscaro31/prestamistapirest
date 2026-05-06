@@ -11,7 +11,7 @@ function resumen() {
 
     $totalCuotasPendientes = (int)$pdo->query("SELECT COUNT(*) FROM PrestamoDetalle WHERE Estado = 'Pendiente'")->fetchColumn();
     $totalUsuarios = (int)$pdo->query("SELECT COUNT(*) FROM usuario")->fetchColumn();
-    $usuariosActivos = (int)$pdo->query("SELECT COUNT(*) FROM usuario WHERE activo = 1")->fetchColumn();
+    $usuariosActivos = (int)$pdo->query("SELECT COUNT(*) FROM usuario WHERE idtipoestatususuarios = 1")->fetchColumn();
     $interesTotal = (float)$pdo->query("SELECT COALESCE(SUM(ValorInteres), 0) FROM Prestamo")->fetchColumn();
     $montoPendiente = (float)$pdo->query("SELECT COALESCE(SUM(MontoCuota), 0) FROM PrestamoDetalle WHERE Estado = 'Pendiente'")->fetchColumn();
 
@@ -63,11 +63,14 @@ function resumen() {
                               ORDER BY pd.FechaPago DESC LIMIT 10");
     $ultimosPagos = $stmtPagos->fetchAll();
 
-    // Usuarios activos
-    $stmtU = $pdo->query("SELECT u.nombre, u.login, c.nombre as cargo_nombre, u.activo
+    // Usuarios activos (conectados)
+    $stmtU = $pdo->query("SELECT u.nombre, u.login, c.nombre as cargo_nombre,
+                                  u.idtipoestatususuarios, tu.Nombre as status_nombre
                           FROM usuario u
                           LEFT JOIN Cargos c ON c.idcargo = u.idcargo
-                          ORDER BY u.activo DESC LIMIT 10");
+                          LEFT JOIN Tipoestatususuarios tu ON tu.idtipoestatususuarios = u.idtipoestatususuarios
+                          WHERE u.idtipoestadosusuarios = 1
+                          ORDER BY u.idtipoestatususuarios ASC LIMIT 10");
     $usuarios = $stmtU->fetchAll();
 
     // Prestamos por mes (para grafico)
