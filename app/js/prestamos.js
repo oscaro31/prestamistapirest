@@ -142,7 +142,7 @@ function calcularPrestamo() {
     var nc = parseInt(document.getElementById('npCuotas').value) || 0;
     var tasa = parseFloat(document.getElementById('npInteres').value) || 0;
     if (!cl || !mt || !nc) {
-        document.getElementById('npResumen').innerHTML = '<span class="text-muted">Complete campos</span>';
+        document.getElementById('npResumen').innerHTML = '<span class="text-muted">'+__('completar')+'</span>';
         return;
     }
     var t = mt + (mt * tasa / 100 * nc / 12);
