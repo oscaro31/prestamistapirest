@@ -95,10 +95,11 @@ function validateToken() {
     }
     $token = $m[1];
     $pdo = getDB();
-    $stmt = $pdo->prepare("SELECT u.idusuario, u.idempresa, u.nombre, u.apellido, u.login, u.rol, u.idcargo, e.nombre as empresa_nombre, e.slug as empresa_slug
+    $stmt = $pdo->prepare("SELECT u.idusuario, u.idempresa, u.nombre, u.apellido, u.login, u.email, u.rol, u.idcargo, c.nombre as cargo_nombre, e.nombre as empresa_nombre, e.slug as empresa_slug
                            FROM tokens t 
                            JOIN usuarios u ON u.idusuario = t.idusuario
                            JOIN empresas e ON e.idempresa = u.idempresa
+                           LEFT JOIN cargos c ON c.idcargo = u.idcargo
                            WHERE t.token = ? AND (t.expires_at IS NULL OR t.expires_at > NOW()) AND u.activo = 1");
     $stmt->execute([$token]);
     $user = $stmt->fetch();
