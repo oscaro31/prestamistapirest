@@ -205,7 +205,7 @@ function vp(id) {
                 var est = c.Estado || 'Pendiente';
                 var badge = est === 'Pagado' ? 'bg-success' : 'bg-secondary';
                 var mora = c.MoraCalculada ? parseFloat(c.MoraCalculada) : 0;
-                tab += '<tr><td>' + num + '</td><td>' + f + '</td><td>RD$ ' + fm(m) + '</td><td>RD$ ' + fm(parseFloat(c.MontoPagado||0)) + '</td><td>RD$ ' + fm(Math.max(0, parseFloat(m) - parseFloat(c.MontoPagado||0))) + '</td><td><span class="badge ' + badge + '">' + (__estado(est)||est) + '</span></td><td>' + (est !== 'Pagado' ? '<input type="checkbox" class="vp-check" value="' + c.IdPrestamoDetalle + '" data-num="' + num + '" data-mora="' + (c.MoraCalculada?parseFloat(c.MoraCalculada):0) + '">' : '') + '</td></tr>';
+                tab += '<tr><td>' + num + '</td><td>' + f + '</td><td>RD$ ' + fm(m) + '</td><td>RD$ ' + fm(parseFloat(c.MontoPagado||0)) + '</td><td>RD$ ' + fm(Math.max(0, parseFloat(m) - parseFloat(c.MontoPagado||0))) + '</td><td>RD$ ' + fm(mora) + '</td><td><span class="badge ' + badge + '">' + (__estado(est)||est) + '</span></td><td>' + (est !== 'Pagado' ? '<input type="checkbox" class="vp-check" value="' + c.IdPrestamoDetalle + '" data-num="' + num + '" data-mora="' + mora + '">' : '') + '</td></tr>';
             }
         } else {
             tab = '<tr><td colspan="7" class="text-muted text-center">Sin cuotas</td></tr>';
