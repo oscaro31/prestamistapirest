@@ -40,10 +40,11 @@ function ld(){
                 var cliente = (v.cliente_nombre || '') + ' ' + (v.cliente_apellido || '');
                 var monto = 'RD$' + (v.MontoCuota || '0');
                 var fecha = v.FechaPago ? v.FechaPago.substring(0, 10) : '-';
-                vbody += '<tr><td>' + cliente + '</td><td>' + monto + '</td><td>' + fecha + '</td></tr>';
+                var cuotaNum = v.NumeroCuota || v.numerocuota || '';
+                vbody += '<tr><td>' + cliente + '</td><td>' + cuotaNum + '</td><td>' + monto + '</td><td>' + fecha + '</td></tr>';
             }
         } else {
-            vbody = '<tr><td colspan="3" class="text-muted text-center">Sin datos</td></tr>';
+            vbody = '<tr><td colspan="4" class="text-muted text-center">Sin datos</td></tr>';
         }
         var vbodyEl = document.getElementById('vbody');
         if (vbodyEl) vbodyEl.innerHTML = vbody;
@@ -58,10 +59,11 @@ function ld(){
                 var cliente = (q.cliente_nombre || '') + ' ' + (q.cliente_apellido || '');
                 var monto = 'RD$' + (q.MontoCuota || '0');
                 var fecha = q.FechaPago ? q.FechaPago.substring(0, 10) : '-';
-                qbody += '<tr><td>' + cliente + '</td><td>' + monto + '</td><td>' + fecha + '</td></tr>';
+                var cuotaNum = q.NumeroCuota || q.numerocuota || '';
+                qbody += '<tr><td>' + cliente + '</td><td>' + cuotaNum + '</td><td>' + monto + '</td><td>' + fecha + '</td></tr>';
             }
         } else {
-            qbody = '<tr><td colspan="3" class="text-muted text-center">Sin datos</td></tr>';
+            qbody = '<tr><td colspan="4" class="text-muted text-center">Sin datos</td></tr>';
         }
         var qbodyEl = document.getElementById('qbody');
         if (qbodyEl) qbodyEl.innerHTML = qbody;
