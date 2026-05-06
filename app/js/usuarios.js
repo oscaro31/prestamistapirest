@@ -75,7 +75,7 @@ function ppRenderUsuarios(){
     var h='';
     for(var i=0;i<page.length;i++){
         var u=page[i];
-        h+='<tr><td><strong>'+u.login+'</strong></td><td>'+u.nombre+' '+(u.apellido||'')+'</td><td>'+(u.cargo_nombre||'-')+'</td><td><span class="badge '+(u.activo?'bg-success':'bg-secondary')+'">'+(u.activo?'Activo':'Inactivo')+'</span></td><td><button class="btn btn-sm btn-outline-warning" onclick="tu('+u.idusuario+')"><i class="bi bi-'+(u.activo?'pause':'play')+'"></i></button> <button class="btn btn-sm btn-outline-primary" onclick="cp('+u.idusuario+')"><i class="bi bi-key"></i></button> <button class="btn btn-sm btn-outline-info" onclick="eu('+u.idusuario+')"><i class="bi bi-pencil"></i></button>'+(u.idcargo==3?' <button class="btn btn-sm btn-outline-success" onclick="asignarClientes('+u.idusuario+',\''+u.nombre+' '+(u.apellido||'')+'\')"><i class="bi bi-people"></i></button>':'')+'</td></tr>';
+        h+='<tr><td><strong>'+u.login+'</strong></td><td>'+u.nombre+' '+(u.apellido||'')+'</td><td>'+(u.cargo_nombre||'-')+'</td><td><span class="badge '+(u.idtipoestadosusuarios==1?'bg-success':'bg-secondary')+'">'+(u.idtipoestadosusuarios==1?'Activo':'Bloqueado')+'</span></td><td><button class="btn btn-sm btn-outline-warning" onclick="tu('+u.idusuario+')"><i class="bi bi-'+(u.idtipoestadosusuarios==1?'pause':'play')+'"></i></button> <button class="btn btn-sm btn-outline-primary" onclick="cp('+u.idusuario+')"><i class="bi bi-key"></i></button> <button class="btn btn-sm btn-outline-info" onclick="eu('+u.idusuario+')"><i class="bi bi-pencil"></i></button>'+(u.idcargo==3?' <button class="btn btn-sm btn-outline-success" onclick="asignarClientes('+u.idusuario+',\''+u.nombre+' '+(u.apellido||'')+'\')"><i class="bi bi-people"></i></button>':'')+'</td></tr>';
     }
     document.getElementById('ubody2').innerHTML=h||'<tr><td colspan="5" class="text-muted text-center">'+__('sin_datos')+'</td></tr>';
     aplicarIdioma();
@@ -186,7 +186,7 @@ function guardarUsuario(){
 function tu(id){
     g('users/list',function(e,d){
         var nom='';var act=false;var nomCompleto='';
-        if(!e&&d)for(var i=0;i<d.length;i++){if(d[i].idusuario===id){nom=d[i].nombre+' '+(d[i].apellido||'');nom=nom.trim();act=d[i].activo;break;}}
+        if(!e&&d)for(var i=0;i<d.length;i++){if(d[i].idusuario===id){nom=d[i].nombre+' '+(d[i].apellido||'');nom=nom.trim();act=d[i].idtipoestadosusuarios==1;break;}}
         var acc=act?'desactivar':'activar';
         var btn=document.getElementById('mcBtnConfirm');
         if(btn)btn.innerHTML='<i class="bi bi-'+(act?'pause':'play')+'"></i> '+(act?'Desactivar':'Activar');
