@@ -530,6 +530,14 @@ function sp(pg){
         if(sub&&sub.classList)sub.classList.remove('show');
     }
     document.querySelectorAll('.pg').forEach(function(s){s.classList.remove('act');});
+    // Inyectar pagina SA si no existe
+    if(pg.indexOf('sa-')===0 && !document.getElementById('p-'+pg)){
+        var content=document.getElementById('content');
+        if(!content)return;
+        if(pg==='sa-dashboard') content.insertAdjacentHTML('beforeend', saDashboardHTML());
+        else if(pg==='sa-empresas') content.insertAdjacentHTML('beforeend', saEmpresasHTML());
+        else if(pg==='sa-usuarios') content.insertAdjacentHTML('beforeend', saUsuariosHTML());
+    }
     var pgTarget=document.getElementById('p-'+pg);
     if(!pgTarget)return;
     pgTarget.classList.add('act');
