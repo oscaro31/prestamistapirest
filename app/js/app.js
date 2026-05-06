@@ -610,7 +610,7 @@ function imprimirRecibo(c,formato){
     }
     var html='<html><head><title>Recibo</title><style>'+css+'</style></head><body>';
     if(formato==='boleta'){
-        var lines=c.split('\\n');
+        var lines=c.split('\n');
         html+='<div class="recibo">';
         html+='<h1>'+lines[0].trim()+'</h1>';
         html+='<h2>'+lines[1].trim()+'</h2>';
