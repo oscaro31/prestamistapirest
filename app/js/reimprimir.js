@@ -30,11 +30,11 @@ function buscar(){
         if(e){document.getElementById('rrbody').innerHTML='<tr><td colspan="7" class="text-danger">'+e+'</td></tr>';return;}
         _rrData=d||[];
         _rrPage=0;
-        ppRender();
+        rrRender();
     });
 }
 
-function ppRender(){
+function rrRender(){
     var d=_rrData;
     if(!d||d.length===0){
         document.getElementById('rrbody').innerHTML='<tr><td colspan="7" class="text-muted text-center">'+__('sin_datos')+'</td></tr>';
@@ -55,12 +55,12 @@ function ppRender(){
     }
     document.getElementById('rrbody').innerHTML=h;
     var totalPages=Math.ceil(total/_rrPageSize)||1;
-    var pgHtml='<div class="d-flex justify-content-between align-items-center mt-2 px-2"><div class="text-muted small">'+__('mostrando')+' '+Math.min(from+1,total)+'-'+to+' '+__('de')+' '+total+'</div><div class="d-flex align-items-center gap-1"><select class="form-select form-select-sm" style="width:auto" onchange="_rrPageSize=parseInt(this.value);_rrPage=0;ppRender()">';
+    var pgHtml='<div class="d-flex justify-content-between align-items-center mt-2 px-2"><div class="text-muted small">'+__('mostrando')+' '+Math.min(from+1,total)+'-'+to+' '+__('de')+' '+total+'</div><div class="d-flex align-items-center gap-1"><select class="form-select form-select-sm" style="width:auto" onchange="_rrPageSize=parseInt(this.value);_rrPage=0;rrRender()">';
     [10,25,50,100].forEach(function(s){pgHtml+='<option value="'+s+'"'+(_rrPageSize===s?' selected':'')+'>'+s+'</option>';});
     pgHtml+='<option value="0"'+(_rrPageSize===0?' selected':'')+'>'+__('todos')+'</option></select>';
-    pgHtml+='<button class="btn btn-sm btn-outline-secondary" onclick="_rrPage=Math.max(0,_rrPage-1);ppRender()" '+(from<=0?'disabled':'')+'><i class="bi bi-chevron-left"></i></button>';
+    pgHtml+='<button class="btn btn-sm btn-outline-secondary" onclick="_rrPage=Math.max(0,_rrPage-1);rrRender()" '+(from<=0?'disabled':'')+'><i class="bi bi-chevron-left"></i></button>';
     pgHtml+='<span class="small mx-1">'+(_rrPage+1)+'/'+totalPages+'</span>';
-    pgHtml+='<button class="btn btn-sm btn-outline-secondary" onclick="_rrPage=Math.min('+(totalPages-1)+',_rrPage+1);ppRender()" '+(to>=total?'disabled':'')+'><i class="bi bi-chevron-right"></i></button>';
+    pgHtml+='<button class="btn btn-sm btn-outline-secondary" onclick="_rrPage=Math.min('+(totalPages-1)+',_rrPage+1);rrRender()" '+(to>=total?'disabled':'')+'><i class="bi bi-chevron-right"></i></button>';
     pgHtml+='</div></div>';
     document.getElementById('rrPagination').innerHTML=pgHtml;
 }
