@@ -37,7 +37,7 @@
 <nav class="sb" id="sb" style="width:250px">
 <div class="sh"><img src="images/logo.jpg"><div><h6>Prestamist</h6><small id="srole"></small></div></div>
 <div class="ni act" data-p="dashboard" onclick="sp('dashboard')"><i class="bi bi-speedometer2"></i><span class="nt" data-i18n="dashboard">Dashboard</span></div>
-<div class="ni" onclick="var ns=this.nextElementSibling;var r=this.getBoundingClientRect();ns.style.top=r.top+'px';ns.style.left=r.right+5+'px';ns.style.display=ns.style.display=='block'?'none':'block'"><i class="bi bi-cash-stack"></i><span class="nt" data-i18n="prestamos">Prestamos</span> <i class="bi bi-chevron-down" style="margin-left:auto;font-size:.7rem"></i></div>
+<div class="ni" data-p="prestamos" onclick="var ns=this.nextElementSibling;var r=this.getBoundingClientRect();ns.style.top=r.top+'px';ns.style.left=r.right+5+'px';ns.style.display=ns.style.display=='block'?'none':'block'"><i class="bi bi-cash-stack"></i><span class="nt" data-i18n="prestamos">Prestamos</span> <i class="bi bi-chevron-down" style="margin-left:auto;font-size:.7rem"></i></div>
 <div class="n-sub" style="display:none">
 <div class="ni" data-p="prestamos" onclick="sp('prestamos')"><i class="bi bi-journal-text"></i><span class="nt" data-i18n="registro">Registro</span></div>
 <div class="ni" data-p="reimprimir" onclick="sp('reimprimir')"><i class="bi bi-printer"></i><span class="nt" data-i18n="historial">Historial</span></div>
@@ -45,14 +45,14 @@
 
 <div class="ni" data-p="clientes" onclick="sp('clientes')"><i class="bi bi-people"></i><span class="nt" data-i18n="clientes">Clientes</span></div>
 <div class="ni" data-p="monedas" onclick="sp('monedas')"><i class="bi bi-currency-exchange"></i><span class="nt" data-i18n="monedas">Monedas</span></div>
-<div class="ni" onclick="var ns=this.nextElementSibling;var r=this.getBoundingClientRect();ns.style.top=r.top+'px';ns.style.left=r.right+5+'px';ns.style.display=ns.style.display=='block'?'none':'block'"><i class="bi bi-book"></i><span class="nt" data-i18n="contabilidad">Contabilidad</span> <i class="bi bi-chevron-down" style="margin-left:auto;font-size:.7rem"></i></div>
+<div class="ni" data-p="plan-cuentas" onclick="var ns=this.nextElementSibling;var r=this.getBoundingClientRect();ns.style.top=r.top+'px';ns.style.left=r.right+5+'px';ns.style.display=ns.style.display=='block'?'none':'block'"><i class="bi bi-book"></i><span class="nt" data-i18n="contabilidad">Contabilidad</span> <i class="bi bi-chevron-down" style="margin-left:auto;font-size:.7rem"></i></div>
 <div class="n-sub" style="display:none">
 <div class="ni" data-p="plan-cuentas" onclick="sp('plan-cuentas')"><i class="bi bi-list-ul"></i><span class="nt" data-i18n="plan_cuentas">Plan de Cuentas</span></div>
 <div class="ni" data-p="asientos" onclick="sp('asientos')"><i class="bi bi-journal-richtext"></i><span class="nt" data-i18n="asientos_contables">Asientos</span></div>
 <div class="ni" data-p="config-contable" onclick="sp('config-contable')"><i class="bi bi-gear-wide-connected"></i><span class="nt" data-i18n="config_contable">Config. Contable</span></div>
 <div class="ni" data-p="reportes-contables" onclick="sp('reportes-contables')"><i class="bi bi-bar-chart-line"></i><span class="nt" data-i18n="reportes_contables">Reportes</span></div>
 </div>
-<div class="ni" onclick="var ns=this.nextElementSibling;var r=this.getBoundingClientRect();ns.style.top=r.top+'px';ns.style.left=r.right+5+'px';ns.style.display=ns.style.display=='block'?'none':'block'"><i class="bi bi-gear"></i><span class="nt" data-i18n="configuracion">Configuracion</span> <i class="bi bi-chevron-down" style="margin-left:auto;font-size:.7rem"></i></div>
+<div class="ni" data-p="config" onclick="var ns=this.nextElementSibling;var r=this.getBoundingClientRect();ns.style.top=r.top+'px';ns.style.left=r.right+5+'px';ns.style.display=ns.style.display=='block'?'none':'block'"><i class="bi bi-gear"></i><span class="nt" data-i18n="configuracion">Configuracion</span> <i class="bi bi-chevron-down" style="margin-left:auto;font-size:.7rem"></i></div>
 <div class="n-sub" style="display:none">
 <div class="ni" data-p="usuarios" onclick="sp('usuarios')"><i class="bi bi-person-gear"></i><span class="nt" data-i18n="usuarios">Usuarios</span></div>
 <div class="ni" data-p="config" onclick="sp('config')"><i class="bi bi-sliders"></i><span class="nt" data-i18n="preferencias">Preferencias</span></div>
