@@ -4,6 +4,44 @@ var _ppPageUsr=0,_ppPageSizeUsr=10,_ppSortColUsr='',_ppSortDirUsr='asc';
 function formatearDocMu(){var inp=document.getElementById('muDocumento');var td=document.getElementById('muTipoDoc');if(td.value==='3'){var v=inp.value.replace(/\D/g,'').substring(0,9);if(v.length>=3&&v.length<8)v=v.substring(0,2)+'-'+v.substring(2);else if(v.length>=8)v=v.substring(0,2)+'-'+v.substring(2,7)+'-'+v.substring(7,9);inp.value=v;}else{var v=inp.value.replace(/\D/g,'').substring(0,11);if(v.length>=3&&v.length<10)v=v.substring(0,3)+'-'+v.substring(3);else if(v.length>=10)v=v.substring(0,3)+'-'+v.substring(3,10)+'-'+v.substring(10,11);inp.value=v;}}
 function formatearTelMu(){var inp=document.getElementById('muTelefono');var v=inp.value.replace(/\D/g,'').substring(0,10);if(v.length>=3&&v.length<6)v=v.substring(0,3)+'-'+v.substring(3);else if(v.length>=6&&v.length<10)v=v.substring(0,3)+'-'+v.substring(3,6)+'-'+v.substring(6);else if(v.length>=10)v=v.substring(0,3)+'-'+v.substring(3,6)+'-'+v.substring(6,10);inp.value=v;}
 
+var _permisosDisponibles = [];
+var _permisosSeleccionados = {};
+
+function cargarPermisosCargo(idcargo) {
+    var group = document.getElementById('muPermisosGroup');
+    var list = document.getElementById('muPermisosList');
+    if (!group || !list) return;
+    // Admin (idcargo=1) tiene todos los permisos, no mostrar la sección
+    if (parseInt(idcargo) === 1) {
+        group.style.display = 'none';
+        _permisosSeleccionados = {};
+        return;
+    }
+    g('cargos/permisos?idcargo=' + idcargo, function(e, d) {
+        if (e || !d || !d.permisos) {
+            group.style.display = 'none';
+            return;
+        }
+        group.style.display = 'block';
+        var perms = d.permisos;
+        var keys = Object.keys(perms);
+        if (!keys.length) { group.style.display = 'none'; return; }
+        list.innerHTML = '';
+        keys.forEach(function(k) {
+            var checked = perms[k] ? 'checked' : '';
+            list.innerHTML += '<div class="form-check form-check-inline"><input class="form-check-input permiso-check" type="checkbox" id="perm_'+k+'" value="'+k+'" '+checked+' onchange="_permisosSeleccionados[this.value]=this.checked"><label class="form-check-label" for="perm_'+k+'">'+k.charAt(0).toUpperCase()+k.slice(1)+'</label></div>';
+            _permisosSeleccionados[k] = perms[k];
+        });
+    });
+}
+
+function recogerPermisos() {
+    var perms = {};
+    var checks = document.querySelectorAll('.permiso-check');
+    checks.forEach(function(c) { perms[c.value] = c.checked; });
+    return perms;
+}
+
 function lu(){
     g('users/list',function(e,d){
         if(e){var ubody=document.getElementById('ubody2');if(ubody)ubody.innerHTML='<tr><td colspan="5" class="text-danger">'+e+'</td></tr>';return;}
@@ -104,6 +142,15 @@ function guardarUsuario(){
     var data={nombre:n,apellido:a,login:l,idcargo:parseInt(r),num_documento:nd,telefono:t,email:e,direccion:d};
     if(td)data.idtipodocumento=parseInt(td);
     if(c)data.clave=c;
+    var terminar = function() {
+        // Guardar permisos del cargo si no es admin
+        if (parseInt(r) !== 1) {
+            var perms = recogerPermisos();
+            p('cargos/permisos/save', {idcargo: parseInt(r), permisos: perms}, function(e2) {
+                // No mostrar error si fallan los permisos
+            });
+        }
+    };
     if(euId>0){
         data.idusuario=euId;
         p('users/update',data,function(e){
@@ -111,6 +158,7 @@ function guardarUsuario(){
             else{
                 bootstrap.Modal.getInstance(document.getElementById('modalUsuario')).hide();
                 mostrarToast('Usuario '+l+' actualizado','success');
+                terminar();
                 lu();
             }
         });
@@ -120,6 +168,7 @@ function guardarUsuario(){
             else{
                 bootstrap.Modal.getInstance(document.getElementById('modalUsuario')).hide();
                 mostrarToast('Usuario '+l+' creado','success');
+                terminar();
                 lu();
             }
         });

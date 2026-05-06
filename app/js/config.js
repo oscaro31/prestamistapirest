@@ -172,7 +172,7 @@ nuevo_prestamo:'Nouveau Pr\u00EAt',seleccionar:'S\u00E9lectionner...',nro_cuotas
 nuevo_prestamo:'Nouveau Prêt',nuevo_cliente:'Nouveau Client',nuevo_usuario:'Nouvel Utilisateur',nueva_moneda:'Nouvelle Devise',limite_ayuda:'Laisser vide pour aucune limite',limite_prestamos_activos:'Prêt Actifs Max.',limite_prestamos_activos_ayuda:'Maximum de prêts actifs simultanés',seleccionar:'Sélectionner...',nro_cuotas:'Nb Échéances',moneda_default:'Monnaie par Défaut',mora_activa:'Pénalité Active',porcentaje_mora:'% Pénalité/Jour',dias_gracia:'Jours de Grâce',limite_prestamo:'Montant Max Prêt',tipo_mora:'Type Pénalité',formato_recibo:'Format Reçu',mostrar_ganancias:'Afficher Revenus',total_debe:'Total Débit',total_haber:'Total Crédit',diferencia:'Différence',detalles:'Détails',descripcion:'Description',
 tipo_doc:'Type Document',simbolo:'Symbole',datos_perfil:'Donn\u00E9es du Profil',
 num_documento:'N\u00B0 Document',recordarme:'Se souvenir',modulo:'Module',
-sidebar_compacto:'Barre Lat\u00E9rale Compacte',cambiar:'Changer',semanal:'Hebdomadaire',
+sidebar_compacto:'Barre Lat\u00E9rale Compacte',cambiar:'Changer',permisos:'Autorisations',semanal:'Hebdomadaire',
 quincenal:'Bimensuel',mensual:'Mensuel',plazo:'Dur\u00E9e'
 };
 
@@ -220,7 +220,7 @@ vence:'Vence',inicio_pago:'In\u00EDcio Pagamento',nuevo_prestamo:'Novo Empr\u00E
 vence:'Vence',inicio_pago:'Início Pagamento',nuevo_prestamo:'Novo Empréstimo',nuevo_cliente:'Novo Cliente',nuevo_usuario:'Novo Usuário',nueva_moneda:'Nova Moeda',limite_ayuda:'Deixe vazio para sem limite',limite_prestamos_activos:'Empréstimos Ativos Máx.',limite_prestamos_activos_ayuda:'Máximo de empréstimos ativos simultâneos',moneda_default:'Moeda Padrão',mora_activa:'Multa Ativa',porcentaje_mora:'% Multa Diária',dias_gracia:'Dias de Graça',limite_prestamo:'Limite Máx Empréstimo',tipo_mora:'Tipo de Multa',formato_recibo:'Formato Recibo',mostrar_ganancias:'Mostrar Ganhos',total_debe:'Total Débito',total_haber:'Total Crédito',diferencia:'Diferença',detalles:'Detalhes',descripcion:'Descrição',
 datos:'Dados',amortizacion:'Amortiza\u00E7\u00E3o',ninguno:'Nenhum',tipo_doc:'Tipo Documento',
 simbolo:'S\u00EDmbolo',datos_perfil:'Dados do Perfil',num_documento:'N\u00B0 Documento',
-recordarme:'Lembrar-me',detalles:'Detalhes',sidebar_compacto:'Sidebar Compacto',cambiar:'Alterar',
+recordarme:'Lembrar-me',detalles:'Detalhes',sidebar_compacto:'Sidebar Compacto',cambiar:'Alterar',permisos:'Permiss\u00F5es',
 semanal:'Semanal',quincenal:'Quinzenal',mensual:'Mensal',plazo:'Prazo'
 };
 

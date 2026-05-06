@@ -213,6 +213,18 @@ try {
             $authUser = validateToken();
             getCargoPermissions();
             break;
+        case 'cargos/permisos':
+            $authUser = validateToken();
+            requirePermission('config');
+            require __DIR__ . '/routes/setup.php';
+            listPermisos();
+            break;
+        case 'cargos/permisos/save':
+            $authUser = validateToken();
+            requirePermission('config');
+            require __DIR__ . '/routes/setup.php';
+            savePermisos($body);
+            break;
         case 'tipos/documento':
             $authUser = validateToken();
             $pdo = getDB();
