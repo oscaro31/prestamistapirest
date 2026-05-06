@@ -498,7 +498,12 @@ function aplicarPermisosDesde(items){
 }
 function sp(pg){
     // Verificar permiso del módulo usando los permisos cargados
+    var restringidas=['monedas','usuarios','config'];
     if(_permisosCache && _permisosCache.permisos && _permisosCache.permisos[pg]===false){
+        mostrarToast('Permiso denegado','warning');
+        pg='dashboard';
+    } else if(user && user.idcargo && parseInt(user.idcargo)>1 && restringidas.indexOf(pg)>=0){
+        // Fallback por si los permisos no están cargados
         mostrarToast('Permiso denegado','warning');
         pg='dashboard';
     }
@@ -791,7 +796,14 @@ function injectReportesContablesHTML(){
 window._initApp=function(){
     var last=localStorage.getItem('lastPage');
     injectDashboardHTML();
-    if(last && document.getElementById('p-'+last)) sp(last);
+    // Verificar si la última página está permitida según el cargo
+    if(last && document.getElementById('p-'+last)){
+        var restringidas=['usuarios','config','monedas'];
+        if(user && user.idcargo && parseInt(user.idcargo)>1 && restringidas.indexOf(last)>=0){
+            last='dashboard';
+        }
+        sp(last);
+    }
     else if(document.getElementById('p-dashboard')) sp('dashboard');
     else sp('dashboard');
 };
