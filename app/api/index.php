@@ -314,9 +314,12 @@ try {
             break;
         case 'notificaciones/list':
             $authUser = validateToken();
-            if ($authUser['rol'] !== 'superadmin') {
-                $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
+            // Superadmin no tiene notificaciones
+            if ($authUser['rol'] === 'superadmin') {
+                jsonResponse([]);
+                break;
             }
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             $pdo = getDB();
             $stmt = $pdo->prepare("SELECT n.* FROM notificaciones n WHERE n.idusuario = ? AND n.leida = 0 ORDER BY n.fecha DESC LIMIT 20");
             $stmt->execute([$authUser['idusuario']]);
