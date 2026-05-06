@@ -347,15 +347,18 @@ function pagarCuotas(id) {
                 for (var di = 0; di < (p.cuotas||[]).length; di++) {
                     if (parseInt(p.cuotas[di].IdPrestamoDetalle) === parseInt(_vpIds[ci])) {
                         var montoCuo = 0;
+                        var moraCuo = parseFloat(p.cuotas[di].MoraCalculada||0);
                         if (_pagarTodo) {
-                            montoCuo = parseFloat(p.cuotas[di].MontoCuota||0);
+                            montoCuo = parseFloat(p.cuotas[di].MontoCuota||0) + moraCuo;
                         } else if (_montosPagar && _montosPagar.length > ci) {
                             montoCuo = parseFloat(_montosPagar[ci]||0);
                         } else {
                             montoCuo = 0;
                         }
                         totalRec += montoCuo;
-                        paidNumbers.push({num: p.cuotas[di].NroCuota||p.cuotas[di].numero_cuota||(di+1), monto: fms(montoCuo)});
+                        var txtMonto = fms(montoCuo);
+                        if (moraCuo > 0) txtMonto += ' (mora: ' + fms(moraCuo) + ')';
+                        paidNumbers.push({num: p.cuotas[di].NroCuota||p.cuotas[di].numero_cuota||(di+1), monto: txtMonto});
                     }
                 }
             }
