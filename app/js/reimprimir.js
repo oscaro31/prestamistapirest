@@ -22,7 +22,7 @@ function buscar(){
             }
         }
     });
-    var q='?t='+Date.now();
+    var q='&_='+Date.now();
     var cl=document.getElementById('rrCliente');
     if(cl&&cl.value)q+='&idprestamo='+cl.value;
     var ds=document.getElementById('rrDesde');
