@@ -75,7 +75,7 @@ function ppRenderUsuarios(){
     var h='';
     for(var i=0;i<page.length;i++){
         var u=page[i];
-        h+='<tr><td><strong>'+u.login+'</strong></td><td>'+u.nombre+' '+(u.apellido||'')+'</td><td>'+(u.cargo_nombre||'-')+'</td><td><span class="badge '+(u.activo?'bg-success':'bg-secondary')+'">'+(u.activo?'Activo':'Inactivo')+'</span></td><td><button class="btn btn-sm btn-outline-warning" onclick="tu('+u.idusuario+')"><i class="bi bi-'+(u.activo?'pause':'play')+'"></i></button> <button class="btn btn-sm btn-outline-primary" onclick="cp('+u.idusuario+')"><i class="bi bi-key"></i></button> <button class="btn btn-sm btn-outline-info" onclick="eu('+u.idusuario+')"><i class="bi bi-pencil"></i></button></td></tr>';
+        h+='<tr><td><strong>'+u.login+'</strong></td><td>'+u.nombre+' '+(u.apellido||'')+'</td><td>'+(u.cargo_nombre||'-')+'</td><td><span class="badge '+(u.activo?'bg-success':'bg-secondary')+'">'+(u.activo?'Activo':'Inactivo')+'</span></td><td><button class="btn btn-sm btn-outline-warning" onclick="tu('+u.idusuario+')"><i class="bi bi-'+(u.activo?'pause':'play')+'"></i></button> <button class="btn btn-sm btn-outline-primary" onclick="cp('+u.idusuario+')"><i class="bi bi-key"></i></button> <button class="btn btn-sm btn-outline-info" onclick="eu('+u.idusuario+')"><i class="bi bi-pencil"></i></button>'+(u.idcargo==3?' <button class="btn btn-sm btn-outline-success" onclick="asignarClientes('+u.idusuario+',\''+u.nombre+' '+(u.apellido||'')+'\')"><i class="bi bi-people"></i></button>':'')+'</td></tr>';
     }
     document.getElementById('ubody2').innerHTML=h||'<tr><td colspan="5" class="text-muted text-center">'+__('sin_datos')+'</td></tr>';
     aplicarIdioma();
@@ -245,5 +245,46 @@ function guardarPassword(){
             bootstrap.Modal.getInstance(document.getElementById('modalPassword')).hide();
             mostrarToast('Clave actualizada correctamente','success');
         }
+    });
+}
+
+
+// ===== ASIGNAR CLIENTES A VENDEDOR =====
+var _asignarIdVendedor = 0;
+var _asignarNombreVendedor = '';
+
+function asignarClientes(idv, nombre) {
+    _asignarIdVendedor = idv;
+    _asignarNombreVendedor = nombre;
+    document.getElementById('acTitulo').textContent = 'Asignar Clientes - ' + nombre;
+    var list = document.getElementById('acList');
+    list.innerHTML = '<div class="text-center py-3"><div class="spinner-border"></div></div>';
+    new bootstrap.Modal(document.getElementById('modalAsignarClientes')).show();
+    g('clientes/list-vendedor&idvendedor=' + idv, function(e, d) {
+        if (e || !d) { list.innerHTML = '<div class="text-danger">Error al cargar clientes</div>'; return; }
+        var html = '<div class="mb-2"><button class="btn btn-sm btn-outline-primary" onclick="seleccionarTodos()">Seleccionar todos</button> <button class="btn btn-sm btn-outline-secondary" onclick="deseleccionarTodos()">Deseleccionar todos</button></div>';
+        d.forEach(function(c) {
+            var checked = c.asignado ? 'checked' : '';
+            html += '<div class="form-check"><input class="form-check-input ac-check" type="checkbox" value="' + c.IdCliente + '" ' + checked + ' id="ac_' + c.IdCliente + '"><label class="form-check-label" for="ac_' + c.IdCliente + '">' + (c.Nombre || '') + ' ' + (c.Apellido || '') + '</label></div>';
+        });
+        list.innerHTML = html;
+    });
+}
+
+function seleccionarTodos() {
+    document.querySelectorAll('.ac-check').forEach(function(c) { c.checked = true; });
+}
+
+function deseleccionarTodos() {
+    document.querySelectorAll('.ac-check').forEach(function(c) { c.checked = false; });
+}
+
+function guardarAsignacion() {
+    var ids = [];
+    document.querySelectorAll('.ac-check:checked').forEach(function(c) { ids.push(parseInt(c.value)); });
+    p('clientes/asignar', { idvendedor: _asignarIdVendedor, idsclientes: ids }, function(e) {
+        if (e) { mostrarToast(e, 'danger'); return; }
+        bootstrap.Modal.getInstance(document.getElementById('modalAsignarClientes')).hide();
+        mostrarToast('Clientes asignados correctamente (' + ids.length + ')', 'success');
     });
 }
