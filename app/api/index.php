@@ -144,6 +144,20 @@ try {
             require __DIR__ . '/routes/clientes.php';
             deleteCliente($body);
             break;
+        case 'clientes/list-vendedor':
+            $authUser = validateToken();
+            requirePermission('config');
+            require __DIR__ . '/routes/clientes.php';
+            $idv = (int)($_GET['idvendedor'] ?? 0);
+            if (!$idv) jsonError('idvendedor requerido');
+            listClientesVendedor($idv);
+            break;
+        case 'clientes/asignar':
+            $authUser = validateToken();
+            requirePermission('config');
+            require __DIR__ . '/routes/clientes.php';
+            asignarClientes($body);
+            break;
 
         // MONEDAS
         case 'monedas/list':

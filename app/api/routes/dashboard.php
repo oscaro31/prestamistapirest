@@ -148,12 +148,21 @@ function generarNotificaciones() {
     if (!$authUser) return;
     $pdo = getDB();
     
+    // Determinar filtro de clientes según cargo
+    $idcargo = (int)$authUser['idcargo'];
+    $joinClientes = '';
+    if ($idcargo == 3) {
+        // Vendedor: solo ve clientes asignados
+        $joinClientes = " JOIN cliente_usuario cu ON cu.idcliente = c.IdCliente AND cu.idusuario = " . (int)$authUser['idusuario'];
+    }
+    // Admin (1) y Usuario (2): ven todos los clientes (sin filtro)
+    
     // 1. Cuotas vencidas hoy (no notificadas aún)
     $vencidas = $pdo->query("SELECT pd.IdPrestamoDetalle, pd.IdPrestamo, pd.NroCuota, pd.MontoCuota, pd.FechaPago,
                                    c.Nombre as cliente_nombre, c.Apellido as cliente_apellido
                             FROM PrestamoDetalle pd
                             JOIN Prestamo p ON p.IdPrestamo = pd.IdPrestamo
-                            JOIN Cliente c ON c.IdCliente = p.IdCliente
+                            JOIN Cliente c ON c.IdCliente = p.IdCliente" . $joinClientes . "
                             WHERE pd.Estado = 'Pendiente' AND pd.FechaPago < CURDATE()
                             AND NOT EXISTS (SELECT 1 FROM notificaciones WHERE idref = pd.IdPrestamoDetalle AND tipo = 'vencida')
                             ORDER BY pd.FechaPago ASC LIMIT 5")->fetchAll();
@@ -169,7 +178,7 @@ function generarNotificaciones() {
                                    c.Nombre as cliente_nombre, c.Apellido as cliente_apellido
                             FROM PrestamoDetalle pd
                             JOIN Prestamo p ON p.IdPrestamo = pd.IdPrestamo
-                            JOIN Cliente c ON c.IdCliente = p.IdCliente
+                            JOIN Cliente c ON c.IdCliente = p.IdCliente" . $joinClientes . "
                             WHERE pd.Estado = 'Pendiente' AND pd.FechaPago BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 2 DAY)
                             AND NOT EXISTS (SELECT 1 FROM notificaciones WHERE idref = pd.IdPrestamoDetalle AND tipo = 'proxima')
                             ORDER BY pd.FechaPago ASC LIMIT 5")->fetchAll();

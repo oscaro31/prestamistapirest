@@ -86,3 +86,34 @@ function deleteCliente($body) {
     $pdo->prepare("DELETE FROM Cliente WHERE IdCliente = ?")->execute([$idcliente]);
     jsonResponse(['success' => true]);
 }
+
+
+// ============================================================
+// ASIGNACIÓN DE CLIENTES A VENDEDORES
+// ============================================================
+
+function listClientesVendedor($idvendedor) {
+    $pdo = getDB();
+    $stmt = $pdo->prepare("SELECT c.IdCliente, c.Nombre, c.Apellido,
+                                  CASE WHEN cu.idcliente IS NOT NULL THEN 1 ELSE 0 END as asignado
+                           FROM Cliente c
+                           LEFT JOIN cliente_usuario cu ON cu.idcliente = c.IdCliente AND cu.idusuario = ?
+                           ORDER BY c.Nombre ASC");
+    $stmt->execute([$idvendedor]);
+    jsonResponse($stmt->fetchAll());
+}
+
+function asignarClientes($body) {
+    $idvendedor = (int)($body['idvendedor'] ?? 0);
+    $idsclientes = $body['idsclientes'] ?? [];
+    if (!$idvendedor) jsonError('idvendedor requerido');
+    $pdo = getDB();
+    $pdo->beginTransaction();
+    $pdo->prepare("DELETE FROM cliente_usuario WHERE idusuario = ?")->execute([$idvendedor]);
+    $stmt = $pdo->prepare("INSERT INTO cliente_usuario (idcliente, idusuario) VALUES (?, ?)");
+    foreach ($idsclientes as $idc) {
+        $stmt->execute([(int)$idc, $idvendedor]);
+    }
+    $pdo->commit();
+    jsonResponse(['success' => true, 'asignados' => count($idsclientes)]);
+}
