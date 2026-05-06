@@ -17,7 +17,7 @@ function cargarPermisosCargo(idcargo) {
         _permisosSeleccionados = {};
         return;
     }
-    g('cargos/permisos?idcargo=' + idcargo, function(e, d) {
+    x('GET','cargos/permisos&idcargo='+idcargo,null,function(e,d){
         if (e || !d || !d.permisos) {
             group.style.display = 'none';
             return;
