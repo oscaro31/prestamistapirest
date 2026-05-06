@@ -1,19 +1,27 @@
 <?php
 // =============================================
-// PrestamistAPI - Database Configuration
+// PrestamistAPI - Multiempresa Database Layer
 // =============================================
 
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'u139313903_prestamist');
+define('DB_NAME_UNIVERSAL', 'u139313903_prestamist');
 define('DB_USER', 'u139313903_prestamist');
 define('DB_PASS', 'r:T+Xgs@R5dMS>U4');
 define('DB_CHARSET', 'utf8mb4');
 
-function getDB() {
+// Conexión a la BD universal (db_universal) o BD de empresa
+function getDB($idempresa = null) {
+    if ($idempresa !== null) {
+        return getEmpresaDB($idempresa);
+    }
+    // Si hay un contexto de empresa activo (establecido desde index.php)
+    if (isset($GLOBALS['_EMPRESA_PDO'])) {
+        return $GLOBALS['_EMPRESA_PDO'];
+    }
     static $pdo = null;
     if ($pdo === null) {
         try {
-            $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=" . DB_CHARSET;
+            $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME_UNIVERSAL . ";charset=" . DB_CHARSET;
             $pdo = new PDO($dsn, DB_USER, DB_PASS, [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -26,6 +34,43 @@ function getDB() {
         }
     }
     return $pdo;
+}
+
+// Conexión dinámica a la BD de una empresa específica
+function getEmpresaDB($idempresa) {
+    static $pools = [];
+    if (isset($pools[$idempresa])) return $pools[$idempresa];
+
+    $universal = getDB();
+    $stmt = $universal->prepare("SELECT host, puerto, dbname, dbuser, dbpass FROM config_bd WHERE idempresa = ?");
+    $stmt->execute([$idempresa]);
+    $cfg = $stmt->fetch();
+    if (!$cfg) jsonError('Configuración de BD no encontrada para esta empresa', 500);
+
+    try {
+        $dsn = "mysql:host={$cfg['host']};port={$cfg['puerto']};dbname={$cfg['dbname']};charset=" . DB_CHARSET;
+        $pass = decryptPass($cfg['dbpass']);
+        $pdo = new PDO($dsn, $cfg['dbuser'], $pass, [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES => false,
+        ]);
+        $pools[$idempresa] = $pdo;
+        return $pdo;
+    } catch (PDOException $e) {
+        jsonError('Error conectando a la base de datos de la empresa: ' . $e->getMessage(), 500);
+    }
+}
+
+// Cifrado simple para credenciales de BD
+function encryptPass($plain) {
+    $key = defined('ENCRYPT_KEY') ? ENCRYPT_KEY : 'prestamist_default_key_2026';
+    return base64_encode(openssl_encrypt($plain, 'aes-128-ecb', $key));
+}
+
+function decryptPass($encrypted) {
+    $key = defined('ENCRYPT_KEY') ? ENCRYPT_KEY : 'prestamist_default_key_2026';
+    return openssl_decrypt(base64_decode($encrypted), 'aes-128-ecb', $key);
 }
 
 function jsonResponse($data, $code = 200) {
@@ -50,20 +95,34 @@ function validateToken() {
     }
     $token = $m[1];
     $pdo = getDB();
-    $stmt = $pdo->prepare("SELECT u.idusuario, u.nombre, u.apellido, u.login, u.idcargo, u.preferencias, u.avatar, c.nombre as cargo_nombre, u.idtipoestadosusuarios, u.idtipoestatususuarios
+    $stmt = $pdo->prepare("SELECT u.idusuario, u.idempresa, u.nombre, u.apellido, u.login, u.rol, u.idcargo, e.nombre as empresa_nombre, e.slug as empresa_slug
                            FROM tokens t 
-                           JOIN usuario u ON u.idusuario = t.idusuario
-                           LEFT JOIN Cargos c ON c.idcargo = u.idcargo
-                           WHERE t.token = ? AND (t.expires_at IS NULL OR t.expires_at > NOW())");
+                           JOIN usuarios u ON u.idusuario = t.idusuario
+                           JOIN empresas e ON e.idempresa = u.idempresa
+                           WHERE t.token = ? AND (t.expires_at IS NULL OR t.expires_at > NOW()) AND u.activo = 1");
     $stmt->execute([$token]);
     $user = $stmt->fetch();
     if (!$user) {
-        // Marcar como Offline cuando expira el token
-        $pdo->prepare("UPDATE usuario SET idtipoestatususuarios = 2 WHERE idusuario = (SELECT idusuario FROM tokens WHERE token = ? LIMIT 1)")->execute([$token]);
         jsonError('Token inválido o expirado', 401);
     }
-    if ($user['idtipoestadosusuarios'] != 1) {
-        jsonError('Usuario desactivado', 403);
-    }
     return $user;
+}
+
+// Helper: establecer contexto de empresa en getDB()
+// Despues de validateToken(), llama a esto para que getDB() devuelva la BD de la empresa
+function useEmpresaDB($authUser) {
+    if (!defined('_USE_EMPRESA')) {
+        $empresaPdo = getEmpresaDB($authUser['idempresa']);
+        // Reemplazar getDB en el contexto actual
+        $GLOBALS['_EMPRESA_PDO'] = $empresaPdo;
+    }
+}
+
+// Helper: obtener BD de empresa desde un usuario autenticado
+function getDataDB($authUser = null) {
+    if ($authUser === null) {
+        $authUser = validateToken();
+    }
+    if (isset($GLOBALS['_EMPRESA_PDO'])) return $GLOBALS['_EMPRESA_PDO'];
+    return getEmpresaDB($authUser['idempresa']);
 }

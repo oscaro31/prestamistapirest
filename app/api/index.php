@@ -69,11 +69,61 @@ try {
             break;
         // AUTH logout
         case 'auth/logout':
-            $authUser = validateToken();
+            logout(json_decode(file_get_contents('php://input'), true) ?: $_POST);
+            break;
+
+        // EMPRESAS (solo superadmin)
+        case 'empresas/list':
+            $user = validateToken();
+            if ($user['rol'] !== 'superadmin') jsonError('No autorizado', 403);
             $pdo = getDB();
-            $pdo->prepare("UPDATE usuario SET idtipoestatususuarios = 2 WHERE idusuario = ?")->execute([$authUser['idusuario']]);
-            $pdo->prepare("DELETE FROM tokens WHERE idusuario = ?")->execute([$authUser['idusuario']]);
-            jsonResponse(['success' => true]);
+            $list = $pdo->query("SELECT e.*, IFNULL(c.idconfig,0) as tiene_config FROM empresas e LEFT JOIN config_bd c ON c.idempresa = e.idempresa ORDER BY e.idempresa")->fetchAll();
+            jsonResponse($list);
+            break;
+        case 'empresas/save':
+            $user = validateToken();
+            if ($user['rol'] !== 'superadmin') jsonError('No autorizado', 403);
+            $body = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            $idempresa = (int)($body['idempresa'] ?? 0);
+            $nombre = trim($body['nombre'] ?? '');
+            $slug = trim($body['slug'] ?? '');
+            if (empty($nombre) || empty($slug)) jsonError('Nombre y slug requeridos');
+            $pdo = getDB();
+            if ($idempresa > 0) {
+                $pdo->prepare("UPDATE empresas SET nombre = ?, slug = ? WHERE idempresa = ?")->execute([$nombre, $slug, $idempresa]);
+            } else {
+                $pdo->prepare("INSERT INTO empresas (nombre, slug) VALUES (?, ?)")->execute([$nombre, $slug]);
+                $idempresa = (int)$pdo->lastInsertId();
+            }
+            $host = trim($body['host'] ?? '');
+            if (!empty($host)) {
+                $puerto = (int)($body['puerto'] ?? 3306);
+                $dbname = trim($body['dbname'] ?? '');
+                $dbuser = trim($body['dbuser'] ?? '');
+                $dbpass = encryptPass(trim($body['dbpass'] ?? ''));
+                if (!empty($dbname) && !empty($dbuser)) {
+                    $exist = $pdo->prepare("SELECT idconfig FROM config_bd WHERE idempresa = ?");
+                    $exist->execute([$idempresa]);
+                    if ($exist->fetch()) {
+                        $pdo->prepare("UPDATE config_bd SET host=?, puerto=?, dbname=?, dbuser=?, dbpass=? WHERE idempresa=?")->execute([$host, $puerto, $dbname, $dbuser, $dbpass, $idempresa]);
+                    } else {
+                        $pdo->prepare("INSERT INTO config_bd (idempresa, host, puerto, dbname, dbuser, dbpass) VALUES (?,?,?,?,?,?)")->execute([$idempresa, $host, $puerto, $dbname, $dbuser, $dbpass]);
+                    }
+                }
+            }
+            jsonResponse(['idempresa' => $idempresa, 'message' => 'Empresa guardada']);
+            break;
+        case 'empresas/test-conexion':
+            $user = validateToken();
+            if ($user['rol'] !== 'superadmin') jsonError('No autorizado', 403);
+            $body = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+            try {
+                $dsn = "mysql:host={$body['host']};port={$body['puerto']};dbname={$body['dbname']};charset=utf8mb4";
+                $test = new PDO($dsn, $body['dbuser'], $body['dbpass'], [PDO::ATTR_TIMEOUT => 5]);
+                jsonResponse(['success' => true, 'message' => 'Conexión exitosa']);
+            } catch (Exception $e) {
+                jsonError('Error de conexión: ' . $e->getMessage());
+            }
             break;
 
         // USERS list — cualquiera autenticado
@@ -81,7 +131,6 @@ try {
             $authUser = validateToken();
             listUsers();
             break;
-        // USERS create — solo admin (cargo 1)
         case 'users/create':
             $authUser = validateToken();
             requirePermission('usuarios');
@@ -124,7 +173,7 @@ try {
             $idprestamo = (int)($_GET['idprestamo'] ?? 0);
             $desde = $_GET['desde'] ?? '';
             $hasta = $_GET['hasta'] ?? '';
-            $pdo = getDB();
+            $pdo = getEmpresaDB($authUser['idempresa']);
             $sql = "SELECT r.*, c.Nombre as cliente_nombre, c.Apellido as cliente_apellido, p.MontoPrestamo
                     FROM recibos r
                     JOIN Prestamo p ON p.IdPrestamo = r.idprestamo
@@ -158,29 +207,35 @@ try {
         // CLIENTES
         case 'clientes/list':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             listClientes();
             break;
         case 'clientes/get':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             getCliente($_GET['NroDocumento'] ?? '');
             break;
         case 'clientes/create':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             requirePermission('clientes');
             createCliente($body);
             break;
         case 'clientes/update':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             requirePermission('clientes');
             updateCliente($body);
             break;
         case 'clientes/delete':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             requirePermission('clientes');
             deleteCliente($body);
             break;
         case 'clientes/list-vendedor':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             requirePermission('config');
             $idv = (int)($_GET['idvendedor'] ?? 0);
             if (!$idv) jsonError('idvendedor requerido');
@@ -188,6 +243,7 @@ try {
             break;
         case 'clientes/asignar':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             requirePermission('config');
             asignarClientes($body);
             break;
@@ -195,21 +251,25 @@ try {
         // MONEDAS
         case 'monedas/list':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             listMonedas();
             break;
         case 'monedas/create':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             requirePermission('monedas');
             registrarActividad(getDB(), $authUser['idusuario'], 'crear_moneda', 'Creó moneda: ' . ($body['Nombre'] ?? '?'));
             createMoneda($body);
             break;
         case 'monedas/update':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             requirePermission('monedas');
             updateMoneda($body);
             break;
         case 'monedas/delete':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             requirePermission('monedas');
             deleteMoneda($body);
             break;
@@ -217,16 +277,19 @@ try {
         // PRESTAMOS
         case 'prestamos/list':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             listPrestamos($_GET);
             break;
         case 'prestamos/create':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             requirePermission('prestamos');
             $body['_userId'] = (int)$authUser['idusuario'];
             createPrestamo($body);
             break;
         case 'prestamos/pagar':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             requirePermission('prestamos');
             $body['_userId'] = (int)$authUser['idusuario'];
             pagarCuotas($body);
@@ -235,11 +298,13 @@ try {
         // DASHBOARD
         case 'dashboard/resumen':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             generarNotificaciones();
             resumen();
             break;
         case 'notificaciones/list':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             $pdo = getDB();
             $stmt = $pdo->prepare("SELECT n.* FROM notificaciones n WHERE n.idusuario = ? AND n.leida = 0 ORDER BY n.fecha DESC LIMIT 20");
             $stmt->execute([$authUser['idusuario']]);
@@ -248,6 +313,7 @@ try {
             break;
         case 'notificaciones/marcar-leida':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             $id = (int)($body['idnotificacion'] ?? 0);
             if (!$id) jsonError('idnotificacion requerido');
             $pdo = getDB();
@@ -256,6 +322,7 @@ try {
             break;
         case 'notificaciones/marcar-todas':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             $pdo = getDB();
             $pdo->prepare("UPDATE notificaciones SET leida = 1 WHERE idusuario = ?")->execute([$authUser['idusuario']]);
             jsonResponse(['success' => true]);
@@ -264,10 +331,12 @@ try {
         // CONFIG
         case 'config/list':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             listConfig();
             break;
         case 'config/update':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             requirePermission('config');
             updateConfig($body);
             break;
@@ -434,88 +503,104 @@ try {
         // CONTABILIDAD
         case 'plan-cuenta/list':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             requirePermission('plan-cuentas');
             $body['_userId'] = (int)$authUser['idusuario'];
             listPlanCuentas($body);
             break;
         case 'plan-cuenta/create':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             requirePermission('plan-cuentas');
             $body['_userId'] = (int)$authUser['idusuario'];
             createPlanCuenta($body);
             break;
         case 'plan-cuenta/update':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             requirePermission('plan-cuentas');
             $body['_userId'] = (int)$authUser['idusuario'];
             updatePlanCuenta($body);
             break;
         case 'plan-cuenta/delete':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             requirePermission('plan-cuentas');
             $body['_userId'] = (int)$authUser['idusuario'];
             deletePlanCuenta($body);
             break;
         case 'asientos/list':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             requirePermission('asientos');
             listAsientos($body);
             break;
         case 'asientos/create':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             requirePermission('asientos');
             $body['_userId'] = (int)$authUser['idusuario'];
             createAsiento($body);
             break;
         case 'asientos/get':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             requirePermission('asientos');
             getAsiento($body);
             break;
         case 'asientos/anular':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             requirePermission('asientos');
             $body['_userId'] = (int)$authUser['idusuario'];
             anularAsiento($body);
             break;
         case 'asientos/generar':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             requirePermission('prestamos');
             $body['_userId'] = (int)$authUser['idusuario'];
             generarAsientosPrestamo($body);
             break;
         case 'config-contable/list':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             requirePermission('config-contable');
             listConfigContable();
             break;
         case 'config-contable/update':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             requirePermission('config-contable');
             updateConfigContable($body);
             break;
         case 'reportes/balance-comprobacion':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             requirePermission('reportes-contables');
             balanceComprobacion($body);
             break;
         case 'reportes/libro-diario':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             requirePermission('reportes-contables');
             libroDiario($body);
             break;
         case 'reportes/libro-mayor':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             requirePermission('reportes-contables');
             libroMayor($body);
             break;
         case 'reportes/estado-resultados':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             requirePermission('reportes-contables');
             estadoResultados($body);
             break;
         case 'reportes/balance-general':
             $authUser = validateToken();
+            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
             requirePermission('reportes-contables');
             balanceGeneral();
             break;

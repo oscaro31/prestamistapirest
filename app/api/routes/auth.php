@@ -1,6 +1,6 @@
 <?php
 // =============================================
-// PrestamistAPI - Login with brute-force protection
+// PrestamistAPI - Login Multiempresa
 // =============================================
 
 define('MAX_LOGIN_ATTEMPTS', 5);
@@ -15,29 +15,22 @@ function login($body) {
         jsonError('Usuario y clave requeridos');
     }
 
-    // Sanitizar login: solo alfanumérico y guiones
     if (!preg_match('/^[a-zA-Z0-9_.@-]+$/', $login)) {
         jsonError('Credenciales inválidas');
     }
 
     $pdo = getDB();
-
-    // 1. Verificar bloqueo por fuerza bruta
-    $stmt = $pdo->prepare("SELECT COUNT(*) as attempts
-                           FROM login_attempts 
-                           WHERE login = ? AND ip = ? AND intento > NOW() - INTERVAL ? MINUTE");
     $ip = getClientIP();
-    $stmt->execute([$login, $ip, LOGIN_LOCKOUT_MINUTES]);
-    $attemptData = $stmt->fetch();
 
-    if ((int)$attemptData['attempts'] >= MAX_LOGIN_ATTEMPTS) {
+    // Verificar bloqueo por fuerza bruta
+    $stmt = $pdo->prepare("SELECT COUNT(*) as attempts FROM login_attempts WHERE login = ? AND ip = ? AND intento > NOW() - INTERVAL ? MINUTE");
+    $stmt->execute([$login, $ip, LOGIN_LOCKOUT_MINUTES]);
+    if ((int)$stmt->fetchColumn() >= MAX_LOGIN_ATTEMPTS) {
         jsonError('Demasiados intentos. Intente de nuevo en ' . LOGIN_LOCKOUT_MINUTES . ' minutos.', 429);
     }
 
-    $stmt = $pdo->prepare("SELECT u.*, c.nombre as cargo_nombre
-                           FROM usuario u
-                           LEFT JOIN Cargos c ON c.idcargo = u.idcargo
-                           WHERE u.login = ?");
+    // Buscar usuario en db_universal
+    $stmt = $pdo->prepare("SELECT u.*, c.nombre as cargo_nombre FROM usuarios u LEFT JOIN cargos c ON c.idcargo = u.idcargo WHERE u.login = ?");
     $stmt->execute([$login]);
     $user = $stmt->fetch();
 
@@ -46,23 +39,8 @@ function login($body) {
         jsonError('Credenciales inválidas');
     }
 
-    // Verificar contraseña con bcrypt
-    $passwordOk = false;
-    if (password_verify($clave, $user['clave'])) {
-        $passwordOk = true;
-    } else {
-        // Compatibilidad hacia atras: probar con SHA-256 legacy
-        if ($user['clave'] !== hash('sha256', $clave)) {
-            registerLoginAttempt($pdo, $login, $ip, false);
-            jsonError('Credenciales inválidas');
-        }
-        // Si era SHA-256, migrar a bcrypt automaticamente
-        $bcryptHash = password_hash($clave, PASSWORD_BCRYPT);
-        $pdo->prepare("UPDATE usuario SET clave = ? WHERE idusuario = ?")->execute([$bcryptHash, $user['idusuario']]);
-        $passwordOk = true;
-    }
-
-    if (!$passwordOk) {
+    // Verificar contraseña
+    if (!password_verify($clave, $user['clave'])) {
         registerLoginAttempt($pdo, $login, $ip, false);
         jsonError('Credenciales inválidas');
     }
@@ -72,86 +50,75 @@ function login($body) {
         jsonError('Usuario desactivado. Contacte al administrador.');
     }
 
-    // Limpiar intentos al login exitoso
+    // Limpiar intentos
     $pdo->prepare("DELETE FROM login_attempts WHERE login = ? AND ip = ?")->execute([$login, $ip]);
 
-    // Registrar acceso exitoso
-    registrarActividad($pdo, $user['idusuario'], 'login', 'Inicio de sesión desde IP: ' . $ip);
-
-    // Generate token (64 bytes hex = 128 chars, más seguro)
-    $token = bin2hex(random_bytes(32)) . bin2hex(random_bytes(32));
-    $expireDays = $remember ? 30 : 1;
-
-    // Limpiar tokens expirados del usuario
-    $pdo->prepare("DELETE FROM tokens WHERE idusuario = ? AND expires_at < NOW()")->execute([$user['idusuario']]);
-
-    // SINGLE SESSION: eliminar todos los tokens anteriores (incluyendo activos)
+    // Single session: eliminar tokens anteriores de este usuario
     $pdo->prepare("DELETE FROM tokens WHERE idusuario = ?")->execute([$user['idusuario']]);
 
-    $stmt = $pdo->prepare("INSERT INTO tokens (idusuario, token, expires_at) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL ? DAY))");
-    $stmt->execute([$user['idusuario'], $token, $expireDays]);
+    // Generar token
+    $token = bin2hex(random_bytes(32));
+    $expires = $remember ? date('Y-m-d H:i:s', strtotime('+30 days')) : date('Y-m-d H:i:s', strtotime('+24 hours'));
+    $pdo->prepare("INSERT INTO tokens (idusuario, token, expires_at) VALUES (?, ?, ?)")->execute([$user['idusuario'], $token, $expires]);
 
-    // Mark user as Online
-    $pdo->prepare("UPDATE usuario SET idtipoestatususuarios = 1, ultimo_acceso = NOW() WHERE idusuario = ?")->execute([$user['idusuario']]);
+    // Actualizar ultimo_acceso
+    $pdo->prepare("UPDATE usuarios SET ultimo_acceso = NOW() WHERE idusuario = ?")->execute([$user['idusuario']]);
+
+    // Cargar permisos del cargo
+    $permStmt = $pdo->prepare("SELECT permiso, valor FROM usuario_cargo WHERE idcargo = ?");
+    $permStmt->execute([$user['idcargo']]);
+    $permisos = [];
+    while ($p = $permStmt->fetch()) {
+        $permisos[$p['permiso']] = (bool)$p['valor'];
+    }
+
+    registrarActividad($pdo, $user['idusuario'], 'login', 'Inicio de sesión');
 
     jsonResponse([
         'token' => $token,
         'user' => [
             'idusuario' => (int)$user['idusuario'],
+            'idempresa' => (int)$user['idempresa'],
             'nombre' => $user['nombre'],
             'apellido' => $user['apellido'],
             'login' => $user['login'],
-            'email' => $user['email'] ?? '',
-            'telefono' => $user['telefono'] ?? '',
-            'direccion' => $user['direccion'] ?? '',
-            'idtipodocumento' => (int)($user['idtipodocumento'] ?? 0),
-            'num_documento' => $user['num_documento'] ?? '',
+            'email' => $user['email'],
             'idcargo' => (int)$user['idcargo'],
             'cargo_nombre' => $user['cargo_nombre'],
-            'activo' => (bool)$user['activo'],
-            'preferencias' => $user['preferencias'],
-            'avatar' => $user['avatar'],
-        ]
+            'rol' => $user['rol'],
+            'permisos' => $permisos,
+        ],
+        'remember' => $remember,
     ]);
 }
 
-// =============================================
-// Helpers de seguridad
-// =============================================
-
-function getClientIP() {
-    $headers = [
-        'HTTP_X_FORWARDED_FOR',
-        'HTTP_X_REAL_IP',
-        'HTTP_CLIENT_IP',
-        'HTTP_X_FORWARDED',
-        'HTTP_FORWARDED_FOR',
-        'HTTP_FORWARDED',
-        'REMOTE_ADDR'
-    ];
-    foreach ($headers as $h) {
-        if (!empty($_SERVER[$h])) {
-            $ips = explode(',', $_SERVER[$h]);
-            $ip = trim($ips[0]);
-            if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
-                return $ip;
-            }
-            return $ip; // fallback aunque sea privada
-        }
-    }
-    return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
-}
-
-function registerLoginAttempt($pdo, $login, $ip, $success) {
+function registerLoginAttempt($pdo, $login, $ip, $exitoso) {
     $stmt = $pdo->prepare("INSERT INTO login_attempts (login, ip, intento, exitoso) VALUES (?, ?, NOW(), ?)");
-    $stmt->execute([$login, $ip, $success ? 1 : 0]);
+    $stmt->execute([$login, $ip, $exitoso ? 1 : 0]);
 }
 
 function registrarActividad($pdo, $idusuario, $accion, $detalle = '') {
-    try {
-        $stmt = $pdo->prepare("INSERT INTO actividad (idusuario, accion, detalle, ip, fecha) VALUES (?, ?, ?, ?, NOW())");
-        $stmt->execute([$idusuario, $accion, $detalle, getClientIP()]);
-    } catch (Exception $e) {
-        // No fallar la operación principal si el log falla
+    // Obtener idempresa del usuario
+    $stmt = $pdo->prepare("SELECT idempresa FROM usuarios WHERE idusuario = ?");
+    $stmt->execute([$idusuario]);
+    $idempresa = (int)$stmt->fetchColumn();
+    
+    $stmt = $pdo->prepare("INSERT INTO actividad (idusuario, idempresa, accion, detalle, ip, fecha) VALUES (?, ?, ?, ?, ?, NOW())");
+    $stmt->execute([$idusuario, $idempresa, $accion, $detalle, getClientIP()]);
+}
+
+function getClientIP() {
+    $ip = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['HTTP_X_REAL_IP'] ?? $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+    return explode(',', $ip)[0];
+}
+
+function logout($body) {
+    $headers = getallheaders();
+    $auth = $headers['Authorization'] ?? $headers['authorization'] ?? '';
+    if (preg_match('/^Bearer\s+(.+)$/i', $auth, $m)) {
+        $token = $m[1];
+        $pdo = getDB();
+        $pdo->prepare("DELETE FROM tokens WHERE token = ?")->execute([$token]);
     }
+    jsonResponse(['message' => 'Sesión cerrada']);
 }
