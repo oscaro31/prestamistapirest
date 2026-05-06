@@ -40,7 +40,7 @@ function ld(){
                 var cliente = (v.cliente_nombre || '') + ' ' + (v.cliente_apellido || '');
                 var monto = 'RD$' + (v.MontoCuota || '0');
                 var fecha = v.FechaPago ? v.FechaPago.substring(0, 10) : '-';
-                var cuotaNum = v.NumeroCuota || v.numerocuota || '';
+                var cuotaNum = v.NroCuota || v.nro_cuota || '';
                 vbody += '<tr><td>' + cliente + '</td><td>' + cuotaNum + '</td><td>' + monto + '</td><td>' + fecha + '</td></tr>';
             }
         } else {
@@ -59,7 +59,7 @@ function ld(){
                 var cliente = (q.cliente_nombre || '') + ' ' + (q.cliente_apellido || '');
                 var monto = 'RD$' + (q.MontoCuota || '0');
                 var fecha = q.FechaPago ? q.FechaPago.substring(0, 10) : '-';
-                var cuotaNum = q.NumeroCuota || q.numerocuota || '';
+                var cuotaNum = q.NroCuota || q.nro_cuota || '';
                 qbody += '<tr><td>' + cliente + '</td><td>' + cuotaNum + '</td><td>' + monto + '</td><td>' + fecha + '</td></tr>';
             }
         } else {

@@ -16,7 +16,7 @@ function resumen() {
     $montoPendiente = (float)$pdo->query("SELECT COALESCE(SUM(MontoCuota), 0) FROM PrestamoDetalle WHERE Estado = 'Pendiente'")->fetchColumn();
 
     // Cuotas vencidas (FechaPago pasada y aún Pendiente)
-    $stmtVencidas = $pdo->query("SELECT pd.IdPrestamoDetalle, pd.IdPrestamo, pd.FechaPago, pd.MontoCuota,
+    $stmtVencidas = $pdo->query("SELECT pd.IdPrestamoDetalle, pd.IdPrestamo, pd.NroCuota, pd.FechaPago, pd.MontoCuota,
                                         c.Nombre as cliente_nombre, c.Apellido as cliente_apellido,
                                         p.MontoPrestamo
                                  FROM PrestamoDetalle pd
@@ -35,7 +35,7 @@ function resumen() {
     unset($cv);
 
     // Cuotas próximas a vencer (próximos 7 días)
-    $stmtProximas = $pdo->query("SELECT pd.IdPrestamoDetalle, pd.IdPrestamo, pd.FechaPago, pd.MontoCuota,
+    $stmtProximas = $pdo->query("SELECT pd.IdPrestamoDetalle, pd.IdPrestamo, pd.NroCuota, pd.FechaPago, pd.MontoCuota,
                                         c.Nombre as cliente_nombre, c.Apellido as cliente_apellido,
                                         p.MontoPrestamo
                                  FROM PrestamoDetalle pd
