@@ -825,6 +825,11 @@ function injectReportesContablesHTML(){
 window._initApp=function(){
     var last=localStorage.getItem('lastPage');
     injectDashboardHTML();
+    // Superadmin: ir a dashboard global
+    if(user && user.rol==='superadmin'){
+        sp('sa-dashboard');
+        return;
+    }
     // Verificar si la última página está permitida según el cargo
     if(last && document.getElementById('p-'+last)){
         var restringidas=['usuarios','config','monedas'];
