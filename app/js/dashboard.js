@@ -38,7 +38,7 @@ function ld(){
             for (var i = 0; i < d.CuotasVencidasDetalle.length; i++) {
                 var v = d.CuotasVencidasDetalle[i];
                 var cliente = (v.cliente_nombre || '') + ' ' + (v.cliente_apellido || '');
-                var monto = 'RD$' + (v.MontoCuota || '0');
+                var monto = 'RD$' + fm(v.MontoCuota || '0');
                 var fecha = v.FechaPago ? v.FechaPago.substring(0, 10) : '-';
                 var cuotaNum = v.NroCuota || v.nro_cuota || '';
                 vbody += '<tr><td>' + cliente + '</td><td>' + cuotaNum + '</td><td>' + monto + '</td><td>' + fecha + '</td></tr>';
@@ -57,7 +57,7 @@ function ld(){
             for (var i = 0; i < d.CuotasProximasDetalle.length; i++) {
                 var q = d.CuotasProximasDetalle[i];
                 var cliente = (q.cliente_nombre || '') + ' ' + (q.cliente_apellido || '');
-                var monto = 'RD$' + (q.MontoCuota || '0');
+                var monto = 'RD$' + fm(q.MontoCuota || '0');
                 var fecha = q.FechaPago ? q.FechaPago.substring(0, 10) : '-';
                 var cuotaNum = q.NroCuota || q.nro_cuota || '';
                 qbody += '<tr><td>' + cliente + '</td><td>' + cuotaNum + '</td><td>' + monto + '</td><td>' + fecha + '</td></tr>';
@@ -77,6 +77,8 @@ function ld(){
                 var p = d.UltimosPagos[i];
                 var cliente = (p.cliente_nombre || '') + ' ' + (p.cliente_apellido || '');
                 var monto = p.MontoPagado ? 'RD$' + parseFloat(p.MontoPagado).toFixed(2) : 'RD$0.00';
+                // Usar fm si hay fm disponible
+                if(typeof fm==='function') monto = 'RD$' + fm(p.MontoPagado || '0');
                 var fecha = p.FechaPago ? p.FechaPago.substring(0, 10) : '-';
                 pagosBody += '<tr><td>' + cliente + '</td><td>' + monto + '</td><td>' + fecha + '</td></tr>';
             }
@@ -94,7 +96,7 @@ function ld(){
             for (var i = 0; i < d.UltimosPrestamos.length; i++) {
                 var u = d.UltimosPrestamos[i];
                 var cliente = (u.cliente_nombre || '') + ' ' + (u.cliente_apellido || '');
-                var monto = 'RD$' + (u.MontoPrestamo || '0');
+                var monto = 'RD$' + fm(u.MontoPrestamo || '0');
                 var estado = u.Estado || 'Pendiente';
                 var badge = estado === 'Cancelado' ? 'bc' : 'bp';
                 var fecha = u.FechaCreacion ? u.FechaCreacion.substring(0, 10) : '-';
