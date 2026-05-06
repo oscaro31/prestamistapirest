@@ -228,6 +228,10 @@ semanal:'Semanal',quincenal:'Quinzenal',mensual:'Mensal',plazo:'Prazo'
 };
 
 function __(k){var l=L||'en';return(LANG[l]&&LANG[l][k])||LANG.en[k]||k;}
+function __estado(est){
+    var map={Pendiente:'pendientes',Pagado:'pagado',Pagada:'pagado',Vencido:'vencidas',Cancelado:'cancelar_modal'};
+    return __(map[est]||est);
+}
 var titles={dashboard:'dashboard',prestamos:'registro',reimprimir:'historial',clientes:'clientes',monedas:'monedas',usuarios:'usuarios',config:'preferencias',perfil:'perfil','plan-cuentas':'plan_cuentas',asientos:'asientos_contables','config-contable':'config_contable','reportes-contables':'reportes_contables'};
 function aplicarIdioma(){
     var li=localStorage.getItem('idioma');

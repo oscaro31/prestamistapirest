@@ -194,7 +194,7 @@ function vp(id) {
         document.getElementById('vpEstado').className = 'badge ' + (p.Estado === 'Cancelado' ? 'bg-success' : 'bg-warning text-dark');
         document.getElementById('vpFecha').textContent = p.FechaInicioPago || p.fecha_inicio || '-';
         var total = parseFloat(p.ValorTotal || p.ValorPorCuota * p.NroCuotas || 0);
-        document.getElementById('vpTotal').textContent = 'Total: ' + (p.moneda_simbolo || 'RD$') + ' ' + total.toFixed(2);
+        document.getElementById('vpTotal').textContent = __('monto_total') + ': ' + (p.moneda_simbolo || 'RD$') + ' ' + total.toFixed(2);
         var tab = '';
         if (p.cuotas && p.cuotas.length > 0) {
             for (var i = 0; i < p.cuotas.length; i++) {
@@ -205,7 +205,7 @@ function vp(id) {
                 var est = c.Estado || 'Pendiente';
                 var badge = est === 'Pagado' ? 'bg-success' : 'bg-secondary';
                 var mora = c.MoraCalculada ? parseFloat(c.MoraCalculada) : 0;
-                tab += '<tr><td>' + num + '</td><td>' + f + '</td><td>RD$ ' + fm(m) + '</td><td>RD$ ' + fm(parseFloat(c.MontoPagado||0)) + '</td><td>RD$ ' + fm(Math.max(0, parseFloat(m) - parseFloat(c.MontoPagado||0))) + '</td><td><span class="badge ' + badge + '">' + est + '</span></td><td>' + (est !== 'Pagado' ? '<input type="checkbox" class="vp-check" value="' + c.IdPrestamoDetalle + '" data-num="' + num + '" data-mora="' + (c.MoraCalculada?parseFloat(c.MoraCalculada):0) + '">' : '') + '</td></tr>';
+                tab += '<tr><td>' + num + '</td><td>' + f + '</td><td>RD$ ' + fm(m) + '</td><td>RD$ ' + fm(parseFloat(c.MontoPagado||0)) + '</td><td>RD$ ' + fm(Math.max(0, parseFloat(m) - parseFloat(c.MontoPagado||0))) + '</td><td><span class="badge ' + badge + '">' + (__estado(est)||est) + '</span></td><td>' + (est !== 'Pagado' ? '<input type="checkbox" class="vp-check" value="' + c.IdPrestamoDetalle + '" data-num="' + num + '" data-mora="' + (c.MoraCalculada?parseFloat(c.MoraCalculada):0) + '">' : '') + '</td></tr>';
             }
         } else {
             tab = '<tr><td colspan="7" class="text-muted text-center">Sin cuotas</td></tr>';
