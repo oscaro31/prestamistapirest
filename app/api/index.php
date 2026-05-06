@@ -45,6 +45,13 @@ try {
     // Se cargan 1 sola vez al cargar el router
     // =========================================
     require_once __DIR__ . '/routes/cargos.php';
+    require_once __DIR__ . '/routes/users.php';
+    require_once __DIR__ . '/routes/clientes.php';
+    require_once __DIR__ . '/routes/monedas.php';
+    require_once __DIR__ . '/routes/prestamos.php';
+    require_once __DIR__ . '/routes/config.php';
+    require_once __DIR__ . '/routes/dashboard.php';
+    require_once __DIR__ . '/routes/setup.php';
 
     switch ($route) {
         // AUTH (sin token)
@@ -72,14 +79,12 @@ try {
         // USERS list — cualquiera autenticado
         case 'users/list':
             $authUser = validateToken();
-            require __DIR__ . '/routes/users.php';
             listUsers();
             break;
         // USERS create — solo admin (cargo 1)
         case 'users/create':
             $authUser = validateToken();
             requirePermission('usuarios');
-            require __DIR__ . '/routes/users.php';
             $login = $body['login'] ?? '?';
             registrarActividad(getDB(), $authUser['idusuario'], 'crear_usuario', 'Creó usuario: ' . $login);
             createUser($body);
@@ -92,14 +97,12 @@ try {
             if ((int)$authUser['idcargo'] !== 1 && (int)$authUser['idusuario'] !== $targetId) {
                 jsonError('No tienes permiso para modificar este usuario', 403);
             }
-            require __DIR__ . '/routes/users.php';
             updateUser($body);
             break;
         // USERS toggle (desactivar) — solo admin
         case 'users/toggle':
             $authUser = validateToken();
             requirePermission('usuarios');
-            require __DIR__ . '/routes/users.php';
             $uid = (int)($body['idusuario'] ?? 0);
             registrarActividad(getDB(), $authUser['idusuario'], 'toggle_usuario', 'Cambió estado del usuario ID: ' . $uid);
             toggleUser($body);
@@ -111,43 +114,36 @@ try {
             if ((int)$authUser['idcargo'] !== 1 && (int)$authUser['idusuario'] !== $targetId) {
                 jsonError('No tienes permiso para cambiar esta clave', 403);
             }
-            require __DIR__ . '/routes/users.php';
             changePassword($body);
             break;
 
         // CLIENTES
         case 'clientes/list':
             $authUser = validateToken();
-            require __DIR__ . '/routes/clientes.php';
             listClientes();
             break;
         case 'clientes/get':
             $authUser = validateToken();
-            require __DIR__ . '/routes/clientes.php';
             getCliente($_GET['NroDocumento'] ?? '');
             break;
         case 'clientes/create':
             $authUser = validateToken();
             requirePermission('clientes');
-            require __DIR__ . '/routes/clientes.php';
             createCliente($body);
             break;
         case 'clientes/update':
             $authUser = validateToken();
             requirePermission('clientes');
-            require __DIR__ . '/routes/clientes.php';
             updateCliente($body);
             break;
         case 'clientes/delete':
             $authUser = validateToken();
             requirePermission('clientes');
-            require __DIR__ . '/routes/clientes.php';
             deleteCliente($body);
             break;
         case 'clientes/list-vendedor':
             $authUser = validateToken();
             requirePermission('config');
-            require __DIR__ . '/routes/clientes.php';
             $idv = (int)($_GET['idvendedor'] ?? 0);
             if (!$idv) jsonError('idvendedor requerido');
             listClientesVendedor($idv);
@@ -155,53 +151,45 @@ try {
         case 'clientes/asignar':
             $authUser = validateToken();
             requirePermission('config');
-            require __DIR__ . '/routes/clientes.php';
             asignarClientes($body);
             break;
 
         // MONEDAS
         case 'monedas/list':
             $authUser = validateToken();
-            require __DIR__ . '/routes/monedas.php';
             listMonedas();
             break;
         case 'monedas/create':
             $authUser = validateToken();
             requirePermission('monedas');
-            require __DIR__ . '/routes/monedas.php';
             registrarActividad(getDB(), $authUser['idusuario'], 'crear_moneda', 'Creó moneda: ' . ($body['Nombre'] ?? '?'));
             createMoneda($body);
             break;
         case 'monedas/update':
             $authUser = validateToken();
             requirePermission('monedas');
-            require __DIR__ . '/routes/monedas.php';
             updateMoneda($body);
             break;
         case 'monedas/delete':
             $authUser = validateToken();
             requirePermission('monedas');
-            require __DIR__ . '/routes/monedas.php';
             deleteMoneda($body);
             break;
 
         // PRESTAMOS
         case 'prestamos/list':
             $authUser = validateToken();
-            require __DIR__ . '/routes/prestamos.php';
             listPrestamos($_GET);
             break;
         case 'prestamos/create':
             $authUser = validateToken();
             requirePermission('prestamos');
-            require __DIR__ . '/routes/prestamos.php';
             $body['_userId'] = (int)$authUser['idusuario'];
             createPrestamo($body);
             break;
         case 'prestamos/pagar':
             $authUser = validateToken();
             requirePermission('prestamos');
-            require __DIR__ . '/routes/prestamos.php';
             $body['_userId'] = (int)$authUser['idusuario'];
             pagarCuotas($body);
             break;
@@ -209,7 +197,6 @@ try {
         // DASHBOARD
         case 'dashboard/resumen':
             $authUser = validateToken();
-            require __DIR__ . '/routes/dashboard.php';
             generarNotificaciones();
             resumen();
             break;
@@ -239,13 +226,11 @@ try {
         // CONFIG
         case 'config/list':
             $authUser = validateToken();
-            require __DIR__ . '/routes/config.php';
             listConfig();
             break;
         case 'config/update':
             $authUser = validateToken();
             requirePermission('config');
-            require __DIR__ . '/routes/config.php';
             updateConfig($body);
             break;
 
@@ -261,13 +246,11 @@ try {
         case 'cargos/permisos':
             $authUser = validateToken();
             requirePermission('config');
-            require __DIR__ . '/routes/setup.php';
             listPermisos();
             break;
         case 'cargos/permisos/save':
             $authUser = validateToken();
             requirePermission('config');
-            require __DIR__ . '/routes/setup.php';
             savePermisos($body);
             break;
         case 'tipos/documento':
@@ -322,7 +305,6 @@ try {
         case 'db/tables':
             $authUser = validateToken();
             requirePermission('config');
-            require __DIR__ . '/routes/setup.php';
             if ($route === 'db/tokens_describe') describeTokens();
             elseif ($route === 'db/create_triggers') createTriggers();
             elseif ($route === 'db/describe_all') describeAll();
@@ -331,7 +313,6 @@ try {
             break;
         case 'setup/permissions':
             // Sin token — ruta de bootstrap interno
-            require __DIR__ . '/routes/setup.php';
             createPermissionsTable();
             break;
         
