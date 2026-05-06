@@ -22,10 +22,13 @@ function buscar(){
             }
         }
     });
-    var q='';
+    var q='?t='+Date.now();
     var cl=document.getElementById('rrCliente');
     if(cl&&cl.value)q+='&idprestamo='+cl.value;
-    if(!q)q='';
+    var ds=document.getElementById('rrDesde');
+    if(ds&&ds.value)q+='&desde='+ds.value;
+    var hs=document.getElementById('rrHasta');
+    if(hs&&hs.value)q+='&hasta='+hs.value;
     g('recibos/list'+q,function(e,d){
         if(e){document.getElementById('rrbody').innerHTML='<tr><td colspan="7" class="text-danger">'+e+'</td></tr>';return;}
         _rrData=d||[];

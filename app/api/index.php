@@ -121,16 +121,28 @@ try {
         case 'recibos/list':
             $authUser = validateToken();
             $idprestamo = (int)($_GET['idprestamo'] ?? 0);
+            $desde = $_GET['desde'] ?? '';
+            $hasta = $_GET['hasta'] ?? '';
             $pdo = getDB();
             $sql = "SELECT r.*, c.Nombre as cliente_nombre, c.Apellido as cliente_apellido, p.MontoPrestamo
                     FROM recibos r
                     JOIN Prestamo p ON p.IdPrestamo = r.idprestamo
                     JOIN Cliente c ON c.IdCliente = p.IdCliente";
             $params = [];
+            $where = [];
             if ($idprestamo > 0) {
-                $sql .= " WHERE r.idprestamo = ?";
+                $where[] = "r.idprestamo = ?";
                 $params[] = $idprestamo;
             }
+            if (!empty($desde)) {
+                $where[] = "DATE(r.fecha_creacion) >= ?";
+                $params[] = $desde;
+            }
+            if (!empty($hasta)) {
+                $where[] = "DATE(r.fecha_creacion) <= ?";
+                $params[] = $hasta;
+            }
+            if (!empty($where)) $sql .= " WHERE " . implode(' AND ', $where);
             $sql .= " ORDER BY r.fecha_creacion DESC LIMIT 100";
             $stmt = $pdo->prepare($sql);
             $stmt->execute($params);
