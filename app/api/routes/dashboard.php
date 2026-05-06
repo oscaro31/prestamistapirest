@@ -148,6 +148,31 @@ function generarNotificaciones() {
     if (!$authUser) return;
     $pdo = getDB();
     
+    // Calcular mora de cuotas vencidas
+    $stmtConfig = $pdo->query("SELECT Clave, valor FROM configuracion WHERE Clave IN ('porcentaje_mora', 'dias_gracia', 'mora_activa')");
+    $cfg = [];
+    while ($r = $stmtConfig->fetch()) $cfg[$r['Clave']] = $r['valor'];
+    $pctMora = (float)($cfg['porcentaje_mora'] ?? 2);
+    $diasGracia = (int)($cfg['dias_gracia'] ?? 0);
+    $moraActiva = (int)($cfg['mora_activa'] ?? 1);
+    
+    if ($moraActiva) {
+        $vencidasCalc = $pdo->query("SELECT pd.IdPrestamoDetalle, pd.MontoCuota, pd.FechaPago, DATEDIFF(CURDATE(), pd.FechaPago) as dias_mora
+                                     FROM PrestamoDetalle pd
+                                     WHERE pd.Estado = 'Pendiente' AND pd.FechaPago < CURDATE()
+                                     AND (pd.MoraCalculada IS NULL OR pd.MoraCalculada = 0)")->fetchAll();
+        foreach ($vencidasCalc as $v) {
+            $dias = (int)$v['dias_mora'];
+            if ($dias > $diasGracia) {
+                $diasMora = $dias - $diasGracia;
+                $mora = round($v['MontoCuota'] * ($pctMora / 100) * $diasMora, 2);
+                if ($mora > 0) {
+                    $pdo->prepare("UPDATE PrestamoDetalle SET MoraCalculada = ? WHERE IdPrestamoDetalle = ?")->execute([$mora, $v['IdPrestamoDetalle']]);
+                }
+            }
+        }
+    }
+    
     // Determinar filtro de clientes según cargo
     $idcargo = (int)$authUser['idcargo'];
     $joinClientes = '';
