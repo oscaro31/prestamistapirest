@@ -95,7 +95,7 @@ function guardarConfig(){
     var ft=document.getElementById('cfgFormato').value;
     if(ft){n++;t++;(function(v){p('config/update',{Clave:'formato_recibo',valor:v},function(e){if(e)alert(e);else f();});})(ft);}
     var fmo=document.getElementById('cfgFormatoMora').value;
-    if(fmo){n++;t++;(function(v){p('config/update',{Clave:'formato_mora_recibo',valor:v},function(e){if(e)alert(e);else f();});})(fmo);}
+    if(fmo){n++;t++;(function(v){localStorage.setItem('formato_mora_recibo',v);p('config/update',{Clave:'formato_mora_recibo',valor:v},function(e){if(e)alert(e);else f();});})(fmo);}
     if(m){n++;t++;(function(v){p('config/update',{Clave:'MoraActiva',valor:v},function(e){if(e)alert(e);else f();});})(m);}
     if(pc){n++;t++;(function(v){p('config/update',{Clave:'PorcentajeMoraDiario',valor:v},function(e){if(e)alert(e);else f();});})(pc);}
     if(g){n++;t++;(function(v){p('config/update',{Clave:'Dias_Gracia',valor:v},function(e){if(e)alert(e);else f();});})(g);}
