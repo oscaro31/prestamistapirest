@@ -546,3 +546,17 @@ html[data-tema="cereza"] .tb .ub i, html[data-tema="tinta"] .tb .ub i {
   color: #fff !important;
 }
 @keyframes saFadeIn{from{transform:translateX(100px);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* Modal headers themed with CSS variables */
+.modal-header-themed {
+  background: linear-gradient(135deg, var(--sidebar, #1a1a2e), var(--accent, #0f3460));
+  color: var(--text-sidebar-active, white);
+}
+.modal-header-themed-danger {
+  background: var(--accent, #dc3545);
+  color: var(--text-sidebar-active, white);
+}
+.modal-header-themed .btn-close,
+.modal-header-themed-danger .btn-close {
+  filter: brightness(0) invert(1);
+}

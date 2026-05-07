@@ -135,7 +135,7 @@
 
 <!-- Modals -->
 <div class="modal fade" id="modalPrestamo" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
-<div class="modal-header" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);color:white"><h5 class="modal-title" data-i18n="nuevo_prestamo"><i class="bi bi-cash-stack"></i> Nuevo Prestamo</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+<div class="modal-header" class="modal-header-themed"><h5 class="modal-title" data-i18n="nuevo_prestamo"><i class="bi bi-cash-stack"></i> Nuevo Prestamo</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
 <div class="modal-body">
 <div class="mb-3"><label class="form-label fw-bold" data-i18n="cliente">Cliente *</label><select id="npCliente" class="form-select" onchange="calcularPrestamo()"><option data-i18n="seleccionar">Seleccionar...</option></select></div>
 <div class="row g-3"><div class="col-6"><div class="mb-3"><label class="form-label fw-bold" data-i18n="tipo_cuota">Tipo Cuota</label><select id="npTipoCuota" class="form-select" onchange="calcularPrestamo()"><option value="1">Semanal</option><option value="2">Quincenal</option><option value="3" selected>Mensual</option></select></div></div><div class="col-4"><div class="mb-3"><label class="form-label fw-bold" data-i18n="monto">Monto *</label><input type="text" id="npMonto" class="form-control text-end" placeholder="0.00" oninput="monInputLive(this);calcularPrestamo()" onblur="monInputBlur(this)"></div></div></div>
@@ -147,7 +147,7 @@
 </div></div></div>
 
 <div class="modal fade" id="modalVerPrestamo" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content">
-<div class="modal-header" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);color:white"><h5 class="modal-title"><i class="bi bi-eye"></i> <span data-i18n="prestamo">Prestamo</span> #<span id="vpId"></span></h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+<div class="modal-header" class="modal-header-themed"><h5 class="modal-title"><i class="bi bi-eye"></i> <span data-i18n="prestamo">Prestamo</span> #<span id="vpId"></span></h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
 <div class="modal-body">
 <div class="card mb-3"><div class="card-header fw-bold" style="background:#f8f9fa" data-i18n="datos"><i class="bi bi-info-circle"></i> Datos</div><div class="card-body"><div class="row"><div class="col-md-4 mb-2"><strong data-i18n="cliente">Cliente:</strong> <span id="vpCliente">-</span></div><div class="col-md-2 mb-2"><strong data-i18n="monto">Monto:</strong> <span id="vpMonto">-</span></div><div class="col-md-2 mb-2"><strong data-i18n="interes">Interes:</strong> <span id="vpInteres">-</span></div><div class="col-1 mb-2"><strong data-i18n="cuotas">Cuotas:</strong> <span id="vpCuotas">-</span></div><div class="col-1 mb-2"><strong data-i18n="estado">Estado:</strong> <span id="vpEstado" class="badge">-</span></div><div class="col-2 mb-2"><strong data-i18n="fecha">Fecha:</strong> <span id="vpFecha">-</span></div></div></div></div>
 <div class="card"><div class="card-header d-flex justify-content-between align-items-center" style="background:#f8f9fa"><span class="fw-bold" data-i18n="amortizacion"><i class="bi bi-table"></i> Amortizacion</span><div><button class="btn btn-sm btn-outline-secondary me-1" id="vpSeleccionar" data-i18n="todos" title="Todo"><i class="bi bi-check-all"></i></button><button class="btn btn-sm btn-outline-secondary" id="vpDeseleccionar" data-i18n="ninguno" title="Ninguno"><i class="bi bi-x"></i></button></div></div><div class="card-body p-0"><div class="table-responsive"><table class="table table-sm mb-0"><thead><tr><th>#</th><th data-i18n="fecha">Fecha</th><th data-i18n="monto">Monto</th><th data-i18n="pagado">Pagado</th><th data-i18n="restante">Restante</th><th data-i18n="mora">Mora</th><th data-i18n="estado">Estado</th><th data-i18n="pagar">Pagar</th></tr></thead><tbody id="vpBody"></tbody></table></div></div></div></div>
@@ -157,7 +157,7 @@
 <!-- Modal Cliente -->
 
 <div class="modal fade" id="modalPagoCuotas" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-sm"><div class="modal-content">
-<div class="modal-header" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);color:white"><h5 class="modal-title"><i class="bi bi-cash-coin"></i> <span data-i18n="pago_cuotas">Pago de Cuotas</span></h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+<div class="modal-header" class="modal-header-themed"><h5 class="modal-title"><i class="bi bi-cash-coin"></i> <span data-i18n="pago_cuotas">Pago de Cuotas</span></h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
 <div class="modal-body">
 <div class="form-check mb-3"><input class="form-check-input" type="checkbox" id="mpPagarTodo" checked onchange="togglePagoTotal()"><label class="form-check-label fw-bold" for="mpPagarTodo" data-i18n="pagar_total">Pagar Total</label></div>
 <div class="mb-3"><label class="form-label fw-bold" data-i18n="monto_pagar">Monto a Pagar</label><input type="text" class="form-control text-end" id="mpMontoPagar" placeholder="0.00" disabled oninput="monInputLive(this)" onblur="monInputBlur(this)"></div>
@@ -167,7 +167,7 @@
 </div></div></div>
 
 <div class="modal fade" id="modalCliente" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
-<div class="modal-header" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);color:white"><h5 class="modal-title" id="mcTitulo" data-i18n="cliente">Cliente</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+<div class="modal-header" class="modal-header-themed"><h5 class="modal-title" id="mcTitulo" data-i18n="cliente">Cliente</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
 <div class="modal-body">
 <div class="row g-3"><div class="col-6"><label class="form-label" data-i18n="nombre">Nombre *</label><input class="form-control" id="mcNombre" placeholder="Nombre"></div><div class="col-6"><label class="form-label" data-i18n="apellido">Apellido *</label><input class="form-control" id="mcApellido" placeholder="Apellido"></div></div>
 <div class="row g-3"><div class="col-4"><label class="form-label" data-i18n="tipo_doc">Tipo Documento</label><select class="form-select" id="mcTipoDoc" onchange="formatearDoc()"><option value="" data-i18n="seleccionar">Seleccionar...</option></select></div><div class="col-8"><label class="form-label" data-i18n="documento">Nro Documento</label><input class="form-control" id="mcDocumento" placeholder="000-0000000-0" oninput="formatearDoc()"></div></div>
@@ -181,7 +181,7 @@
 
 <!-- Modal Moneda -->
 <div class="modal fade" id="modalMoneda" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
-<div class="modal-header" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);color:white"><h5 class="modal-title" id="mmTitulo">Moneda</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+<div class="modal-header" class="modal-header-themed"><h5 class="modal-title" id="mmTitulo">Moneda</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
 <div class="modal-body">
 <div class="mb-3"><label class="form-label" data-i18n="nombre">Nombre *</label><input class="form-control" id="mmNombre" placeholder="Ej: Peso Dominicano"></div>
 <div class="mb-3"><label class="form-label" data-i18n="simbolo">Simbolo *</label><input class="form-control" id="mmSimbolo" placeholder="Ej: RD$"></div>
@@ -191,7 +191,7 @@
 
 <!-- Modal Confirmacion -->
 <div class="modal fade" id="modalConfirm" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-sm"><div class="modal-content">
-<div class="modal-header" style="background:#dc3545;color:white"><h6 class="modal-title" id="mcTitulo"><i class="bi bi-exclamation-triangle"></i> <span data-i18n="confirmar">Confirmar</span></h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+<div class="modal-header" class="modal-header-themed-danger"><h6 class="modal-title" id="mcTitulo"><i class="bi bi-exclamation-triangle"></i> <span data-i18n="confirmar">Confirmar</span></h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
 <div class="modal-body text-center py-4">
 <i class="bi bi-question-circle" style="font-size:3rem;color:#dc3545"></i>
 <p class="mt-2 mb-0" id="mcMsg">Esta seguro?</p>
@@ -204,7 +204,7 @@
 
 <!-- Modal Usuario -->
 <div class="modal fade" id="modalUsuario" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
-<div class="modal-header" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);color:white"><h5 class="modal-title" id="muTitulo" data-i18n="usuario">Usuario</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+<div class="modal-header" class="modal-header-themed"><h5 class="modal-title" id="muTitulo" data-i18n="usuario">Usuario</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
 <div class="modal-body">
 <div class="row g-3"><div class="col-2"><img src="images/logo.jpg" id="muAvatar" style="width:48px;height:48px;border-radius:50%;object-fit:cover;cursor:pointer" onclick="document.getElementById('muAvatarFile').click()" title="Click para cambiar"></div><div class="col-5"><label class="form-label" data-i18n="nombre">Nombre *</label><input class="form-control" id="muNombre" placeholder="Nombre"></div><div class="col-5"><label class="form-label">Apellido</label><input class="form-control" id="muApellido" placeholder="Apellido"></div></div>
 <input type="file" id="muAvatarFile" accept="image/*" style="display:none" onchange="subirAvatarUsuario()">
@@ -221,7 +221,7 @@
 
 <!-- Modal Password -->
 <div class="modal fade" id="modalPassword" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-sm"><div class="modal-content">
-<div class="modal-header" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);color:white"><h6 class="modal-title" id="mpTitulo">Cambiar Clave</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+<div class="modal-header" class="modal-header-themed"><h6 class="modal-title" id="mpTitulo">Cambiar Clave</h6><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
 <div class="modal-body">
 <div class="mb-3"><label class="form-label" data-i18n="nueva_clave">Nueva Clave *</label><input type="password" class="form-control" id="mpClave" placeholder="Minimo 4 caracteres"></div>
 </div>
@@ -350,7 +350,7 @@ document.addEventListener('click',function(e){
 });
 </script>
 <div class="modal fade" id="modalPrestamo" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content">
-<div class="modal-header" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);color:white"><h5 class="modal-title" data-i18n="nuevo_prestamo"><i class="bi bi-cash-stack"></i> Nuevo Prestamo</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+<div class="modal-header" class="modal-header-themed"><h5 class="modal-title" data-i18n="nuevo_prestamo"><i class="bi bi-cash-stack"></i> Nuevo Prestamo</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
 <div class="modal-body">
 <div class="mb-3"><label class="form-label fw-bold" data-i18n="cliente">Cliente *</label><select id="npCliente" class="form-select" onchange="calcularPrestamo()"><option data-i18n="seleccionar">Seleccionar...</option></select></div>
 <div class="row g-3"><div class="col-6"><div class="mb-3"><label class="form-label fw-bold" data-i18n="tipo_cuota">Tipo Cuota</label><select id="npTipoCuota" class="form-select" onchange="calcularPrestamo()"><option value="1">Semanal</option><option value="2">Quincenal</option><option value="3" selected>Mensual</option></select></div></div><div class="col-4"><div class="mb-3"><label class="form-label fw-bold" data-i18n="monto">Monto *</label><input type="text" id="npMonto" class="form-control text-end" placeholder="0.00" oninput="monInputLive(this);calcularPrestamo()" onblur="monInputBlur(this)"></div></div></div>
@@ -362,7 +362,7 @@ document.addEventListener('click',function(e){
 </div></div></div>
 
 <div class="modal fade" id="modalVerPrestamo" tabindex="-1"><div class="modal-dialog modal-xl modal-dialog-centered"><div class="modal-content">
-<div class="modal-header" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);color:white"><h5 class="modal-title"><i class="bi bi-eye"></i> <span data-i18n="prestamo">Prestamo</span> #<span id="vpId"></span></h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+<div class="modal-header" class="modal-header-themed"><h5 class="modal-title"><i class="bi bi-eye"></i> <span data-i18n="prestamo">Prestamo</span> #<span id="vpId"></span></h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
 <div class="modal-body">
 <div class="card mb-3"><div class="card-header fw-bold" style="background:#f8f9fa" data-i18n="datos"><i class="bi bi-info-circle"></i> Datos</div><div class="card-body"><div class="row"><div class="col-md-4 mb-2"><strong data-i18n="cliente">Cliente:</strong> <span id="vpCliente">-</span></div><div class="col-md-2 mb-2"><strong data-i18n="monto">Monto:</strong> <span id="vpMonto">-</span></div><div class="col-md-2 mb-2"><strong data-i18n="interes">Interes:</strong> <span id="vpInteres">-</span></div><div class="col-1 mb-2"><strong data-i18n="cuotas">Cuotas:</strong> <span id="vpCuotas">-</span></div><div class="col-1 mb-2"><strong data-i18n="estado">Estado:</strong> <span id="vpEstado" class="badge">-</span></div><div class="col-2 mb-2"><strong data-i18n="fecha">Fecha:</strong> <span id="vpFecha">-</span></div></div></div></div>
 <div class="card"><div class="card-header d-flex justify-content-between align-items-center" style="background:#f8f9fa"><span class="fw-bold" data-i18n="amortizacion"><i class="bi bi-table"></i> Amortizacion</span><div><button class="btn btn-sm btn-outline-secondary me-1" id="vpSeleccionar" data-i18n="todos" title="Todo"><i class="bi bi-check-all"></i></button><button class="btn btn-sm btn-outline-secondary" id="vpDeseleccionar" data-i18n="ninguno" title="Ninguno"><i class="bi bi-x"></i></button></div></div><div class="card-body p-0"><div class="table-responsive"><table class="table table-sm mb-0"><thead><tr><th>#</th><th data-i18n="fecha">Fecha</th><th data-i18n="monto">Monto</th><th data-i18n="pagado">Pagado</th><th data-i18n="restante">Restante</th><th data-i18n="mora">Mora</th><th data-i18n="estado">Estado</th><th data-i18n="pagar">Pagar</th></tr></thead><tbody id="vpBody"></tbody></table></div></div></div></div>
@@ -372,7 +372,7 @@ document.addEventListener('click',function(e){
 <!-- Modal Cliente -->
 
 <div class="modal fade" id="modalPagoCuotas" tabindex="-1"><div class="modal-dialog modal-dialog-centered modal-sm"><div class="modal-content">
-<div class="modal-header" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);color:white"><h5 class="modal-title"><i class="bi bi-cash-coin"></i> <span data-i18n="pago_cuotas">Pago de Cuotas</span></h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+<div class="modal-header" class="modal-header-themed"><h5 class="modal-title"><i class="bi bi-cash-coin"></i> <span data-i18n="pago_cuotas">Pago de Cuotas</span></h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
 <div class="modal-body">
 <div class="form-check mb-3"><input class="form-check-input" type="checkbox" id="mpPagarTodo" checked onchange="togglePagoTotal()"><label class="form-check-label fw-bold" for="mpPagarTodo" data-i18n="pagar_total">Pagar Total</label></div>
 <div class="mb-3"><label class="form-label fw-bold" data-i18n="monto_pagar">Monto a Pagar</label><input type="text" class="form-control text-end" id="mpMontoPagar" placeholder="0.00" disabled oninput="monInputLive(this)" onblur="monInputBlur(this)"></div>
@@ -382,7 +382,7 @@ document.addEventListener('click',function(e){
 </div></div></div>
 
 <div class="modal fade" id="modalCliente" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content">
-<div class="modal-header" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);color:white"><h5 class="modal-title" id="mcTitulo" data-i18n="cliente">Cliente</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+<div class="modal-header" class="modal-header-themed"><h5 class="modal-title" id="mcTitulo" data-i18n="cliente">Cliente</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
 <div class="modal-body">
 <div class="row g-3"><div class="col-6"><label class="form-label" data-i18n="nombre">Nombre *</label><input class="form-control" id="mcNombre" placeholder="Nombre"></div><div class="col-6"><label class="form-label" data-i18n="apellido">Apellido *</label><input class="form-control" id="mcApellido" placeholder="Apellido"></div></div>
 <div class="row g-3"><div class="col-4"><label class="form-label" data-i18n="tipo_doc">Tipo Documento</label><select class="form-select" id="mcTipoDoc" onchange="formatearDoc()"><option value="" data-i18n="seleccionar">Seleccionar...</option></select></div><div class="col-8"><label class="form-label" data-i18n="documento">Nro Documento</label><input class="form-control" id="mcDocumento" placeholder="000-0000000-0" oninput="formatearDoc()"></div></div>
@@ -397,7 +397,7 @@ document.addEventListener('click',function(e){
 <div class="modal fade" id="modalAsiento" tabindex="-1">
 <div class="modal-dialog modal-lg modal-dialog-scrollable">
 <div class="modal-content">
-<div class="modal-header" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);color:white">
+<div class="modal-header" class="modal-header-themed">
 <h5 class="modal-title" id="maTitulo"><i class="bi bi-plus-circle"></i> Nuevo Asiento</h5>
 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
 </div>
@@ -418,7 +418,7 @@ document.addEventListener('click',function(e){
 <div class="modal fade" id="modalVerAsiento" tabindex="-1">
 <div class="modal-dialog modal-lg modal-dialog-scrollable">
 <div class="modal-content">
-<div class="modal-header" style="background:linear-gradient(135deg,#1a1a2e,#0f3460);color:white">
+<div class="modal-header" class="modal-header-themed">
 <h5 class="modal-title"><i class="bi bi-eye"></i> Asiento #<span id="mvaId"></span></h5>
 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
 </div>
