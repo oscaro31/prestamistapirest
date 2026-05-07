@@ -535,7 +535,7 @@ function sp(pg){
     document.querySelectorAll('.pg').forEach(function(s){s.classList.remove('act');});
     // Inyectar pagina SA si no existe
     if(pg.indexOf('sa-')===0 && !document.getElementById('p-'+pg)){
-        var content=document.getElementById('content');
+        var content=document.querySelector('.ca');
         if(!content)return;
         if(pg==='sa-dashboard') content.insertAdjacentHTML('beforeend', saDashboardHTML());
         else if(pg==='sa-empresas') content.insertAdjacentHTML('beforeend', saEmpresasHTML());
@@ -608,13 +608,13 @@ function sp(pg){
     else if(pg==='reimprimir'){injectReimprimirHTML();lr();}
     // Paginas superadmin
     else if(pg==='sa-dashboard'){
-        if(!document.getElementById('p-sa-dashboard'))document.getElementById('content').insertAdjacentHTML('beforeend',saDashboardHTML());
+        if(!document.getElementById('p-sa-dashboard'))document.querySelector('.ca').insertAdjacentHTML('beforeend',saDashboardHTML());
         saDashboardLoad();
     }else if(pg==='sa-empresas'){
-        if(!document.getElementById('p-sa-empresas'))document.getElementById('content').insertAdjacentHTML('beforeend',saEmpresasHTML());
+        if(!document.getElementById('p-sa-empresas'))document.querySelector('.ca').insertAdjacentHTML('beforeend',saEmpresasHTML());
         saEmpresasLoad();
     }else if(pg==='sa-usuarios'){
-        if(!document.getElementById('p-sa-usuarios'))document.getElementById('content').insertAdjacentHTML('beforeend',saUsuariosHTML());
+        if(!document.getElementById('p-sa-usuarios'))document.querySelector('.ca').insertAdjacentHTML('beforeend',saUsuariosHTML());
         saUsuariosLoad();
     }
     aplicarIdioma();

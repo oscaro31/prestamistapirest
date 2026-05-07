@@ -1,7 +1,12 @@
 <?php
 function listConfig() {
     $pdo = getDB();
-    jsonResponse($pdo->query("SELECT * FROM configuracion ORDER BY Clave")->fetchAll());
+    try {
+        jsonResponse($pdo->query("SELECT * FROM configuracion ORDER BY Clave")->fetchAll());
+    } catch (Exception $e) {
+        // Si la tabla no existe en BD universal, devolver vacío
+        jsonResponse([]);
+    }
 }
 
 function updateConfig($body) {
