@@ -428,7 +428,7 @@ try {
                 jsonError('Error al guardar archivo', 500);
             }
             $pdo = getDB();
-            $pdo->prepare("UPDATE usuario SET avatar = ? WHERE idusuario = ?")->execute([$filename, $id]);
+            $pdo->prepare("UPDATE usuarios SET avatar = ? WHERE idusuario = ?")->execute([$filename, $id]);
             jsonResponse(['avatar' => $filename, 'success' => true]);
             break;
 
