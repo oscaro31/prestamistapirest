@@ -909,9 +909,9 @@ function saDashboardLoad(){
         document.getElementById("saBdActivas").textContent=conBD.length||0;
         var h="";
         d.forEach(function(r){
-            h+="<tr><td>"+r.nombre+"</td><td>"+r.slug+"</td><td><span class=\"badge bg-"+(r.activo?"success\">Activa":"secondary\">Inactiva")+"</span></td><td>"+(r.tiene_config>0?'<span class="badge bg-success">Configurada</span>':'<span class="badge bg-warning">Sin config</span>')+"</td></tr>";
+            h+="<tr><td>"+r.nombre+"</td><td>"+r.slug+"</td><td><span class=\"badge bg-"+(r.activo?"success\">"+__('sa_activa'):"secondary\">"+__('sa_inactiva'))+"</span></td><td>"+(r.tiene_config>0?'<span class="badge bg-success">'+__('sa_configurada')+'</span>':'<span class="badge bg-warning">'+__('sa_sin_config')+'</span>')+"</td></tr>";
         });
-        document.getElementById("saEmpresasBody").innerHTML=h||'<tr><td colspan="4" class="text-muted text-center">Sin empresas</td></tr>';
+        document.getElementById("saEmpresasBody").innerHTML=h||'<tr><td colspan="4" class="text-muted text-center">'+__('sa_sin_empresas')+'</td></tr>';
         // Usuarios total
         g("users/list",function(e2,d2){
             document.getElementById("saTotalUsuarios").textContent=d2?d2.length:0;
@@ -927,28 +927,29 @@ function saEmpresasLoad(){
         if(e||!d){document.getElementById("saEmpBody").innerHTML='<tr><td colspan="6" class="text-danger">'+e+'</td></tr>';return;}
         var h="";
         d.forEach(function(r){
-            h+="<tr><td>"+r.idempresa+"</td><td>"+r.nombre+"</td><td>"+r.slug+"</td><td><span class=\"badge bg-"+(r.activo?"success\">Activa":"secondary\">Inactiva")+"</span></td>"+
-               "<td>"+(r.tiene_config>0?'<span class="badge bg-success">Configurada</span>':'<span class="badge bg-warning">Sin config</span>')+"</td>"+
+            h+="<tr><td>"+r.idempresa+"</td><td>"+r.nombre+"</td><td>"+r.slug+"</td><td><span class=\"badge bg-"+(r.activo?"success\">"+__('sa_activa'):"secondary\">"+__('sa_inactiva'))+"</span></td>"+
+               "<td>"+(r.tiene_config>0?'<span class="badge bg-success">'+__('sa_configurada')+'</span>':'<span class="badge bg-warning">'+__('sa_sin_config')+'</span>')+"</td>"+
                "<td><button class=\"btn btn-sm btn-outline-primary\" onclick=\"saEmpresaModal("+r.idempresa+")\"><i class=\"bi bi-gear\"></i></button></td></tr>";
         });
-        document.getElementById("saEmpBody").innerHTML=h||'<tr><td colspan="6" class="text-muted text-center">Sin empresas registradas</td></tr>';
+        document.getElementById("saEmpBody").innerHTML=h||'<tr><td colspan="6" class="text-muted text-center">'+__('sa_sin_empresas')+'</td></tr>';
     });
 }
 function saEmpresaModal(id){
     // Modal para crear/editar empresa + config BD
-    var t=id?'Editar Empresa #'+id:'Nueva Empresa';
+    var _t=__('sa_nombre'),_e=__('sa_editar'),_n=__('sa_nueva'),_g=__('guardar'),_c=__('cancelar'),_pc=__('sa_probar_conexion'),_cb=__('sa_config_bd');
+    var t=id?_e+' #'+id:_n;
     var html='<div class="modal fade" id="saEmpModal"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5>'+t+'</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">'+
-        '<div class="mb-3"><label>Nombre</label><input class="form-control" id="saEmpNombre" value=""></div>'+
-        '<div class="mb-3"><label>Slug</label><input class="form-control" id="saEmpSlug" value=""><small class="text-muted">Identificador unico (ej: mi-empresa)</small></div>'+
-        '<hr><h6>Configuracion BD</h6>'+
+        '<div class="mb-3"><label>'+_t+'</label><input class="form-control" id="saEmpNombre" value=""></div>'+
+        '<div class="mb-3"><label>Slug</label><input class="form-control" id="saEmpSlug" value=""><small class="text-muted">'+__('sa_slug_help')+'</small></div>'+
+        '<hr><h6>'+_cb+'</h6>'+
         '<div class="mb-3"><label>Host</label><input class="form-control" id="saBDHost" value="localhost"></div>'+
-        '<div class="row g-2"><div class="col-4"><label>Puerto</label><input class="form-control" id="saBDPuerto" value="3306"></div>'+
-        '<div class="col-8"><label>Base de Datos</label><input class="form-control" id="saBDDbname" value=""></div></div>'+
-        '<div class="mb-3"><label>Usuario BD</label><input class="form-control" id="saBDUser" value=""></div>'+
-        '<div class="mb-3"><label>Contrasena BD</label><input type="password" class="form-control" id="saBDPass" value=""></div>'+
-        '<button class="btn btn-outline-success btn-sm" onclick="saTestConexion()"><i class="bi bi-plug"></i> Probar Conexion</button>'+
+        '<div class="row g-2"><div class="col-4"><label>'+__('sa_puerto')+'</label><input class="form-control" id="saBDPuerto" value="3306"></div>'+
+        '<div class="col-8"><label>'+__('sa_bd')+'</label><input class="form-control" id="saBDDbname" value=""></div></div>'+
+        '<div class="mb-3"><label>'+__('sa_usuario_bd')+'</label><input class="form-control" id="saBDUser" value=""></div>'+
+        '<div class="mb-3"><label>'+__('sa_password_bd')+'</label><input type="password" class="form-control" id="saBDPass" value=""></div>'+
+        '<button class="btn btn-outline-success btn-sm" onclick="saTestConexion()"><i class="bi bi-plug"></i> '+_pc+'</button>'+
         '</div><div class="modal-footer">'+
-        '<button class="btn btn-success" onclick="saGuardarEmpresa('+id+')"><i class="bi bi-check"></i> Guardar</button></div></div></div></div>';
+        '<button class="btn btn-success" onclick="saGuardarEmpresa('+id+')"><i class="bi bi-check"></i> '+_g+'</button></div></div></div></div>';
     // Si existe removerlo
     var old=document.getElementById('saEmpModal');
     if(old)old.remove();
@@ -1006,7 +1007,7 @@ function saUsuariosLoad(){
             var bRol=r.rol==='superadmin'?'danger':'primary';
             var rRol=r.rol||'usuario';
             var bAct=r.activo==1||r.activo==='1'?'success':'secondary';
-            var tAct=r.activo==1||r.activo==='1'?'Activo':'Inactivo';
+            var tAct=r.activo==1||r.activo==='1'?__('sa_activo'):__('sa_inactivo');
             h+='<tr><td>'+r.idusuario+'</td><td>'+rNom+' '+rApe+'</td><td>'+r.login+'</td><td>'+rEml+'</td><td>'+rEmp+'</td><td><span class="badge bg-'+bRol+'">'+rRol+'</span></td><td><span class="badge bg-'+bAct+'">'+tAct+'</span></td></tr>';
         });
         document.getElementById("saUserBody").innerHTML=h||'<tr><td colspan="7" class="text-muted text-center">Sin usuarios</td></tr>';
