@@ -536,6 +536,10 @@ function sp(pg){
     var titles={dashboard:'dashboard',prestamos:'registro',reimprimir:'historial',clientes:'clientes',monedas:'monedas',usuarios:'usuarios',config:'preferencias',perfil:'perfil','plan-cuentas':'plan_cuentas',asientos:'asientos_contables','config-contable':'config_contable','reportes-contables':'reportes_contables',
         'sa-dashboard':'Dashboard Global','sa-empresas':'Empresas','sa-usuarios':'Usuarios Globales'};
     document.getElementById('pt').textContent=__(titles[pg]||pg);
+    // Forzar titulo directo para paginas SA
+    if(pg==='sa-dashboard')document.getElementById('pt').textContent='Dashboard Global';
+    else if(pg==='sa-empresas')document.getElementById('pt').textContent='Empresas';
+    else if(pg==='sa-usuarios')document.getElementById('pt').textContent='Usuarios Globales';
     // Inyectar pagina SA si no existe
     if(pg.indexOf('sa-')===0 && !document.getElementById('p-'+pg)){
         var content=document.querySelector('.ca');
