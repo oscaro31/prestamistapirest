@@ -631,6 +631,18 @@ try {
             }
             jsonResponse(['success' => true, 'insertados' => $insertados]);
             break;
+        case 'setup/remove-fk-recibos':
+            $pdo = getEmpresaDB($_GET['id'] ?? 0);
+            $cmds = [
+                "ALTER TABLE recibos DROP FOREIGN KEY recibos_ibfk_2",
+                "ALTER TABLE recibos DROP FOREIGN KEY recibos_ibfk_1",
+            ];
+            foreach ($cmds as $cmd) {
+                try { $pdo->exec($cmd); } catch (Exception $e) {}
+            }
+            jsonResponse(['success' => true, 'msg' => 'FK eliminadas en recibos']);
+            break;
+
         case 'setup/datos-prueba-v2':
             $pdo = getDB();
             $idusuario = 1;
