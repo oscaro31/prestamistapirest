@@ -35,7 +35,7 @@ function fm(n){if(n===null||n===undefined)return'0.00';var f=parseFloat(n);retur
 function avatarUrl(name){
     if(!name)return 'images/logo.jpg';
     if(name.indexOf('//')!==-1||name.indexOf('data:')===0)return name;
-    return 'https://prestamist.optecnology.com/api/uploads/avatars/'+name;
+    return 'https://prestamist.optecnology.com/uploads/avatars/'+name;
 }
 
 // ===== INTERNATIONALIZATION =====
