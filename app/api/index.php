@@ -437,6 +437,21 @@ try {
             elseif ($route === 'db/describe') showTableInfo();
             elseif ($route === 'db/tables') listTables();
             break;
+        case 'setup/add-preferencias':
+            try {
+                $pdo = getDB();
+                $check = $pdo->query("SHOW COLUMNS FROM usuarios LIKE 'preferencias'");
+                if (!$check->fetch()) {
+                    $pdo->exec("ALTER TABLE usuarios ADD COLUMN preferencias TEXT DEFAULT NULL COMMENT 'JSON con preferencias'");
+                    echo json_encode(['success' => true, 'message' => 'Columna preferencias agregada']);
+                } else {
+                    echo json_encode(['success' => true, 'message' => 'Columna preferencias ya existe']);
+                }
+            } catch (Exception $e) {
+                echo json_encode(['error' => $e->getMessage()]);
+            }
+            exit;
+
         case 'setup/permissions':
             // Sin token — ruta de bootstrap interno
             createPermissionsTable();

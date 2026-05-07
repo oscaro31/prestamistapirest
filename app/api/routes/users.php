@@ -29,12 +29,12 @@ function createUser($body) {
     }
 
     $pdo = getDB();
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM usuario WHERE login = ?");
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM usuarios WHERE login = ?");
     $stmt->execute([$login]);
     if ($stmt->fetchColumn() > 0) jsonError('El login ya existe');
 
     $claveHash = password_hash($clave, PASSWORD_BCRYPT);
-    $stmt = $pdo->prepare("INSERT INTO usuario (nombre, apellido, login, clave, email, idcargo, idtipodocumento, num_documento, telefono, direccion, idtipoestadosusuarios, idtipoestatususuarios)
+    $stmt = $pdo->prepare("INSERT INTO usuarios (nombre, apellido, login, clave, email, idcargo, idtipodocumento, num_documento, telefono, direccion, idtipoestadosusuarios, idtipoestatususuarios)
                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 2)");
     $stmt->execute([$nombre, $apellido, $login, $claveHash, $email, $idcargo ?: null, $idtipodocumento, $nrodocumento ?: null, $telefono ?: null, $direccion ?: null]);
     jsonResponse(['idusuario' => (int)$pdo->lastInsertId()], 201);
@@ -60,7 +60,7 @@ function updateUser($body) {
 
     if (empty($fields)) jsonError('Nada que actualizar');
     $params[] = $idusuario;
-    $pdo->prepare("UPDATE usuario SET " . implode(', ', $fields) . " WHERE idusuario = ?")->execute($params);
+    $pdo->prepare("UPDATE usuarios SET " . implode(', ', $fields) . " WHERE idusuario = ?")->execute($params);
     jsonResponse(['success' => true]);
 }
 
