@@ -1031,6 +1031,8 @@ function saUsuarioModal(id){
         '<div class="mb-3"><label>Email</label><input type="email" class="form-control" id="saUEmail" value=""></div>'+
         '<div class="mb-3"><label>Empresa</label><select class="form-select" id="saUEmpresa"><option value="0">Sin empresa</option></select></div>'+
         '<div class="mb-3"><label>Rol</label><select class="form-select" id="saURol"><option value="usuario">Usuario</option><option value="superadmin">Superadmin</option></select></div>'+
+        '<div class="mb-3"><label>Avatar</label><input type="file" class="form-control" id="saUAvatar" accept="image/*"></div>'+
+        (id>0?'<div class="mb-3"><img id="saUAvatarPreview" style="width:60px;height:60px;border-radius:50%;object-fit:cover;display:'+(id>0?'none':'none')+'" src=""></div>':'')+
         '<div class="mb-3"><label>Activo</label><select class="form-select" id="saUActivo"><option value="1">Si</option><option value="0">No</option></select></div>'+
         '</div><div class="modal-footer"><button class="btn btn-success" onclick="saGuardarUsuario('+id+')"><i class="bi bi-check"></i> '+_g+'</button></div></div></div></div>';
     var old=document.getElementById('saUserModal');
@@ -1053,6 +1055,7 @@ function saUsuarioModal(id){
                 document.getElementById('saUEmpresa').value=d3.idempresa||0;
                 document.getElementById('saURol').value=d3.rol||'usuario';
                 document.getElementById('saUActivo').value=d3.activo||1;
+                if(d3.avatar){document.getElementById('saUAvatarPreview').src=avatarUrl(d3.avatar);document.getElementById('saUAvatarPreview').style.display='';}
             });
         }
     });
@@ -1060,8 +1063,20 @@ function saUsuarioModal(id){
 }
 function saGuardarUsuario(id){
     var data={nombre:document.getElementById('saUNombre').value,apellido:document.getElementById('suAApellido').value,login:document.getElementById('saULogin').value,email:document.getElementById('saUEmail').value,idempresa:parseInt(document.getElementById('saUEmpresa').value)||null,rol:document.getElementById('saURol').value};
-    var clv=document.getElementById('saUClave').value;
     if(clv)data.clave=clv;
-    if(id>0){data.idusuario=id;p('users/update',data,function(e,d){if(!e){saUsuariosLoad();document.querySelector('.btn-close').click();}else{alert(e);}});}
-    else{p('users/create',data,function(e,d){if(!e){saUsuariosLoad();document.querySelector('.btn-close').click();}else{alert(e);}});}
+    if(id>0){data.idusuario=id;p('users/update',data,function(e,d){if(!e){subirAvatarSA(id);saUsuariosLoad();document.querySelector('.btn-close').click();}else{alert(e);}});}
+    else{p('users/create',data,function(e,d){if(!e){if(d&&d.idusuario)subirAvatarSA(d.idusuario);saUsuariosLoad();document.querySelector('.btn-close').click();}else{alert(e);}});}
+}
+function subirAvatarSA(idusuario){
+    var fileInput=document.getElementById('saUAvatar');
+    if(!fileInput||!fileInput.files||!fileInput.files[0])return;
+    var form=new FormData();
+    form.append('avatar',fileInput.files[0]);
+    var x=new XMLHttpRequest();
+    x.open('POST',API+'users/upload-avatar&idusuario='+idusuario,true);
+    x.setRequestHeader('Authorization','Bearer '+localStorage.getItem('token'));
+    x.onload=function(){
+        if(x.status===200){window.user.avatar=true;document.getElementById('userAvatar').src=URL.createObjectURL(fileInput.files[0]);}
+    };
+    x.send(form);
 }

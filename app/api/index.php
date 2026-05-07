@@ -198,6 +198,30 @@ try {
             registrarActividad(getDB(), $authUser['idusuario'], 'toggle_usuario', 'Cambió estado del usuario ID: ' . $uid);
             toggleUser($body);
             break;
+        // USERS upload-avatar (SA puede asignar avatar a cualquier usuario)
+        case 'users/upload-avatar':
+            $authUser = validateToken();
+            if ($authUser['rol'] !== 'superadmin') {
+                jsonError('Solo superadmin', 403);
+            }
+            $id = (int)($_GET['idusuario'] ?? 0);
+            if (!$id) jsonError('idusuario requerido', 400);
+            if (!isset($_FILES['avatar']) || $_FILES['avatar']['error'] !== UPLOAD_ERR_OK) {
+                jsonError('Error al subir archivo', 400);
+            }
+            $ext = strtolower(pathinfo($_FILES['avatar']['name'], PATHINFO_EXTENSION));
+            $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+            if (!in_array($ext, $allowed)) jsonError('Formato no permitido (jpg, png, gif, webp)', 400);
+            $filename = 'avatar_' . $id . '_' . time() . '.' . $ext;
+            $dest = __DIR__ . '/../uploads/avatars/' . $filename;
+            if (!move_uploaded_file($_FILES['avatar']['tmp_name'], $dest)) {
+                jsonError('Error al guardar archivo', 500);
+            }
+            $pdo = getDB();
+            $pdo->prepare("UPDATE usuarios SET avatar = ? WHERE idusuario = ?")->execute([$filename, $id]);
+            jsonResponse(['avatar' => $filename, 'success' => true]);
+            break;
+
         // USERS password — admin O el propio usuario
         case 'users/password':
             $authUser = validateToken();
