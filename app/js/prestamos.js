@@ -157,10 +157,10 @@ function guardarPrestamo() {
     var nc = parseInt(document.getElementById('npCuotas').value) || 0;
     var tasa = parseFloat(document.getElementById('npInteres').value) || 0;
     var fi = document.getElementById('npFecha').value;
-    if (!cl || !mt || !nc) { alert(__('completar')); return; }
+    if (!cl || !mt || !nc) { saToast(__('completar'),'error'); return; }
     var cfg = cfgCache || {};
     if (cfg['limite'] && mt > parseFloat(cfg['limite'])) {
-        alert('El monto excede el limite maximo de RD$' + parseFloat(cfg['limite']).toFixed(2));
+                saToast('El monto excede el limite maximo de RD$' + parseFloat(cfg['limite']).toFixed(2),'error');
         return;
     }
     var t = Math.round((mt + (mt * tasa / 100 * nc / 12)) * 100) / 100;
@@ -172,7 +172,7 @@ function guardarPrestamo() {
         FormaDePago: 'Mensual', ValorPorCuota: pc,
         ValorInteres: Math.round((t - mt) * 100) / 100, ValorTotal: t
     }, function(e) {
-        if (e) { alert(e); } else {
+                if (e) { saToast(e,'error'); } else {
             var m = bootstrap.Modal.getInstance(document.getElementById('modalPrestamo'));
             if (m) m.hide();
             var nom = document.getElementById('npCliente').selectedOptions[0].textContent || '';
@@ -184,7 +184,7 @@ function guardarPrestamo() {
 
 function vp(id) {
     g('prestamos/list&IdPrestamo=' + id, function(e, d) {
-        if (e || !d || d.length === 0) { alert('Error al cargar'); return; }
+        if (e || !d || d.length === 0) { saToast('Error al cargar','error'); return; }
         var p = d[0];
         document.getElementById('vpId').textContent = p.IdPrestamo;
         document.getElementById('vpCliente').textContent = (p.cliente_nombre || '') + ' ' + (p.cliente_apellido || '');
@@ -224,7 +224,7 @@ function vp(id) {
 
 function abrirModalPagoCuotas(){
     _vpChecks=document.querySelectorAll('.vp-check:checked');
-    if(_vpChecks.length===0){alert('Selecciona al menos una cuota');return;}
+    if(_vpChecks.length===0){saToast('Selecciona al menos una cuota','error');return;}
     _vpPrestamoIdGlobal=window._vpPrestamoId||0;
     document.getElementById('mpPagarTodo').checked=true;
     document.getElementById('mpMontoPagar').value='';
@@ -282,14 +282,14 @@ function confirmarPagoCuotas(){
 
 function pagarCuotas(id) {
     var ids = _vpIds.length > 0 ? _vpIds : [];
-    if (ids.length === 0) { alert('Selecciona al menos una cuota'); return; }
+    if (ids.length === 0) { saToast('Selecciona al menos una cuota','error'); return; }
     
     p('prestamos/pagar', { IdPrestamo: id, detallesIds: ids, montosPagar: _pagarTodo?[]:_montosPagar, pagarTodo: _pagarTodo===true||_pagarTodo==='true' }, function(e) {
-        if (e) { alert(e); return; }
+        if (e) { saToast(e,'error'); return; }
         mostrarToast('Pago realizado correctamente', 'success');
         g('prestamos/list&IdPrestamo=' + id, function(e2, d2) {
             var p = d2 && d2[0];
-            if (!p) { alert('Error'); return; }
+            if (!p) { saToast('Error','error'); return; }
             var ahora = new Date();
             var f = ahora.toLocaleDateString('es-DO', { year: 'numeric', month: '2-digit', day: '2-digit' });
             var h = ahora.toLocaleTimeString('es-DO', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -420,7 +420,7 @@ function deseleccionarTodasCuotas() {
 
 function ia(id) {
     g('prestamos/list&IdPrestamo=' + id, function(e, d) {
-        if (e || !d || d.length === 0) { alert('Error'); return; }
+        if (e || !d || d.length === 0) { saToast('Error','error'); return; }
         var p = d[0];
         var nc = p.NroCuotas || (p.cuotas ? p.cuotas.length : 0);
         var mon = (p.moneda_simbolo || 'RD$');

@@ -306,3 +306,13 @@ function cargarIdiomaGlobal(){
     }catch(e){}
 }
 var L=localStorage.getItem('idioma')||'es';
+
+function saToast(msg, tipo){
+    var old=document.getElementById('saToast');
+    if(old)old.remove();
+    var bg=tipo==='error'?'bg-danger':'bg-success';
+    var icon=tipo==='error'?'bi-x-circle':'bi-check-circle';
+    var html='<div id="saToast" style="position:fixed;top:20px;right:20px;z-index:9999;animation:saFadeIn 0.3s ease"><div class="toast show align-items-center text-white '+bg+' border-0" role="alert"><div class="d-flex"><div class="toast-body"><i class="bi '+icon+' me-2"></i>'+msg+'</div><button class="btn-close btn-close-white me-2 m-auto" onclick="document.getElementById(\'saToast\').remove()"></button></div></div></div>';
+    document.body.insertAdjacentHTML('beforeend',html);
+    setTimeout(function(){var e=document.getElementById('saToast');if(e){e.style.transition='opacity 0.5s';e.style.opacity='0';setTimeout(function(){e.remove()},500);}},3000);
+}
