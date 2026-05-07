@@ -1023,23 +1023,23 @@ function saUsuariosLoad(){
 function saUsuarioModal(id){
     var _n=__('sa_nuevo'),_g=__('guardar'),_c=__('cancelar'),_t=__('sa_nombre');
     var t=id?__('editar')+' #'+id:_n;
-    var html='<div class="modal fade" id="saUserModal"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5>'+t+'</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">'+
-        '<div class="mb-3"><label>'+_t+'</label><input class="form-control" id="saUNombre" value=""></div>'+
-        '<div class="mb-3"><label>'+__('sa_apellido')+'</label><input class="form-control" id="suAApellido" value=""></div>'+
-        '<div class="mb-3"><label>'+__('sa_login')+'</label><input class="form-control" id="saULogin" value=""></div>'+
-        '<div class="mb-3"><label>'+__('sa_clave')+'</label><input type="password" class="form-control" id="saUClave" value=""></div>'+
-        '<div class="mb-3"><label>'+__('sa_email')+'</label><input type="email" class="form-control" id="saUEmail" value=""></div>'+
-        '<div class="mb-3"><label>'+__('sa_empresa')+'</label><select class="form-select" id="saUEmpresa"><option value="0">'+__('ninguno')+'</option></select></div>'+
-        '<div class="mb-3"><label>'+__('sa_rol')+'</label><select class="form-select" id="saURol"><option value="usuario">Usuario</option><option value="superadmin">Superadmin</option></select></div>'+
-        '<div class="mb-3"><label>Cargo</label><select class="form-select" id="saUCargo"><option value="0">Sin cargo</option></select></div>'+
-        '<div class="mb-3"><label>'+__('telefono')+'</label><input class="form-control" id="saUTelefono" value=""></div>'+
-        '<div class="mb-3"><label>'+__('direccion')+'</label><input class="form-control" id="saUDireccion" value=""></div>'+
-        '<div class="mb-3"><label>'+__('tipo_doc')+'</label><select class="form-select" id="saUTipoDoc"><option value="">Ninguno</option><option value="1">Cedula</option><option value="2">Pasaporte</option><option value="3">RNC</option></select></div>'+
-        '<div class="mb-3"><label>'+__('num_documento')+'</label><input class="form-control" id="saUNumDoc" value=""></div>'+
-        '<div class="mb-3"><label>'+__('sa_avatar')+'</label><input type="file" class="form-control" id="saUAvatar" accept="image/*"></div>'+
-        (id>0?'<div class="mb-3"><img id="saUAvatarPreview" style="width:60px;height:60px;border-radius:50%;object-fit:cover;display:none"></div>':'')+
-        '<div class="mb-3"><label>'+__('sa_activo')+'</label><select class="form-select" id="saUActivo"><option value="1">'+__('sa_si')+'</option><option value="0">'+__('sa_no')+'</option></select></div>'+
-        '</div><div class="modal-footer"><button class="btn btn-success" onclick="saGuardarUsuario('+id+')"><i class="bi bi-check"></i> '+_g+'</button></div></div></div></div>';
+    var html='<div class="modal fade" id="saUserModal"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><h5>'+t+'</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row g-2">'+
+        '<div class="col-md-6"><label class="form-label small">'+_t+'</label><input class="form-control form-control-sm" id="saUNombre"></div>'+
+        '<div class="col-md-6"><label class="form-label small">'+__('sa_apellido')+'</label><input class="form-control form-control-sm" id="suAApellido"></div>'+
+        '<div class="col-md-6"><label class="form-label small">'+__('sa_login')+'</label><input class="form-control form-control-sm" id="saULogin"></div>'+
+        '<div class="col-md-6"><label class="form-label small">'+__('sa_clave')+'</label><input type="password" class="form-control form-control-sm" id="saUClave"></div>'+
+        '<div class="col-md-6"><label class="form-label small">'+__('sa_email')+'</label><input type="email" class="form-control form-control-sm" id="saUEmail"></div>'+
+        '<div class="col-md-6"><label class="form-label small">'+__('telefono')+'</label><input class="form-control form-control-sm" id="saUTelefono"></div>'+
+        '<div class="col-md-6"><label class="form-label small">'+__('tipo_doc')+'</label><select class="form-select form-select-sm" id="saUTipoDoc"><option value="">Ninguno</option><option value="1">Cedula</option><option value="2">Pasaporte</option><option value="3">RNC</option></select></div>'+
+        '<div class="col-md-6"><label class="form-label small">'+__('num_documento')+'</label><input class="form-control form-control-sm" id="saUNumDoc"></div>'+
+        '<div class="col-md-6"><label class="form-label small">'+__('sa_empresa')+'</label><select class="form-select form-select-sm" id="saUEmpresa"><option value="0">'+__('ninguno')+'</option></select></div>'+
+        '<div class="col-md-6"><label class="form-label small">'+__('sa_rol')+'</label><select class="form-select form-select-sm" id="saURol"><option value="usuario">Usuario</option><option value="superadmin">Superadmin</option></select></div>'+
+        '<div class="col-md-6"><label class="form-label small">Cargo</label><select class="form-select form-select-sm" id="saUCargo"><option value="0">Sin cargo</option></select></div>'+
+        '<div class="col-md-6"><label class="form-label small">'+__('sa_activo')+'</label><select class="form-select form-select-sm" id="saUActivo"><option value="1">'+__('sa_si')+'</option><option value="0">'+__('sa_no')+'</option></select></div>'+
+        '<div class="col-12"><label class="form-label small">'+__('direccion')+'</label><input class="form-control form-control-sm" id="saUDireccion"></div>'+
+        '<div class="col-md-6"><label class="form-label small">'+__('sa_avatar')+'</label><input type="file" class="form-control form-control-sm" id="saUAvatar" accept="image/*"></div>'+
+        (id>0?'<div class="col-md-6 d-flex align-items-end pb-1"><img id="saUAvatarPreview" style="width:50px;height:50px;border-radius:50%;object-fit:cover;display:none"></div>':'')+
+        '</div></div><div class="modal-footer"><button class="btn btn-success btn-sm" onclick="saGuardarUsuario('+id+')"><i class="bi bi-check"></i> '+_g+'</button></div></div></div></div>';
     var old=document.getElementById('saUserModal');
     if(old)old.remove();
     document.body.insertAdjacentHTML('beforeend',html);
