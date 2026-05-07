@@ -716,7 +716,19 @@ aplicarIdioma();
                     document.getElementById('uname').textContent=user.nombre+(user.apellido?' '+user.apellido:'');
                     
                     document.getElementById('srole').textContent=user.cargo_nombre||'';
-                    document.getElementById('userAvatar').src=avatarUrl(user.avatar);
+                    if(user.avatar)document.getElementById('userAvatar').src=user.avatar;
+                    
+                    // Mostrar menu segun rol (tambien en recarga)
+                    if(user.rol==='superadmin'){
+                        document.getElementById('menuNormal').style.display='none';
+                        document.getElementById('menuSuperadmin').style.display='block';
+                        var bell=document.getElementById('notifBell');
+                        if(bell)bell.style.display='none';
+                    }else{
+                        document.getElementById('menuNormal').style.display='block';
+                        document.getElementById('menuSuperadmin').style.display='none';
+                    }
+                    
                     cargarTemaGlobal();aplicarPermisos();
     setTimeout(aplicarSidebarCompactGlobal,200);
                     cargarIdiomaGlobal();aplicarIdioma();
@@ -738,6 +750,15 @@ aplicarIdioma();
                         };
                         xx.send();
                     })();
+                    // Recarga: redirigir a pagina correcta segun rol
+                    var last=localStorage.getItem('lastPage');
+                    if(user.rol==='superadmin'){
+                        sp('sa-dashboard');
+                    }else if(last && document.getElementById('p-'+last)){
+                        sp(last);
+                    }else{
+                        sp('dashboard');
+                    }
                 }
             };
             x2.send();
