@@ -83,7 +83,7 @@ function resumen() {
         if (isset($GLOBALS['_EMPRESA_PDO'])) {
             $tmp = $GLOBALS['_EMPRESA_PDO'];
             unset($GLOBALS['_EMPRESA_PDO']);
-            $uStmt = getDB()->query("SELECT u.nombre, u.login, c.nombre as cargo_nombre FROM usuarios u LEFT JOIN cargos c ON c.idcargo = u.idcargo WHERE u.activo = 1 LIMIT 10");
+            $uStmt = getDB()->query("SELECT u.nombre, u.login, u.idtipoestatususuarios, c.nombre as cargo_nombre FROM usuarios u LEFT JOIN cargos c ON c.idcargo = u.idcargo WHERE u.activo = 1 LIMIT 10");
             $usuarios = $uStmt->fetchAll();
             $GLOBALS['_EMPRESA_PDO'] = $tmp;
         }

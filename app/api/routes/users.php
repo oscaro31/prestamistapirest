@@ -81,7 +81,7 @@ function toggleUser($body) {
     if (!$idusuario) jsonError('idusuario requerido');
 
     $pdo = getDB();
-    $pdo->prepare("UPDATE usuario SET idtipoestadosusuarios = CASE WHEN idtipoestadosusuarios = 1 THEN 2 ELSE 1 END WHERE idusuario = ?")->execute([$idusuario]);
+    $pdo->prepare("UPDATE usuarios SET idtipoestadosusuarios = CASE WHEN idtipoestadosusuarios = 1 THEN 2 ELSE 1 END WHERE idusuario = ?")->execute([$idusuario]);
     $pdo->prepare("DELETE FROM tokens WHERE idusuario = ?")->execute([$idusuario]);
     jsonResponse(['success' => true]);
 }
