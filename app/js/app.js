@@ -348,8 +348,20 @@ function ea(){
     });
 }
 
-// ===== NOTIFICACIONES =====
+// ===== NOTIFICACIONES MEJORADAS =====
 var _notifAbierto = false;
+var _notifTimer = null;
+
+function animarBadgeNotif(){
+    var badge = document.getElementById('notifBadge');
+    if(!badge || badge.style.display==='none') return;
+    badge.style.transition='none';
+    badge.style.transform='scale(1.3)';
+    setTimeout(function(){
+        badge.style.transition='transform 0.3s ease';
+        badge.style.transform='scale(1)';
+    },50);
+}
 
 function cargarNotificaciones(){
     g('notificaciones/list', function(e,d){
@@ -357,7 +369,7 @@ function cargarNotificaciones(){
         var drop = document.getElementById('notifDrop');
         if(e || !d || d.length===0){
             if(badge) badge.style.display='none';
-            if(drop) drop.innerHTML = '<div class="p-3 text-muted text-center small">Sin notificaciones</div>';
+            if(drop) drop.innerHTML = '<div class="p-4 text-muted text-center small" style="animation:saFadeIn 0.3s ease"><i class="bi bi-bell-slash fs-3 d-block mb-2"></i>Sin notificaciones</div>';
             return;
         }
         var noLeidas = d.filter(function(n){ return !n.leida; }).length;
@@ -365,16 +377,18 @@ function cargarNotificaciones(){
             if(noLeidas > 0){
                 badge.textContent = noLeidas;
                 badge.style.display = 'inline';
+                animarBadgeNotif();
             } else {
                 badge.style.display = 'none';
             }
         }
         if(drop){
-            var html = '<div class="d-flex justify-content-between align-items-center p-2 border-bottom"><strong class="small">Notificaciones</strong><button class="btn btn-sm btn-link p-0" onclick="marcarTodasLeidas()">'+__('marcar_todas')||'Marcar todas' +'</button></div>';
-            d.forEach(function(n){
-                var icono = n.tipo==='vencida' ? 'bi-exclamation-triangle text-danger' : (n.tipo==='proxima' ? 'bi-clock text-warning' : 'bi-info-circle text-primary');
+            var html = '<div class="d-flex justify-content-between align-items-center p-2 border-bottom" style="animation:saFadeIn 0.3s ease"><strong class="small"><i class="bi bi-bell-fill me-1"></i>Notificaciones</strong><button class="btn btn-sm btn-link p-0" onclick="marcarTodasLeidas()">'+__('marcar_todas')||'Marcar todas' +'</button></div>';
+            d.forEach(function(n,i){
+                var icono = n.tipo==='vencida' ? 'bi-exclamation-triangle-fill text-danger' : (n.tipo==='proxima' ? 'bi-clock-fill text-warning' : 'bi-info-circle-fill text-primary');
                 var bg = n.leida ? '' : 'bg-light';
-                html += '<div class="p-2 border-bottom ' + bg + ' d-flex justify-content-between align-items-start"><div><i class="bi ' + icono + ' me-2"></i><span class="small">' + n.mensaje + '</span></div>';
+                var animDelay = 'animation-delay:'+(i*40)+'ms';
+                html += '<div class="p-2 border-bottom ' + bg + ' d-flex justify-content-between align-items-start notif-item" style="animation:notifSlideIn 0.3s ease both;' + animDelay + '"><div><i class="bi ' + icono + ' me-2"></i><span class="small">' + n.mensaje + '</span></div>';
                 if(!n.leida) html += '<button class="btn btn-sm btn-link p-0 ms-2" onclick="marcarNotifLeida('+n.idnotificacion+')"><i class="bi bi-check"></i></button>';
                 html += '</div>';
             });
@@ -386,19 +400,38 @@ function cargarNotificaciones(){
 function toggleNotif(){
     _notifAbierto = !_notifAbierto;
     var drop = document.getElementById('notifDrop');
-    if(drop) drop.classList.toggle('show', _notifAbierto);
+    if(drop){
+        if(_notifAbierto){
+            drop.classList.add('show');
+            drop.style.animation = 'saFadeIn 0.2s ease';
+        } else {
+            drop.classList.remove('show');
+        }
+    }
 }
 
 function marcarNotifLeida(id){
-    p('notificaciones/marcar-leida', {idnotificacion: id}, function(e,d){
-        cargarNotificaciones();
+    var items = document.querySelectorAll('.notif-item');
+    items.forEach(function(el,idx){
+        setTimeout(function(){ el.style.opacity='0'; el.style.transform='translateX(30px)'; }, idx*50);
     });
+    setTimeout(function(){
+        p('notificaciones/marcar-leida', {idnotificacion: id}, function(e,d){
+            cargarNotificaciones();
+        });
+    }, 300);
 }
 
 function marcarTodasLeidas(){
-    p('notificaciones/marcar-todas', {}, function(e,d){
-        cargarNotificaciones();
+    var items = document.querySelectorAll('.notif-item');
+    items.forEach(function(el,idx){
+        setTimeout(function(){ el.style.opacity='0'; }, idx*30);
     });
+    setTimeout(function(){
+        p('notificaciones/marcar-todas', {}, function(e,d){
+            cargarNotificaciones();
+        });
+    }, 500);
 }
 
 // Cerrar panel al hacer clic fuera

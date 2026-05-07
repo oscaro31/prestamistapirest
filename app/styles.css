@@ -547,6 +547,15 @@ html[data-tema="cereza"] .tb .ub i, html[data-tema="tinta"] .tb .ub i {
 }
 @keyframes saFadeIn{from{transform:translateX(100px);opacity:0}to{transform:translateX(0);opacity:1}}
 
+/* Notificaciones animadas */
+@keyframes notifSlideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.notif-item {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
 /* Modal headers themed with CSS variables */
 .modal-header-themed {
   background: linear-gradient(135deg, var(--sidebar, #1a1a2e), var(--accent, #0f3460));
