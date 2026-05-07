@@ -1059,9 +1059,9 @@ function saUsuarioModal(id){
     new bootstrap.Modal(document.getElementById('saUserModal')).show();
 }
 function saGuardarUsuario(id){
-    var data={nombre:document.getElementById('saUNombre').value,login:document.getElementById('saULogin').value,email:document.getElementById('saUEmail').value,idempresa:document.getElementById('saUEmpresa').value,rol:document.getElementById('saURol').value};
+    var data={nombre:document.getElementById('saUNombre').value,apellido:document.getElementById('suAApellido').value,login:document.getElementById('saULogin').value,email:document.getElementById('saUEmail').value,idempresa:parseInt(document.getElementById('saUEmpresa').value)||null,rol:document.getElementById('saURol').value};
     var clv=document.getElementById('saUClave').value;
     if(clv)data.clave=clv;
-    if(id>0){data.idusuario=id;g('users/update',function(e,d){if(!e){saUsuariosLoad();document.querySelector('.btn-close').click();}else{alert(e);}},data,'POST');}
-    else{g('users/create',function(e,d){if(!e){saUsuariosLoad();document.querySelector('.btn-close').click();}else{alert(e);}},data,'POST');}
+    if(id>0){data.idusuario=id;p('users/update',data,function(e,d){if(!e){saUsuariosLoad();document.querySelector('.btn-close').click();}else{alert(e);}});}
+    else{p('users/create',data,function(e,d){if(!e){saUsuariosLoad();document.querySelector('.btn-close').click();}else{alert(e);}});}
 }
