@@ -106,7 +106,7 @@ function registrarActividad($pdo, $idusuario, $accion, $detalle = '') {
     $stmt->execute([$idusuario]);
     $idempresa = (int)$stmt->fetchColumn();
     
-    $stmt = $pdo->prepare("INSERT INTO actividad (idusuario, idempresa, accion, detalle, ip, fecha) VALUES (?, ?, ?, ?, ?, NOW())");
+    $stmt = $uPdo->prepare("INSERT INTO actividad (idusuario, idempresa, accion, detalle, ip, fecha) VALUES (?, ?, ?, ?, ?, NOW())");
     $stmt->execute([$idusuario, $idempresa, $accion, $detalle, getClientIP()]);
 }
 
