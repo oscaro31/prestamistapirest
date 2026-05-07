@@ -41,7 +41,7 @@ function ld(){
                 var monto = 'RD$' + fm(v.MontoCuota || '0');
                 var fecha = v.FechaPago ? v.FechaPago.substring(0, 10) : '-';
                 var cuotaNum = v.NroCuota || v.nro_cuota || '';
-                vbody += '<tr><td>' + cliente + '</td><td>' + cuotaNum + '</td><td>' + monto + '</td><td>' + fecha + '</td></tr>';
+                vbody += '<tr style="animation:rowSlideIn 0.3s ease both;animation-delay:'+(i*50)+'ms"><td>' + cliente + '</td><td>' + cuotaNum + '</td><td>' + monto + '</td><td>' + fecha + '</td></tr>';
             }
         } else {
             vbody = '<tr><td colspan="4" class="text-muted text-center">Sin datos</td></tr>';
@@ -60,7 +60,7 @@ function ld(){
                 var monto = 'RD$' + fm(q.MontoCuota || '0');
                 var fecha = q.FechaPago ? q.FechaPago.substring(0, 10) : '-';
                 var cuotaNum = q.NroCuota || q.nro_cuota || '';
-                qbody += '<tr><td>' + cliente + '</td><td>' + cuotaNum + '</td><td>' + monto + '</td><td>' + fecha + '</td></tr>';
+                qbody += '<tr style="animation:rowSlideIn 0.3s ease both;animation-delay:'+(i*50)+'ms"><td>' + cliente + '</td><td>' + cuotaNum + '</td><td>' + monto + '</td><td>' + fecha + '</td></tr>';
             }
         } else {
             qbody = '<tr><td colspan="4" class="text-muted text-center">Sin datos</td></tr>';
@@ -80,7 +80,7 @@ function ld(){
                 // Usar fm si hay fm disponible
                 if(typeof fm==='function') monto = 'RD$' + fm(p.MontoPagado || '0');
                 var fecha = p.FechaPago ? p.FechaPago.substring(0, 10) : '-';
-                pagosBody += '<tr><td>' + cliente + '</td><td>' + monto + '</td><td>' + fecha + '</td></tr>';
+                pagosBody += '<tr style="animation:rowSlideIn 0.3s ease both;animation-delay:'+(i*50)+'ms"><td>' + cliente + '</td><td>' + monto + '</td><td>' + fecha + '</td></tr>';
             }
         } else {
             pagosBody = '<tr><td colspan="3" class="text-muted text-center">Sin datos</td></tr>';
