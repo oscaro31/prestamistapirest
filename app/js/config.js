@@ -48,6 +48,7 @@ clientes:'Clientes',monedas:'Monedas',configuracion:'Configuracion',usuarios:'Us
 perfil:'Perfil',cerrar:'Cerrar Sesion',cerrar_modal:'Cerrar',nuevo:'Nuevo',editar:'Editar',eliminar:'Eliminar',
 // Superadmin
 sa_dashboard:'Dashboard Global',sa_empresas:'Empresas',sa_usuarios:'Usuarios',sa_usuarios_globales:'Usuarios Globales',sa_bd_config:'BD Configuradas',sa_empresa:'Empresa',sa_estado:'Estado',sa_nuevo:'Nueva',sa_nombre:'Nombre',sa_acciones:'Acciones',sa_rol:'Rol',
+
 sa_editar:'Editar Empresa',sa_probar_conexion:'Probar Conexion',sa_config_bd:'Configuracion BD',sa_slug_help:'Identificador unico (ej: mi-empresa)',sa_puerto:'Puerto',sa_bd:'Base de Datos',sa_usuario_bd:'Usuario BD',sa_password_bd:'Contrasena BD',
 sa_sin_empresas:'Sin empresas registradas',sa_activa:'Activa',sa_inactiva:'Inactiva',sa_configurada:'Configurada',sa_sin_config:'Sin config',
 sa_activo:'Activo',sa_inactivo:'Inactivo',
@@ -101,6 +102,8 @@ sa_dashboard:'Global Dashboard',sa_empresas:'Companies',sa_usuarios:'Users',sa_u
 sa_editar:'Edit Company',sa_probar_conexion:'Test Connection',sa_config_bd:'DB Configuration',sa_slug_help:'Unique identifier (e.g. my-company)',sa_puerto:'Port',sa_bd:'Database',sa_usuario_bd:'DB User',sa_password_bd:'DB Password',
 sa_sin_empresas:'No companies registered',sa_activa:'Active',sa_inactiva:'Inactive',sa_configurada:'Configured',sa_sin_config:'No config',
 sa_activo:'Active',sa_inactivo:'Inactive',
+// Superadmin
+sa_dashboard:'Global Dashboard',sa_empresas:'Companies',sa_usuarios:'Users',sa_usuarios_globales:'Global Users',sa_bd_config:'Configured DBs',sa_empresa:'Company',sa_estado:'Status',sa_nuevo:'New',sa_nombre:'Name',sa_acciones:'Actions',sa_rol:'Role',
 guardar:'Save',cancelar:'Cancel',buscar:'Search',limpiar:'Clear',fecha:'Date',monto:'Amount',
 pagado:'Paid',cuotas:'Installments',interes:'Interest',estado:'Status',cliente:'Client',moneda:'Currency',
 tipo_cuota:'Installment Type',cargo:'Role',nombre:'Name',apellido:'Last Name',documento:'Document',
@@ -146,7 +149,8 @@ preferencias:'Pr\u00E9f\u00E9rences',perfil:'Profil',cerrar:'D\u00E9connexion',c
 nuevo:'Nouveau',editar:'Modifier',eliminar:'Supprimer',guardar:'Enregistrer',cancelar:'Annuler',
 buscar:'Rechercher',limpiar:'Effacer',fecha:'Date',monto:'Montant',pagado:'Pay\u00E9',
 cuotas:'\u00C9ch\u00E9ances',interes:'Int\u00E9r\u00EAt',estado:'Statut',cliente:'Client',moneda:'Monnaie',
-tipo_cuota:"Type d'\u00E9ch\u00E9ance",cargo:'R\u00F4le',nombre:'Nom',apellido:'Pr\u00E9nom',
+// Superadmin
+sa_dashboard:'Tableau de Bord Global',sa_empresas:'Entreprises',sa_usuarios:'Utilisateurs',sa_usuarios_globales:'Utilisateurs Globaux',sa_bd_config:'BD Configuru00E9es',sa_empresa:'Entreprise',sa_estado:'Statut',sa_nuevo:'Nouveau',sa_nombre:'Nom',sa_acciones:'Actions',sa_rol:'Ru00F4le',
 documento:'Document',telefono:'T\u00E9l\u00E9phone',email:'Email',direccion:'Adresse',login:'Login',
 clave:'Mot de passe',usuario:'Utilisateur',nombre_completo:'Nom Complet',tema:'Th\u00E8me',idioma:'Langue',pagar:'Payer',
 comprobante:'Re\u00E7u',imprimer:'Imprimer',recibo:'Re\u00E7u',monto_total:'Montant Total',
@@ -201,7 +205,9 @@ clientes:'Clientes',monedas:'Moedas',configuracao:'Configura\u00E7\u00E3o',usuar
 preferencias:'Prefer\u00EAncias',perfil:'Perfil',cerrar:'Sair',cerrar_modal:'Fechar',nuevo:'Novo',
 editar:'Editar',eliminar:'Excluir',guardar:'Salvar',cancelar:'Cancelar',buscar:'Buscar',limpiar:'Limpar',
 fecha:'Data',monto:'Valor',pagado:'Pago',cuotas:'Parcelas',interes:'Juros',estado:'Status',
-cliente:'Cliente',moneda:'Moeda',tipo_cuota:'Tipo de Parcela',cargo:'Cargo',nombre:'Nome',
+// Superadmin
+sa_dashboard:'Dashboard Global',sa_empresas:'Empresas',sa_usuarios:'Usuários',sa_usuarios_globales:'Usuários Globais',sa_bd_config:'BD Configuradas',sa_empresa:'Empresa',sa_estado:'Status',sa_nuevo:'Nova',sa_nombre:'Nome',sa_acciones:'Ações',sa_rol:'Função',
+sa_editar:'Editar Empresa',sa_probar_conexion:'Testar Conexão',sa_config_bd:'Configuração BD',sa_slug_help:'Identificador único (ex: minha-empresa)',sa_puerto:'Porta',sa_bd:'Base de Dados',sa_usuario_bd:'Usuário BD',sa_password_bd:'Senha BD',
 apellido:'Sobrenome',documento:'Documento',telefono:'Telefone',email:'Email',direccion:'Endere\u00E7o',
 login:'Login',clave:'Senha',usuario:'Usu\u00E1rio',nombre_completo:'Nome Completo',tema:'Tema',idioma:'Idioma',pagar:'Pagar',
 comprobante:'Comprovante',imprimir:'Imprimir',recibo:'Recibo',monto_total:'Valor Total',
@@ -242,9 +248,6 @@ marcar_todas:'Marcar todas',recordarme:'Lembrar-me',detalles:'Detalhes',sidebar_
 semanal:'Semanal',quincenal:'Quinzenal',mensual:'Mensal',plazo:'Prazo',
 // Superadmin
 sa_dashboard:'Dashboard Global',sa_empresas:'Empresas',sa_usuarios:'Usuários',sa_usuarios_globales:'Usuários Globais',sa_bd_config:'BD Configuradas',sa_empresa:'Empresa',sa_estado:'Status',sa_nuevo:'Nova',sa_nombre:'Nome',sa_acciones:'Ações',sa_rol:'Função',
-sa_editar:'Editar Empresa',sa_probar_conexion:'Testar Conexão',sa_config_bd:'Configuração BD',sa_slug_help:'Identificador único (ex: minha-empresa)',sa_puerto:'Porta',sa_bd:'Base de Dados',sa_usuario_bd:'Usuário BD',sa_password_bd:'Senha BD',
-sa_sin_empresas:'Nenhuma empresa registrada',sa_activa:'Ativa',sa_inactiva:'Inativa',sa_configurada:'Configurada',sa_sin_config:'Sem config.',
-sa_activo:'Ativo',sa_inactivo:'Inativo'
 };
 
 function __(k){var l=L||'en';return(LANG[l]&&LANG[l][k])||LANG.en[k]||k;}
