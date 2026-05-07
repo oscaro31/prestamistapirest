@@ -46,6 +46,8 @@ name:'Espa\u00F1ol',flag:'\uD83C\uDDEA\uD83C\uDDF8',
 login:'Iniciar Sesión',dashboard:'Dashboard',prestamos:'Prestamos',registro:'Registro',historial:'Historial',fecha_desde:'Desde',fecha_hasta:'Hasta',
 clientes:'Clientes',monedas:'Monedas',configuracion:'Configuracion',usuarios:'Usuarios',preferencias:'Preferencias',
 perfil:'Perfil',cerrar:'Cerrar Sesion',cerrar_modal:'Cerrar',nuevo:'Nuevo',editar:'Editar',eliminar:'Eliminar',
+// Superadmin
+sa_dashboard:'Dashboard Global',sa_empresas:'Empresas',sa_usuarios:'Usuarios',sa_usuarios_globales:'Usuarios Globales',sa_bd_config:'BD Configuradas',sa_empresa:'Empresa',sa_estado:'Estado',sa_nuevo:'Nueva',sa_nombre:'Nombre',sa_acciones:'Acciones',sa_rol:'Rol',
 guardar:'Guardar',cancelar:'Cancelar',buscar:'Buscar',limpiar:'Limpiar',fecha:'Fecha',monto:'Monto',
 pagado:'Pagado',cuotas:'Cuotas',interes:'Interes',estado:'Estado',cliente:'Cliente',moneda:'Moneda',
 tipo_cuota:'Tipo Cuota',cargo:'Cargo',nombre:'Nombre',apellido:'Apellido',documento:'Documento',
@@ -91,6 +93,8 @@ name:'English',flag:'\uD83C\uDDEC\uD83C\uDDE7',
 login:'Sign In',dashboard:'Dashboard',prestamos:'Loans',registro:'Register',historial:'History',fecha_desde:'From',fecha_hasta:'To',
 clientes:'Clients',monedas:'Currencies',configuracion:'Configuration',usuarios:'Users',preferencias:'Preferences',
 perfil:'Profile',cerrar:'Sign Out',cerrar_modal:'Close',nuevo:'New',editar:'Edit',eliminar:'Delete',
+// Superadmin
+sa_dashboard:'Global Dashboard',sa_empresas:'Companies',sa_usuarios:'Users',sa_usuarios_globales:'Global Users',sa_bd_config:'Configured DBs',sa_empresa:'Company',sa_estado:'Status',sa_nuevo:'New',sa_nombre:'Name',sa_acciones:'Actions',sa_rol:'Role',
 guardar:'Save',cancelar:'Cancel',buscar:'Search',limpiar:'Clear',fecha:'Date',monto:'Amount',
 pagado:'Paid',cuotas:'Installments',interes:'Interest',estado:'Status',cliente:'Client',moneda:'Currency',
 tipo_cuota:'Installment Type',cargo:'Role',nombre:'Name',apellido:'Last Name',documento:'Document',
@@ -176,6 +180,8 @@ nuevo_prestamo:'Nouveau Prêt',nuevo_cliente:'Nouveau Client',nuevo_usuario:'Nou
 tipo_doc:'Type Document',simbolo:'Symbole',datos_perfil:'Donn\u00E9es du Profil',
 num_documento:'N\u00B0 Document',recordarme:'Se souvenir',modulo:'Module',
 marcar_todas:'Tout marquer',sidebar_compacto:'Barre Lat\u00E9rale Compacte',cambiar:'Changer',permisos:'Autorisations',semanal:'Hebdomadaire',
+// Superadmin
+sa_dashboard:'Tableau de Bord Global',sa_empresas:'Entreprises',sa_usuarios:'Utilisateurs',sa_usuarios_globales:'Utilisateurs Globaux',sa_bd_config:'BD Configur\u00E9es',sa_empresa:'Entreprise',sa_estado:'Statut',sa_nuevo:'Nouveau',sa_nombre:'Nom',sa_acciones:'Actions',sa_rol:'R\u00F4le',
 quincenal:'Bimensuel',mensual:'Mensuel',plazo:'Dur\u00E9e'
 };
 
@@ -224,7 +230,9 @@ vence:'Vence',inicio_pago:'Início Pagamento',nuevo_prestamo:'Novo Empréstimo',
 datos:'Dados',amortizacion:'Amortiza\u00E7\u00E3o',ninguno:'Nenhum',tipo_doc:'Tipo Documento',
 simbolo:'S\u00EDmbolo',datos_perfil:'Dados do Perfil',num_documento:'N\u00B0 Documento',
 marcar_todas:'Marcar todas',recordarme:'Lembrar-me',detalles:'Detalhes',sidebar_compacto:'Sidebar Compacto',cambiar:'Alterar',permisos:'Permiss\u00F5es',
-semanal:'Semanal',quincenal:'Quinzenal',mensual:'Mensal',plazo:'Prazo'
+semanal:'Semanal',quincenal:'Quinzenal',mensual:'Mensal',plazo:'Prazo',
+// Superadmin
+sa_dashboard:'Dashboard Global',sa_empresas:'Empresas',sa_usuarios:'Usuários',sa_usuarios_globales:'Usuários Globais',sa_bd_config:'BD Configuradas',sa_empresa:'Empresa',sa_estado:'Status',sa_nuevo:'Nova',sa_nombre:'Nome',sa_acciones:'Ações',sa_rol:'Função'
 };
 
 function __(k){var l=L||'en';return(LANG[l]&&LANG[l][k])||LANG.en[k]||k;}

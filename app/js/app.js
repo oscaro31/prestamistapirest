@@ -878,7 +878,7 @@ window._initApp=function(){
 // SUPERADMIN VIEWS
 // ============================================
 function saDashboardHTML(){
-    return '<div class="pg act" id="p-sa-dashboard"><div class="container-fluid p-4"><h4><i class="bi bi-server"></i> Dashboard Global</h4><div class="row g-3 mt-2"><div class="col-md-4"><div class="card border-0 shadow-sm"><div class="card-body text-center py-4"><h5><i class="bi bi-building"></i></h5><h3 id="saTotalEmpresas">0</h3><small class="text-muted">Empresas</small></div></div></div><div class="col-md-4"><div class="card border-0 shadow-sm"><div class="card-body text-center py-4"><h5><i class="bi bi-people-fill"></i></h5><h3 id="saTotalUsuarios">0</h3><small class="text-muted">Usuarios</small></div></div></div><div class="col-md-4"><div class="card border-0 shadow-sm"><div class="card-body text-center py-4"><h5><i class="bi bi-check-circle"></i></h5><h3 id="saBdActivas">0</h3><small class="text-muted">BD Configuradas</small></div></div></div></div><div class="table-responsive mt-3"><table class="table table-hover"><thead><tr><th>Empresa</th><th>Slug</th><th>Estado</th><th>BD</th></tr></thead><tbody id="saEmpresasBody"><tr><td colspan="4" class="text-muted text-center">Cargando...</td></tr></tbody></table></div></div></div>';
+    return '<div class="pg act" id="p-sa-dashboard"><div class="container-fluid p-4"><h4><i class="bi bi-server"></i> '+__('sa_dashboard')+'</h4><div class="row g-3 mt-2"><div class="col-md-4"><div class="card border-0 shadow-sm"><div class="card-body text-center py-4"><h5><i class="bi bi-building"></i></h5><h3 id="saTotalEmpresas">0</h3><small class="text-muted">'+__('sa_empresas')+'</small></div></div></div><div class="col-md-4"><div class="card border-0 shadow-sm"><div class="card-body text-center py-4"><h5><i class="bi bi-people-fill"></i></h5><h3 id="saTotalUsuarios">0</h3><small class="text-muted">'+__('sa_usuarios')+'</small></div></div></div><div class="col-md-4"><div class="card border-0 shadow-sm"><div class="card-body text-center py-4"><h5><i class="bi bi-check-circle"></i></h5><h3 id="saBdActivas">0</h3><small class="text-muted">'+__('sa_bd_config')+'</small></div></div></div></div><div class="table-responsive mt-3"><table class="table table-hover"><thead><tr><th>'+__('sa_empresa')+'</th><th>Slug</th><th>'+__('sa_estado')+'</th><th>BD</th></tr></thead><tbody id="saEmpresasBody"><tr><td colspan="4" class="text-muted text-center">'+__('cargando')+'...</td></tr></tbody></table></div></div></div>';
 }
 function saDashboardLoad(){
     g("empresas/list",function(e,d){
@@ -899,7 +899,7 @@ function saDashboardLoad(){
 }
 
 function saEmpresasHTML(){
-    return '<div class="pg act" id="p-sa-empresas"><div class="container-fluid p-4"><div class="d-flex justify-content-between mb-3"><h4><i class="bi bi-building"></i> Empresas</h4><button class="btn btn-primary btn-sm" onclick="saEmpresaModal(0)"><i class="bi bi-plus"></i> Nueva</button></div><div class="table-responsive"><table class="table table-hover"><thead><tr><th>#</th><th>Nombre</th><th>Slug</th><th>Estado</th><th>BD</th><th>Acciones</th></tr></thead><tbody id="saEmpBody"><tr><td colspan="6" class="text-muted text-center">Cargando...</td></tr></tbody></table></div></div></div>';
+    return '<div class="pg act" id="p-sa-empresas"><div class="container-fluid p-4"><div class="d-flex justify-content-between mb-3"><h4><i class="bi bi-building"></i> '+__('sa_empresas')+'</h4><button class="btn btn-primary btn-sm" onclick="saEmpresaModal(0)"><i class="bi bi-plus"></i> '+__('sa_nueva')+'</button></div><div class="table-responsive"><table class="table table-hover"><thead><tr><th>#</th><th>'+__('sa_nombre')+'</th><th>Slug</th><th>'+__('sa_estado')+'</th><th>BD</th><th>'+__('sa_acciones')+'</th></tr></thead><tbody id="saEmpBody"><tr><td colspan="6" class="text-muted text-center">'+__('cargando')+'...</td></tr></tbody></table></div></div></div>';
 }
 function saEmpresasLoad(){
     g("empresas/list",function(e,d){
@@ -971,7 +971,7 @@ function saGuardarEmpresa(id){
 }
 
 function saUsuariosHTML(){
-    return '<div class="pg act" id="p-sa-usuarios"><div class="container-fluid p-4"><h4><i class="bi bi-people-fill"></i> Usuarios Globales</h4><div class="table-responsive mt-3"><table class="table table-hover"><thead><tr><th>#</th><th>Nombre</th><th>Login</th><th>Email</th><th>Empresa</th><th>Rol</th><th>Estado</th></tr></thead><tbody id="saUserBody"><tr><td colspan="7" class="text-muted text-center">Cargando...</td></tr></tbody></table></div></div></div>';
+    return '<div class="pg act" id="p-sa-usuarios"><div class="container-fluid p-4"><h4><i class="bi bi-people-fill"></i> '+__('sa_usuarios_globales')+'</h4><div class="table-responsive mt-3"><table class="table table-hover"><thead><tr><th>#</th><th>'+__('sa_nombre')+'</th><th>Login</th><th>Email</th><th>'+__('sa_empresa')+'</th><th>'+__('sa_rol')+'</th><th>'+__('sa_estado')+'</th></tr></thead><tbody id="saUserBody"><tr><td colspan="7" class="text-muted text-center">'+__('cargando')+'...</td></tr></tbody></table></div></div></div>';
 }
 function saUsuariosLoad(){
     g("users/list",function(e,d){
