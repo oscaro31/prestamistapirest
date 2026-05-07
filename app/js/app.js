@@ -780,9 +780,10 @@ aplicarIdioma();
                     var last=localStorage.getItem('lastPage');
                     if(user.rol==='superadmin'){
                         sp('sa-dashboard');
-                    }else if(last && document.getElementById('p-'+last)){
+                    }else if(last && last.indexOf('sa-')=== -1 && document.getElementById('p-'+last)){
                         sp(last);
                     }else{
+                        localStorage.removeItem('lastPage');
                         sp('dashboard');
                     }
                 }
