@@ -43,6 +43,7 @@ function listPrestamos($params) {
 }
 
 function createPrestamo($body) {
+    $pdo = getDB();
     $idCliente = (int)($body['IdCliente'] ?? $body['idcliente'] ?? 0);
     $idMoneda = (int)($body['IdMoneda'] ?? $body['idmoneda'] ?? 0);
     $monto = $body['MontoPrestamo'] ?? $body['monto_prestamo'] ?? 0;
