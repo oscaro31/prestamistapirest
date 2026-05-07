@@ -1025,15 +1025,15 @@ function saUsuarioModal(id){
     var t=id?__('editar')+' #'+id:_n;
     var html='<div class="modal fade" id="saUserModal"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5>'+t+'</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">'+
         '<div class="mb-3"><label>'+_t+'</label><input class="form-control" id="saUNombre" value=""></div>'+
-        '<div class="mb-3"><label>Apellido</label><input class="form-control" id="suAApellido" value=""></div>'+
-        '<div class="mb-3"><label>Login</label><input class="form-control" id="saULogin" value=""></div>'+
-        '<div class="mb-3"><label>Clave</label><input type="password" class="form-control" id="saUClave" value=""></div>'+
-        '<div class="mb-3"><label>Email</label><input type="email" class="form-control" id="saUEmail" value=""></div>'+
-        '<div class="mb-3"><label>Empresa</label><select class="form-select" id="saUEmpresa"><option value="0">Sin empresa</option></select></div>'+
-        '<div class="mb-3"><label>Rol</label><select class="form-select" id="saURol"><option value="usuario">Usuario</option><option value="superadmin">Superadmin</option></select></div>'+
-        '<div class="mb-3"><label>Avatar</label><input type="file" class="form-control" id="saUAvatar" accept="image/*"></div>'+
-        (id>0?'<div class="mb-3"><img id="saUAvatarPreview" style="width:60px;height:60px;border-radius:50%;object-fit:cover;display:'+(id>0?'none':'none')+'" src=""></div>':'')+
-        '<div class="mb-3"><label>Activo</label><select class="form-select" id="saUActivo"><option value="1">Si</option><option value="0">No</option></select></div>'+
+        '<div class="mb-3"><label>'+__('sa_apellido')+'</label><input class="form-control" id="suAApellido" value=""></div>'+
+        '<div class="mb-3"><label>'+__('sa_login')+'</label><input class="form-control" id="saULogin" value=""></div>'+
+        '<div class="mb-3"><label>'+__('sa_clave')+'</label><input type="password" class="form-control" id="saUClave" value=""></div>'+
+        '<div class="mb-3"><label>'+__('sa_email')+'</label><input type="email" class="form-control" id="saUEmail" value=""></div>'+
+        '<div class="mb-3"><label>'+__('sa_empresa')+'</label><select class="form-select" id="saUEmpresa"><option value="0">'+__('ninguno')+'</option></select></div>'+
+        '<div class="mb-3"><label>'+__('sa_rol')+'</label><select class="form-select" id="saURol"><option value="usuario">Usuario</option><option value="superadmin">Superadmin</option></select></div>'+
+        '<div class="mb-3"><label>'+__('sa_avatar')+'</label><input type="file" class="form-control" id="saUAvatar" accept="image/*"></div>'+
+        (id>0?'<div class="mb-3"><img id="saUAvatarPreview" style="width:60px;height:60px;border-radius:50%;object-fit:cover;display:none"></div>':'')+
+        '<div class="mb-3"><label>'+__('sa_activo')+'</label><select class="form-select" id="saUActivo"><option value="1">'+__('sa_si')+'</option><option value="0">'+__('sa_no')+'</option></select></div>'+
         '</div><div class="modal-footer"><button class="btn btn-success" onclick="saGuardarUsuario('+id+')"><i class="bi bi-check"></i> '+_g+'</button></div></div></div></div>';
     var old=document.getElementById('saUserModal');
     if(old)old.remove();
