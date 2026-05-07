@@ -127,6 +127,15 @@ try {
             break;
 
         // USERS list — cualquiera autenticado
+        case 'users/preferencias':
+            $user = validateToken();
+            $pdo = getDB();
+            $stmt = $pdo->prepare("SELECT preferencias FROM usuarios WHERE idusuario = ?");
+            $stmt->execute([$user['idusuario']]);
+            $prefs = $stmt->fetchColumn();
+            jsonResponse(['preferencias' => $prefs ?: '{}']);
+            break;
+
         case 'users/list':
             $authUser = validateToken();
             listUsers();

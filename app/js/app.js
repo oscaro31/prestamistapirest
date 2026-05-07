@@ -749,6 +749,43 @@ aplicarIdioma();
                             }
                         };
                         xx.send();
+                    (function(){
+                        var xx=new XMLHttpRequest();
+                        xx.open('GET',API+'config/list',true);
+                        xx.setRequestHeader('Authorization','Bearer '+st);
+                        xx.onreadystatechange=function(){
+                            if(xx.readyState===4&&xx.status===200){
+                                try{var j=JSON.parse(xx.responseText);
+                                    if(j.data)for(var i=0;i<j.data.length;i++){
+                                        var c=j.data[i].Clave.toLowerCase();
+                                        if(c==='empresa_nombre')empresaNombre=j.data[i].valor;
+                                        if(c==='empresa_direccion')empresaDir=j.data[i].valor;
+                                        if(c==='empresa_telefono')empresaTel=j.data[i].valor;
+                                    }}catch(e){}
+                            }
+                        };
+                        xx.send();
+                    })();
+                    // Refrescar preferencias del usuario desde BD (recarga)
+                    (function(){
+                        var px=new XMLHttpRequest();
+                        px.open('GET',API+'users/preferencias',true);
+                        px.setRequestHeader('Authorization','Bearer '+st);
+                        px.onreadystatechange=function(){
+                            if(px.readyState===4&&px.status===200){
+                                try{var j=JSON.parse(px.responseText);
+                                    if(j.data&&j.data.preferencias){
+                                        user.preferencias=j.data.preferencias;
+                                        var st=localStorage.getItem('prestamist_user');
+                                        if(st){try{var u=JSON.parse(st);u.preferencias=user.preferencias;localStorage.setItem('prestamist_user',JSON.stringify(u));}catch(e){}}
+                                        st=sessionStorage.getItem('prestamist_user');
+                                        if(st){try{var u=JSON.parse(st);u.preferencias=user.preferencias;sessionStorage.setItem('prestamist_user',JSON.stringify(u));}catch(e){}}
+                                        cargarTemaGlobal();cargarIdiomaGlobal();aplicarIdioma();
+                                        if(typeof aplicarSidebarCompactGlobal==='function')aplicarSidebarCompactGlobal();
+                                    }}catch(e){}
+                            }
+                        };
+                        px.send();
                     })();
                     // Recarga: redirigir a pagina correcta segun rol
                     var last=localStorage.getItem('lastPage');
