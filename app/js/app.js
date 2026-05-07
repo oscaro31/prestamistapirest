@@ -533,6 +533,9 @@ function sp(pg){
         if(sub&&sub.classList)sub.classList.remove('show');
     }
     document.querySelectorAll('.pg').forEach(function(s){s.classList.remove('act');});
+    var titles={dashboard:'dashboard',prestamos:'registro',reimprimir:'historial',clientes:'clientes',monedas:'monedas',usuarios:'usuarios',config:'preferencias',perfil:'perfil','plan-cuentas':'plan_cuentas',asientos:'asientos_contables','config-contable':'config_contable','reportes-contables':'reportes_contables',
+        'sa-dashboard':'Dashboard Global','sa-empresas':'Empresas','sa-usuarios':'Usuarios Globales'};
+    document.getElementById('pt').textContent=__(titles[pg]||pg);
     // Inyectar pagina SA si no existe
     if(pg.indexOf('sa-')===0 && !document.getElementById('p-'+pg)){
         var content=document.querySelector('.ca');
@@ -547,9 +550,6 @@ function sp(pg){
     document.querySelectorAll('.ni').forEach(function(n){n.classList.remove('act');});
     var n=document.querySelector('.ni[data-p="'+pg+'"]');
     if(n)n.classList.add('act');
-    var titles={dashboard:'dashboard',prestamos:'registro',reimprimir:'historial',clientes:'clientes',monedas:'monedas',usuarios:'usuarios',config:'preferencias',perfil:'perfil','plan-cuentas':'plan_cuentas',asientos:'asientos_contables','config-contable':'config_contable','reportes-contables':'reportes_contables',
-        'sa-dashboard':'Dashboard Global','sa-empresas':'Empresas','sa-usuarios':'Usuarios Globales'};
-    document.getElementById('pt').textContent=__(titles[pg]||pg);
     if(typeof aplicarIdioma==='function')aplicarIdioma();
     if(pg==='prestamos'){
         // Inject prestamos page HTML if not present
