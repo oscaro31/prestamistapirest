@@ -1082,8 +1082,8 @@ function saGuardarUsuario(id){
     var data={nombre:document.getElementById('saUNombre').value,apellido:document.getElementById('suAApellido').value,login:document.getElementById('saULogin').value,email:document.getElementById('saUEmail').value,telefono:document.getElementById('saUTelefono').value,direccion:document.getElementById('saUDireccion').value,idtipodocumento:parseInt(document.getElementById('saUTipoDoc').value)||null,num_documento:document.getElementById('saUNumDoc').value,idempresa:parseInt(document.getElementById('saUEmpresa').value)||null,rol:document.getElementById('saURol').value,idcargo:parseInt(document.getElementById('saUCargo').value)||null};
     var clv=document.getElementById('saUClave').value;
     if(clv)data.clave=clv;
-    if(id>0){data.idusuario=id;p('users/update',data,function(e,d){if(!e){subirAvatarSA(id);saUsuariosLoad();bootstrap.Modal.getInstance(document.getElementById('saUserModal')).hide();}else{alert(e);}});}
-    else{p('users/create',data,function(e,d){if(!e){if(d&&d.idusuario)subirAvatarSA(d.idusuario);saUsuariosLoad();bootstrap.Modal.getInstance(document.getElementById('saUserModal')).hide();}else{alert(e);}});}
+    if(id>0){data.idusuario=id;p('users/update',data,function(e,d){if(!e){alert('Usuario actualizado');subirAvatarSA(id);saUsuariosLoad();bootstrap.Modal.getInstance(document.getElementById('saUserModal')).hide();}else{alert(e);}});}
+    else{p('users/create',data,function(e,d){if(!e){alert('Usuario creado');if(d&&d.idusuario)subirAvatarSA(d.idusuario);saUsuariosLoad();bootstrap.Modal.getInstance(document.getElementById('saUserModal')).hide();}else{alert(e);}});}
 }
 function subirAvatarSA(idusuario){
     var fileInput=document.getElementById('saUAvatar');
