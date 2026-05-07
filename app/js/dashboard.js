@@ -20,7 +20,7 @@ function ld(){
         document.getElementById('dVencidas').textContent = d.CuotasVencidas || '0';
         document.getElementById('dProximas').textContent = d.CuotasProximas || '0';
         document.getElementById('dPorCobrar').textContent = 'RD$' + fm(d.MontoPendiente || '0');
-        var du=document.getElementById('dUsuarios'); if(du) du.textContent = (d.UsuariosActivos || '0') + '/' + (d.TotalUsuarios || '0');
+        // var du=document.getElementById('dUsuarios'); if(du) du.textContent = (d.UsuariosActivos || '0') + '/' + (d.TotalUsuarios || '0');
         
         var ganancias = document.getElementById('dGanancias');
         if (ganancias) ganancias.textContent = 'RD$' + fm(d.InteresTotal || '0');
@@ -109,32 +109,33 @@ function ld(){
         if (ubodyEl) ubodyEl.innerHTML = ultimosBody;
 
         // ============================================================
-        // TABLA: Usuarios Activos
-        // ============================================================
-        var usuariosBody = '';
-        if (d.Usuarios && d.Usuarios.length > 0) {
-            for (var i = 0; i < d.Usuarios.length; i++) {
-                var us = d.Usuarios[i];
-                var estado = us.status_nombre || (us.idtipoestatususuarios == 1 ? 'Online' : 'Offline');
-                var badge = (us.idtipoestatususuarios == 1) ? 'badge bg-success' : 'badge bg-secondary';
-                usuariosBody += '<tr><td>' + (us.nombre || '') + ' (' + (us.login || '') + ')</td><td>' + (us.cargo_nombre || '-') + '</td><td><span class="badge ' + badge + '">' + estado + '</span></td></tr>';
-            }
-        } else {
-            usuariosBody = '<tr><td colspan="3" class="text-muted text-center">Sin datos</td></tr>';
-        }
-        // La tabla de usuarios usa id="ubody" pero ya tenemos conflictos con la de prestamos,
-        // mejor usamos un ID específico para usuarios activos
-        var usuariosTable = document.querySelector('.card:has(#ubody) tbody');
-        // Buscar por texto del card-header "Usuarios Activos"
-        var allCards = document.querySelectorAll('.card');
-        for (var ci = 0; ci < allCards.length; ci++) {
-            var header = allCards[ci].querySelector('.card-header');
-            if (header && header.textContent.indexOf('Usuarios') >= 0 && header.textContent.indexOf('Activos') >= 0) {
-                var tb = allCards[ci].querySelector('tbody');
-                if (tb) tb.innerHTML = usuariosBody;
-                break;
-            }
-        }
+//         // TABLA: Usuarios Activos (eliminada - no relevante multiempresa)
+//         /*
+//         // ============================================================
+//         var usuariosBody = '';
+//         if (d.Usuarios && d.Usuarios.length > 0) {
+//             for (var i = 0; i < d.Usuarios.length; i++) {
+//                 var us = d.Usuarios[i];
+//                 var estado = us.status_nombre || (us.idtipoestatususuarios == 1 ? 'Online' : 'Offline');
+//                 var badge = (us.idtipoestatususuarios == 1) ? 'badge bg-success' : 'badge bg-secondary';
+//                 usuariosBody += '<tr><td>' + (us.nombre || '') + ' (' + (us.login || '') + ')</td><td>' + (us.cargo_nombre || '-') + '</td><td><span class="badge ' + badge + '">' + estado + '</span></td></tr>';
+//             }
+//         } else {
+//             usuariosBody = '<tr><td colspan="3" class="text-muted text-center">Sin datos</td></tr>';
+//         }
+//         // La tabla de usuarios usa id="ubody" pero ya tenemos conflictos con la de prestamos,
+//         // mejor usamos un ID específico para usuarios activos
+//         var usuariosTable = document.querySelector('.card:has(#ubody) tbody');
+//         // Buscar por texto del card-header "Usuarios Activos"
+//         var allCards = document.querySelectorAll('.card');
+//         for (var ci = 0; ci < allCards.length; ci++) {
+//             var header = allCards[ci].querySelector('.card-header');
+//             if (header && header.textContent.indexOf('Usuarios') >= 0 && header.textContent.indexOf('Activos') >= 0) {
+//                 var tb = allCards[ci].querySelector('tbody');
+//                 if (tb) tb.innerHTML = usuariosBody;
+//                 break;
+//             }
+//         }
 
         // Charts
         destroyCharts();

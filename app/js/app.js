@@ -254,18 +254,7 @@ function injectDashboardHTML() {
                 </div>
             </div>
         </div>
-        <div class="col-md-4 col-lg-3" id="dCardUsuarios">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body text-center">
-                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-secondary bg-opacity-10 p-3 mb-2" style="width:50px;height:50px">
-                        <i class="bi bi-people fs-4 text-secondary"></i>
-                    </div>
-                    <h6 class="text-muted mb-1 small" data-i18n="usuarios_activos">Usuarios</h6>
-                    <h3 class="mb-0 fw-bold" id="dUsuarios" style="color:#0d6efd">0</h3>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 col-lg-3" id="dGananciasWrap">
+                <div class="col-md-4 col-lg-3" id="dGananciasWrap">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
                     <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success bg-opacity-10 p-3 mb-2" style="width:50px;height:50px">
@@ -295,20 +284,8 @@ function injectDashboardHTML() {
                 <div class="card-header bg-white fw-bold" data-i18n="ultimos_pagos">Ultimos Pagos</div>
                 <div class="card-body p-0"><div class="table-responsive"><table class="table table-sm mb-0"><thead><tr><th data-i18n="cliente">Cliente</th><th data-i18n="monto">Monto</th><th data-i18n="fecha">Fecha</th></tr></thead><tbody id="qbodyPagos"><tr><td colspan="3" class="text-muted text-center py-3" data-i18n="sin_datos">Sin datos</td></tr></tbody></table></div></div>
             </div>
-        </div>
-        <div class="col-md-6" id="dCardUsuariosTabla">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white fw-bold" data-i18n="usuarios_activos">Usuarios Activos</div>
-                <div class="card-body p-0"><div class="table-responsive"><table class="table table-sm mb-0"><thead><tr><th data-i18n="usuario">Usuario</th><th data-i18n="cargo">Cargo</th><th data-i18n="estado">Estado</th></tr></thead><tbody id="ubody"><tr><td colspan="3" class="text-muted text-center py-3" data-i18n="sin_datos">Sin datos</td></tr></tbody></table></div></div>
-        </div>
+                </div>
     </div>`;
-    // Ocultar cards de usuarios activos si no es admin
-    if(user && user.idcargo && parseInt(user.idcargo)!==1){
-        var dc=document.getElementById('dCardUsuarios');
-        if(dc)dc.style.display='none';
-        var dt=document.getElementById('dCardUsuariosTabla');
-        if(dt)dt.style.display='none';
-    }
 }
 
 function ea(){

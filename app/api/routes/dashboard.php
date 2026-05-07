@@ -10,22 +10,10 @@ function resumen() {
     $pagadoCuotas = (float)$pdo->query("SELECT COALESCE(SUM(IFNULL(MontoPagado, MontoCuota)), 0) FROM PrestamoDetalle WHERE Estado = 'Pagado'")->fetchColumn();
 
     $totalCuotasPendientes = (int)$pdo->query("SELECT COUNT(*) FROM PrestamoDetalle WHERE Estado = 'Pendiente'")->fetchColumn();
-    // Usuarios desde BD universal
+    // Usuarios desde BD universal - omitido (multiempresa)
     $totalUsuarios = 0;
     $usuariosActivos = 0;
     $usuarios = [];
-    try {
-        $uPdo = getDB(); // getDB() sin _EMPRESA_PDO devuelve universal
-        // Forzar universal temporalmente
-        if (isset($GLOBALS['_EMPRESA_PDO'])) {
-            $tmp = $GLOBALS['_EMPRESA_PDO'];
-            unset($GLOBALS['_EMPRESA_PDO']);
-            $totalUsuarios = (int)getDB()->query("SELECT COUNT(*) FROM usuarios")->fetchColumn();
-            $GLOBALS['_EMPRESA_PDO'] = $tmp;
-        } else {
-            $totalUsuarios = (int)getDB()->query("SELECT COUNT(*) FROM usuarios")->fetchColumn();
-        }
-    } catch (Exception $e) {}
     $interesTotal = (float)$pdo->query("SELECT COALESCE(SUM(ValorInteres), 0) FROM Prestamo")->fetchColumn();
     $montoPendiente = (float)$pdo->query("SELECT COALESCE(SUM(MontoCuota), 0) FROM PrestamoDetalle WHERE Estado = 'Pendiente'")->fetchColumn();
 
@@ -77,17 +65,9 @@ function resumen() {
                               ORDER BY pd.FechaPago DESC LIMIT 10");
     $ultimosPagos = $stmtPagos->fetchAll();
 
-    // Usuarios activos (conectados) - desde BD universal
+    // Usuarios activos - omitido (multiempresa)
     $usuarios = [];
-    try {
-        if (isset($GLOBALS['_EMPRESA_PDO'])) {
-            $tmp = $GLOBALS['_EMPRESA_PDO'];
-            unset($GLOBALS['_EMPRESA_PDO']);
-            $uStmt = getDB()->query("SELECT u.nombre, u.login, u.idtipoestatususuarios, c.nombre as cargo_nombre FROM usuarios u LEFT JOIN cargos c ON c.idcargo = u.idcargo WHERE u.activo = 1 LIMIT 10");
-            $usuarios = $uStmt->fetchAll();
-            $GLOBALS['_EMPRESA_PDO'] = $tmp;
-        }
-    } catch (Exception $e) {}
+
     // Prestamos por mes (para grafico)
     $stmtMes = $pdo->query("SELECT DATE_FORMAT(FechaCreacion, '%Y-%m') as mes, COUNT(*) as total, COALESCE(SUM(MontoPrestamo), 0) as monto
                             FROM Prestamo
@@ -139,8 +119,8 @@ function resumen() {
         'MontoVencido' => number_format($montoVencido, 2, '.', ''),
         'CuotasProximas' => (string)$cuotasProximas,
         'MontoProximo' => number_format($montoProximo, 2, '.', ''),
-        'TotalUsuarios' => (string)$totalUsuarios,
-        'UsuariosActivos' => (string)$usuariosActivos,
+        'TotalUsuarios' => '0',
+        'UsuariosActivos' => '0',
         'InteresTotal' => number_format($interesTotal, 2, '.', ''),
         'MontoPendiente' => number_format($montoPendiente, 2, '.', ''),
         'MostrarGanancias' => '1',
@@ -149,7 +129,7 @@ function resumen() {
         'PrestamosPorMes' => $prestamosPorMes,
         'PrestamosPorQuincena' => $prestamosPorQuincena,
         'UltimosPagos' => $ultimosPagos,
-        'Usuarios' => $usuarios,
+        'Usuarios' => [],
         'UltimosPrestamos' => $ultimos,
     ]);
 }
