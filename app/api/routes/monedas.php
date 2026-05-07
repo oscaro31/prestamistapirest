@@ -34,7 +34,7 @@ function deleteMoneda($body) {
     $idmoneda = (int)($body['IdMoneda'] ?? $body['idmoneda'] ?? 0);
     if (!$idmoneda) jsonError('IdMoneda requerido');
 
-    $pdo->getDB();
+    $pdo = getDB();
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM Prestamo WHERE IdMoneda = ?");
     $stmt->execute([$idmoneda]);
     if ($stmt->fetchColumn() > 0) jsonError('No se puede eliminar: tiene préstamos asociados');
