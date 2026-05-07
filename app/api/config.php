@@ -11,13 +11,23 @@ define('DB_CHARSET', 'utf8mb4');
 
 // Conexión a la BD universal (db_universal) o BD de empresa
 function getDB($idempresa = null) {
+    // null significa "usar contexto actual o universal"
+    // Cuando se pasa un valor especifico, se fuerza a esa BD
     if ($idempresa !== null) {
-        return getEmpresaDB($idempresa);
+        if ($idempresa > 0) {
+            return getEmpresaDB($idempresa);
+        }
+        // idempresa == 0 o -1: forzar universal (ignorar _EMPRESA_PDO)
+        return getDBUnica();
     }
-    // Si hay un contexto de empresa activo (establecido desde index.php)
+    // Si hay un contexto de empresa activo, devolverlo
     if (isset($GLOBALS['_EMPRESA_PDO'])) {
         return $GLOBALS['_EMPRESA_PDO'];
     }
+    return getDBUnica();
+}
+
+function getDBUnica() {
     static $pdo = null;
     if ($pdo === null) {
         try {

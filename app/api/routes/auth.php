@@ -101,7 +101,7 @@ function registerLoginAttempt($pdo, $login, $ip, $exitoso) {
 
 function registrarActividad($pdo, $idusuario, $accion, $detalle = '') {
     // Obtener idempresa del usuario (desde BD universal)
-    $uPdo = getDB(null);
+    $uPdo = getDB(0);
     $stmt = $uPdo->prepare("SELECT idempresa FROM usuarios WHERE idusuario = ?");
     $stmt->execute([$idusuario]);
     $idempresa = (int)$stmt->fetchColumn();

@@ -31,7 +31,7 @@ function createUser($body, $authUser = null) {
     }
 
     // SA crea en universal, admin de empresa crea en BD empresa
-    $pdo = ($authUser && $authUser['rol'] === 'superadmin') ? getDB(null) : getDB();
+    $pdo = ($authUser && $authUser['rol'] === 'superadmin') ? getDB(0) : getDB();
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM usuarios WHERE login = ?");
     $stmt->execute([$login]);
     if ($stmt->fetchColumn() > 0) jsonError('El login ya existe');

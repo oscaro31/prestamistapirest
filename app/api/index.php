@@ -321,11 +321,18 @@ try {
             listMonedas();
             break;
         case 'monedas/create':
-            $authUser = validateToken();
-            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
-            requirePermission('monedas');
-            registrarActividad(getDB(), $authUser['idusuario'], 'crear_moneda', 'Creó moneda: ' . ($body['Nombre'] ?? '?'));
-            createMoneda($body);
+            try {
+                $authUser = validateToken();
+                $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
+                requirePermission('monedas');
+                registrarActividad(getDB(), $authUser['idusuario'], 'crear_moneda', 'Creó moneda: ' . ($body['Nombre'] ?? '?'));
+                createMoneda($body);
+            } catch (Throwable $e) {
+                error_log('monedas/create THROW: ' . $e->getMessage() . ' line=' . $e->getLine() . ' file=' . $e->getFile());
+                $trace = $e->getTraceAsString();
+                error_log('monedas/create TRACE: ' . $trace);
+                jsonError('Error [' . $e->getLine() . ']: ' . $e->getMessage());
+            }
             break;
         case 'monedas/update':
             $authUser = validateToken();
