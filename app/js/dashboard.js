@@ -20,7 +20,7 @@ function ld(){
         document.getElementById('dVencidas').textContent = d.CuotasVencidas || '0';
         document.getElementById('dProximas').textContent = d.CuotasProximas || '0';
         document.getElementById('dPorCobrar').textContent = 'RD$' + fm(d.MontoPendiente || '0');
-        var du=document.getElementById('dUsuarios'); if(du) du.textContent = (d.UsuariosActivos || '0') + '/' + (d.TotalUsuarios || '0');
+        document.getElementById('dUsuarios').textContent = (d.UsuariosActivos || '0') + '/' + (d.TotalUsuarios || '0');
         
         var ganancias = document.getElementById('dGanancias');
         if (ganancias) ganancias.textContent = 'RD$' + fm(d.InteresTotal || '0');
