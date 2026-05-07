@@ -1031,6 +1031,7 @@ function saUsuarioModal(id){
         '<div class="mb-3"><label>'+__('sa_email')+'</label><input type="email" class="form-control" id="saUEmail" value=""></div>'+
         '<div class="mb-3"><label>'+__('sa_empresa')+'</label><select class="form-select" id="saUEmpresa"><option value="0">'+__('ninguno')+'</option></select></div>'+
         '<div class="mb-3"><label>'+__('sa_rol')+'</label><select class="form-select" id="saURol"><option value="usuario">Usuario</option><option value="superadmin">Superadmin</option></select></div>'+
+        '<div class="mb-3"><label>Cargo</label><select class="form-select" id="saUCargo"><option value="0">Sin cargo</option></select></div>'+
         '<div class="mb-3"><label>'+__('sa_avatar')+'</label><input type="file" class="form-control" id="saUAvatar" accept="image/*"></div>'+
         (id>0?'<div class="mb-3"><img id="saUAvatarPreview" style="width:60px;height:60px;border-radius:50%;object-fit:cover;display:none"></div>':'')+
         '<div class="mb-3"><label>'+__('sa_activo')+'</label><select class="form-select" id="saUActivo"><option value="1">'+__('sa_si')+'</option><option value="0">'+__('sa_no')+'</option></select></div>'+
@@ -1045,6 +1046,13 @@ function saUsuarioModal(id){
         if(!e2&&d2){
             d2.forEach(function(r){sel.innerHTML+='<option value="'+r.idempresa+'">'+r.nombre+'</option>';});
         }
+        // Cargar lista de cargos
+        g("cargos/list",function(ce,cd){
+            var csel=document.getElementById('saUCargo');
+            if(csel&&!ce&&cd){
+                cd.forEach(function(r){csel.innerHTML+='<option value="'+r.idcargo+'">'+r.nombre+'</option>';});
+            }
+        });
         if(id>0){
             g("users/get&id="+id,function(e3,d3){
                 if(e3||!d3)return;
@@ -1054,6 +1062,7 @@ function saUsuarioModal(id){
                 document.getElementById('saUEmail').value=d3.email||'';
                 document.getElementById('saUEmpresa').value=d3.idempresa||0;
                 document.getElementById('saURol').value=d3.rol||'usuario';
+                if(d3.idcargo)document.getElementById('saUCargo').value=d3.idcargo;
                 document.getElementById('saUActivo').value=d3.activo||1;
                 if(d3.avatar){document.getElementById('saUAvatarPreview').src=avatarUrl(d3.avatar);document.getElementById('saUAvatarPreview').style.display='';}
             });
@@ -1062,7 +1071,7 @@ function saUsuarioModal(id){
     new bootstrap.Modal(document.getElementById('saUserModal')).show();
 }
 function saGuardarUsuario(id){
-    var data={nombre:document.getElementById('saUNombre').value,apellido:document.getElementById('suAApellido').value,login:document.getElementById('saULogin').value,email:document.getElementById('saUEmail').value,idempresa:parseInt(document.getElementById('saUEmpresa').value)||null,rol:document.getElementById('saURol').value};
+    var data={nombre:document.getElementById('saUNombre').value,apellido:document.getElementById('suAApellido').value,login:document.getElementById('saULogin').value,email:document.getElementById('saUEmail').value,idempresa:parseInt(document.getElementById('saUEmpresa').value)||null,rol:document.getElementById('saURol').value,idcargo:parseInt(document.getElementById('saUCargo').value)||null};
     var clv=document.getElementById('saUClave').value;
     if(clv)data.clave=clv;
     if(id>0){data.idusuario=id;p('users/update',data,function(e,d){if(!e){subirAvatarSA(id);saUsuariosLoad();document.querySelector('.btn-close').click();}else{alert(e);}});}
