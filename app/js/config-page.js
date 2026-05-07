@@ -12,14 +12,13 @@ function cargarMonedasSelect(){
     });
 }
 
-function lg(){
+function _lg(){
     // Asegurar que el contenedor base existe
     var pe=document.getElementById('p-config');
     if(pe && !document.getElementById('configBody')){
         pe.innerHTML='<div class="container-fluid p-4"><h3 data-i18n="preferencias">Preferencias</h3><div id="configBody"></div></div>';
     }
     g('config/list',function(e,d){
-        try {
         if(e)return;
         var ma='';var pm='';var dg='';var lm='';var fmt='punto-venta';
         for(var i=0;i<d.length;i++){
@@ -40,13 +39,11 @@ function lg(){
             if(cl==='empresa_telefono'){var e=document.getElementById('empresaTel');if(e)e.value=c.valor;}
             if(cl==='moneda_default'){var msId=c.valor;window._monedaSelectId=msId;cargarMonedasDefaultSymbol(msId);}
         }
-        try {
         var e1=document.getElementById('cfgMora');if(e1)e1.value=ma;
         var e2=document.getElementById('cfgPorcentaje');if(e2)e2.value=pm;
         var e3=document.getElementById('cfgGracia');if(e3)e3.value=dg;
         var e4=document.getElementById('cfgLimite');if(e4)e4.value=lm;
         var e5=document.getElementById('cfgFormato');if(e5)e5.value=fmt;
-        } catch(ign){}
     });
     setTimeout(function(){cargarMonedasSelect();},100);
 }

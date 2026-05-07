@@ -671,7 +671,7 @@ function sp(pg){
     else if(pg==='clientes'){injectClientesHTML();lc();}
     else if(pg==='monedas'){injectMonedasHTML();lm();}
     else if(pg==='usuarios'){injectUsuariosHTML();lu();}
-    else if(pg==='config'){injectConfigHTML();lg();}
+    else if(pg==='config'){injectConfigHTML();_lg();}
     else if(pg==='plan-cuentas'){injectPlanCuentasHTML();if(typeof cargarPlanCuentas==='function')cargarPlanCuentas();else{var s=document.createElement('script');s.src='js/plan-cuentas.js?'+Date.now();s.onload=function(){cargarPlanCuentas()};document.body.appendChild(s);}}
         else if(pg==='asientos'){injectAsientosHTML();if(typeof cargarAsientos==='function')cargarAsientos();else{var s=document.createElement('script');s.src='js/asientos.js?'+Date.now();s.onload=function(){cargarAsientos()};document.body.appendChild(s);}}
         else if(pg==='config-contable'){injectConfigContableHTML();if(typeof cargarConfigContable==='function')cargarConfigContable();else{var s=document.createElement('script');s.src='js/config-contable.js?'+Date.now();s.onload=function(){cargarConfigContable()};document.body.appendChild(s);}}
@@ -908,10 +908,10 @@ function injectConfigHTML(){
         if(!el.dataset.loaded){
             var x=new XMLHttpRequest();
             x.open('GET','pages/config.html',true);
-            x.onreadystatechange=function(){if(x.readyState===4&&x.status===200){el.innerHTML=x.responseText;el.dataset.loaded='1';lg();}};
+            x.onreadystatechange=function(){if(x.readyState===4&&x.status===200){el.innerHTML=x.responseText;el.dataset.loaded='1';_lg();}};
             x.send();
         } else {
-            lg();
+            _lg();
         }
     }
 }
