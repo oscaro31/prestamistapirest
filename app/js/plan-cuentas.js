@@ -27,7 +27,7 @@ function renderTreeHtml(all, parentId, depth) {
         h += '<td style="width:50px;text-align:center"><span class="badge" style="font-size:14px;padding:2px 6px;background:' + (n.naturaleza === 'Debe' ? '#198754' : '#dc3545') + ';color:white">' + (n.naturaleza || '') + '</span></td>';
         h += '<td style="width:50px;text-align:right;white-space:nowrap">';
         h += '<button class="btn btn-sm btn-outline-primary py-0 px-1" style="font-size:.7rem" onclick="event.stopPropagation();editarCuenta(' + n.idcuenta + ')"><i class="bi bi-pencil"></i></button>';
-        h += '<button class="btn btn-sm btn-outline-danger py-0 px-1 ms-1" style="font-size:.7rem" onclick="event.stopPropagation();eliminarCuenta(' + n.idcuenta + ',' + JSON.stringify(n.nombre||'') + ')"><i class="bi bi-trash"></i></button>';
+        h += '<button class="btn btn-sm btn-outline-danger py-0 px-1 ms-1" style="font-size:.7rem" onclick="event.stopPropagation();eliminarCuenta(' + n.idcuenta + ')"><i class="bi bi-trash"></i></button>';
         h += '</td></tr></table></div>';
         if (sub.length > 0) {
             h += '<div class="pc-children">' + renderTreeHtml(all, parseInt(n.idcuenta), depth + 1) + '</div>';
@@ -101,11 +101,12 @@ function guardarCuenta() {
     });
 }
 function eliminarCuenta(id) {
-    if (!confirm(__('confirmar_eliminar'))) return;
-    p('plan-cuenta/delete', {idcuenta: id}, function(err) {
-        if (err) { mostrarToast('Error: '+String(err), 'danger'); return; }
-        mostrarToast(__('eliminado'), 'success');
-        cargarPlanCuentas();
+    confirmar(__('confirmar_eliminar'), function(){
+        p('plan-cuenta/delete', {idcuenta: id}, function(err) {
+            if (err) { saToast('Error: '+String(err), 'danger'); return; }
+            saToast(__('eliminado'), 'success');
+            cargarPlanCuentas();
+        });
     });
 }
 function filtrarPlan() {
