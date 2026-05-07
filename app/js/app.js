@@ -890,7 +890,11 @@ window._initApp=function(){
     }
     // Solo inyectar dashboard normal si NO es superadmin
     injectDashboardHTML();
-    // Verificar si la última página está permitida según el cargo
+    // Verificar si la ultima pagina es SA (no aplica para usuarios normales)
+    if(last && last.indexOf('sa-')>=0){
+        localStorage.removeItem('lastPage');
+        last=null;
+    }
     if(last && document.getElementById('p-'+last)){
         var restringidas=['usuarios','config','monedas'];
         if(user && user.idcargo && parseInt(user.idcargo)>1 && restringidas.indexOf(last)>=0){
