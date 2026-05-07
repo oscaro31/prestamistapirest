@@ -545,3 +545,4 @@ html[data-tema="naranja"] .tb .ub i, html[data-tema="purpura"] .tb .ub i, html[d
 html[data-tema="cereza"] .tb .ub i, html[data-tema="tinta"] .tb .ub i {
   color: #fff !important;
 }
+@keyframes saFadeIn{from{transform:translateX(100px);opacity:0}to{transform:translateX(0);opacity:1}}

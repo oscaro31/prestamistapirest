@@ -1082,8 +1082,8 @@ function saGuardarUsuario(id){
     var data={nombre:document.getElementById('saUNombre').value,apellido:document.getElementById('suAApellido').value,login:document.getElementById('saULogin').value,email:document.getElementById('saUEmail').value,telefono:document.getElementById('saUTelefono').value,direccion:document.getElementById('saUDireccion').value,idtipodocumento:parseInt(document.getElementById('saUTipoDoc').value)||null,num_documento:document.getElementById('saUNumDoc').value,idempresa:parseInt(document.getElementById('saUEmpresa').value)||null,rol:document.getElementById('saURol').value,idcargo:parseInt(document.getElementById('saUCargo').value)||null};
     var clv=document.getElementById('saUClave').value;
     if(clv)data.clave=clv;
-    if(id>0){data.idusuario=id;p('users/update',data,function(e,d){if(!e){alert('Usuario actualizado');subirAvatarSA(id);saUsuariosLoad();bootstrap.Modal.getInstance(document.getElementById('saUserModal')).hide();}else{alert(e);}});}
-    else{p('users/create',data,function(e,d){if(!e){alert('Usuario creado');if(d&&d.idusuario)subirAvatarSA(d.idusuario);saUsuariosLoad();bootstrap.Modal.getInstance(document.getElementById('saUserModal')).hide();}else{alert(e);}});}
+        if(id>0){data.idusuario=id;p('users/update',data,function(e,d){if(!e){saToast('Usuario actualizado');subirAvatarSA(id);saUsuariosLoad();bootstrap.Modal.getInstance(document.getElementById('saUserModal')).hide();}else{saToast(e,'error');}});}
+    else{p('users/create',data,function(e,d){if(!e){saToast('Usuario creado');if(d&&d.idusuario)subirAvatarSA(d.idusuario);saUsuariosLoad();bootstrap.Modal.getInstance(document.getElementById('saUserModal')).hide();}else{saToast(e,'error');}});}
 }
 function subirAvatarSA(idusuario){
     var fileInput=document.getElementById('saUAvatar');
@@ -1097,4 +1097,13 @@ function subirAvatarSA(idusuario){
         if(x.status===200){window.user.avatar=true;document.getElementById('userAvatar').src=URL.createObjectURL(fileInput.files[0]);}
     };
     x.send(form);
+}
+function saToast(msg, tipo){
+    var old=document.getElementById('saToast');
+    if(old)old.remove();
+    var bg=tipo==='error'?'bg-danger':'bg-success';
+    var icon=tipo==='error'?'bi-x-circle':'bi-check-circle';
+    var html='<div id="saToast" style="position:fixed;top:20px;right:20px;z-index:9999;animation:saFadeIn 0.3s ease"><div class="toast show align-items-center text-white '+bg+' border-0" role="alert"><div class="d-flex"><div class="toast-body"><i class="bi '+icon+' me-2"></i>'+msg+'</div><button class="btn-close btn-close-white me-2 m-auto" onclick="document.getElementById(\'saToast\').remove()"></button></div></div></div>';
+    document.body.insertAdjacentHTML('beforeend',html);
+    setTimeout(function(){var e=document.getElementById('saToast');if(e){e.style.transition='opacity 0.5s';e.style.opacity='0';setTimeout(function(){e.remove()},500);}},3000);
 }
