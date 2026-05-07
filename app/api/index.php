@@ -80,6 +80,21 @@ try {
             $list = $pdo->query("SELECT e.*, IFNULL(c.idconfig,0) as tiene_config FROM empresas e LEFT JOIN config_bd c ON c.idempresa = e.idempresa ORDER BY e.idempresa")->fetchAll();
             jsonResponse($list);
             break;
+        case 'empresas/get':
+            $user = validateToken();
+            if ($user['rol'] !== 'superadmin') jsonError('No autorizado', 403);
+            $pdo = getDB();
+            $id = (int)($_GET['id'] ?? 0);
+            if (!$id) jsonError('ID requerido');
+            $stmt = $pdo->prepare("SELECT e.*, c.host, c.puerto, c.dbname, c.dbuser, c.dbpass FROM empresas e LEFT JOIN config_bd c ON c.idempresa = e.idempresa WHERE e.idempresa = ?");
+            $stmt->execute([$id]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$row) jsonError('Empresa no encontrada', 404);
+            if (!empty($row['dbpass'])) {
+                $row['dbpass'] = decryptPass($row['dbpass']);
+            }
+            jsonResponse($row);
+            break;
         case 'empresas/save':
             $user = validateToken();
             if ($user['rol'] !== 'superadmin') jsonError('No autorizado', 403);

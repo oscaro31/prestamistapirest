@@ -960,13 +960,15 @@ function saEmpresaModal(id){
     if(old)old.remove();
     document.body.insertAdjacentHTML('beforeend',html);
     if(id>0){
-        g("empresas/list",function(e,d){
+        g("empresas/get&id="+id,function(e,d){
             if(e||!d)return;
-            var r=d.find(function(x){return x.idempresa==id;});
-            if(r){
-                document.getElementById('saEmpNombre').value=r.nombre;
-                document.getElementById('saEmpSlug').value=r.slug;
-            }
+            document.getElementById('saEmpNombre').value=d.nombre;
+            document.getElementById('saEmpSlug').value=d.slug;
+            document.getElementById('saBDHost').value=d.host||'localhost';
+            document.getElementById('saBDPuerto').value=d.puerto||3306;
+            document.getElementById('saBDDbname').value=d.dbname||'';
+            document.getElementById('saBDUser').value=d.dbuser||'';
+            document.getElementById('saBDPass').value=d.dbpass||'';
         });
     }
     var modal=new bootstrap.Modal(document.getElementById('saEmpModal'));
