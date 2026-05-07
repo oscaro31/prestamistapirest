@@ -1075,7 +1075,7 @@ function subirAvatarSA(idusuario){
     form.append('avatar',fileInput.files[0]);
     var x=new XMLHttpRequest();
     x.open('POST',API+'users/upload-avatar&idusuario='+idusuario,true);
-    x.setRequestHeader('Authorization','Bearer '+localStorage.getItem('token'));
+    x.setRequestHeader('Authorization','Bearer '+gt());
     x.onload=function(){
         if(x.status===200){window.user.avatar=true;document.getElementById('userAvatar').src=URL.createObjectURL(fileInput.files[0]);}
     };
