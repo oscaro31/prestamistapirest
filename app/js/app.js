@@ -1063,6 +1063,7 @@ function saUsuarioModal(id){
 }
 function saGuardarUsuario(id){
     var data={nombre:document.getElementById('saUNombre').value,apellido:document.getElementById('suAApellido').value,login:document.getElementById('saULogin').value,email:document.getElementById('saUEmail').value,idempresa:parseInt(document.getElementById('saUEmpresa').value)||null,rol:document.getElementById('saURol').value};
+    var clv=document.getElementById('saUClave').value;
     if(clv)data.clave=clv;
     if(id>0){data.idusuario=id;p('users/update',data,function(e,d){if(!e){subirAvatarSA(id);saUsuariosLoad();document.querySelector('.btn-close').click();}else{alert(e);}});}
     else{p('users/create',data,function(e,d){if(!e){if(d&&d.idusuario)subirAvatarSA(d.idusuario);saUsuariosLoad();document.querySelector('.btn-close').click();}else{alert(e);}});}
