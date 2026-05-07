@@ -83,21 +83,26 @@ function em(id){
 function guardarMoneda(){
     var n=document.getElementById('mmNombre').value.trim();
     var s=document.getElementById('mmSimbolo').value.trim();
-    if(!n||!s){alert('Nombre y Simbolo requeridos');return;}
+        if(!n||!s){saToast('Nombre y Simbolo requeridos','error');return;}
     if(meId>0){
         p('monedas/update',{IdMoneda:meId,Nombre:n,Simbolo:s},function(e){
-            if(e)alert(e);
+            if(e)saToast(e,'error');
             else{
                 bootstrap.Modal.getInstance(document.getElementById('modalMoneda')).hide();
-                mostrarToast('Moneda '+n+' '+__('actualizada'),'success');
+                saToast('Moneda '+n+' actualizada');
                 lm();
             }
         });
     }else{
         p('monedas/create',{Nombre:n,Simbolo:s},function(e){
-            if(e)alert(e);
+            if(e)saToast(e,'error');
             else{
                 bootstrap.Modal.getInstance(document.getElementById('modalMoneda')).hide();
+                saToast('Moneda creada');
+                lm();
+            }
+        });
+    }
                 mostrarToast('Moneda '+n+' '+__('creada'),'success');
                 lm();
             }
