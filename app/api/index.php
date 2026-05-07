@@ -446,6 +446,46 @@ try {
             elseif ($route === 'db/describe') showTableInfo();
             elseif ($route === 'db/tables') listTables();
             break;
+        case 'setup/alter-usuarios':
+            try {
+                $pdo = getDB();
+                $existing = [];
+                $stmt = $pdo->query("SHOW COLUMNS FROM usuarios");
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $existing[] = $row['Field'];
+                }
+                $alter = [
+                    'telefono' => 'ADD COLUMN telefono VARCHAR(50) DEFAULT NULL',
+                    'direccion' => 'ADD COLUMN direccion TEXT DEFAULT NULL',
+                    'avatar' => 'ADD COLUMN avatar VARCHAR(255) DEFAULT NULL',
+                    'idtipodocumento' => 'ADD COLUMN idtipodocumento INT DEFAULT NULL',
+                    'num_documento' => 'ADD COLUMN num_documento VARCHAR(50) DEFAULT NULL',
+                    'idtipoestadosusuarios' => 'ADD COLUMN idtipoestadosusuarios INT DEFAULT 1',
+                    'idtipoestatususuarios' => 'ADD COLUMN idtipoestatususuarios INT DEFAULT 2',
+                ];
+                $added = [];
+                foreach ($alter as $name => $sql) {
+                    if (!in_array($name, $existing)) {
+                        $pdo->exec("ALTER TABLE usuarios $sql");
+                        $added[] = $name;
+                    }
+                }
+                echo json_encode(['success' => true, 'added' => $added, 'existing' => count($existing) . ' columnas']);
+            } catch (Exception $e) {
+                echo json_encode(['error' => $e->getMessage()]);
+            }
+            exit;
+
+        case 'setup/describe-usuarios':
+            try {
+                $pdo = getDB();
+                $stmt = $pdo->query("DESCRIBE usuarios");
+                echo json_encode(['columns' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
+            } catch (Exception $e) {
+                echo json_encode(['error' => $e->getMessage()]);
+            }
+            exit;
+
         case 'setup/add-preferencias':
             try {
                 $pdo = getDB();
