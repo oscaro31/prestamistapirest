@@ -87,6 +87,7 @@ function login($body) {
             'cargo_nombre' => $user['cargo_nombre'],
             'rol' => $user['rol'],
             'preferencias' => $user['preferencias'] ?? '{}',
+            'avatar' => $user['avatar'] ?? null,
             'permisos' => $permisos,
         ],
         'remember' => $remember,

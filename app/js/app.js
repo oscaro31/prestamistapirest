@@ -316,7 +316,7 @@ function ea(){
     document.getElementById('uname').textContent=user.nombre+(user.apellido?' '+user.apellido:'');
     
     document.getElementById('srole').textContent=user.cargo_nombre||'';
-    if(user.avatar)document.getElementById('userAvatar').src=user.avatar;
+    if(user.avatar)document.getElementById('userAvatar').src=avatarUrl(user.avatar);
     
     // Mostrar menu segun rol
     if(user.rol==='superadmin'){
@@ -716,7 +716,7 @@ aplicarIdioma();
                     document.getElementById('uname').textContent=user.nombre+(user.apellido?' '+user.apellido:'');
                     
                     document.getElementById('srole').textContent=user.cargo_nombre||'';
-                    if(user.avatar)document.getElementById('userAvatar').src=user.avatar;
+                    if(user.avatar)document.getElementById('userAvatar').src=avatarUrl(user.avatar);
                     
                     // Mostrar menu segun rol (tambien en recarga)
                     if(user.rol==='superadmin'){
