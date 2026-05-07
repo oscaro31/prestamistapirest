@@ -39,11 +39,11 @@ function lg(){
             if(cl==='empresa_telefono'){var e=document.getElementById('empresaTel');if(e)e.value=c.valor;}
             if(cl==='moneda_default'){var msId=c.valor;window._monedaSelectId=msId;cargarMonedasDefaultSymbol(msId);}
         }
-        document.getElementById('cfgMora').value=ma;
-        document.getElementById('cfgPorcentaje').value=pm;
-        document.getElementById('cfgGracia').value=dg;
-        document.getElementById('cfgLimite').value=lm;
-        document.getElementById('cfgFormato').value=fmt;
+        var e1=document.getElementById('cfgMora');if(e1)e1.value=ma;
+        var e2=document.getElementById('cfgPorcentaje');if(e2)e2.value=pm;
+        var e3=document.getElementById('cfgGracia');if(e3)e3.value=dg;
+        var e4=document.getElementById('cfgLimite');if(e4)e4.value=lm;
+        var e5=document.getElementById('cfgFormato');if(e5)e5.value=fmt;
     });
     setTimeout(function(){cargarMonedasSelect();},100);
 }
