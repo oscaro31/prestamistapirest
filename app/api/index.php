@@ -155,17 +155,35 @@ try {
             $authUser = validateToken();
             listUsers();
             break;
+        case 'users/get':
+            $authUser = validateToken();
+            $id = (int)($_GET['id'] ?? 0);
+            if (!$id) jsonError('ID requerido');
+            $pdo = getDB();
+            $stmt = $pdo->prepare("SELECT idusuario, nombre, apellido, login, email, idcargo, idempresa, rol, activo FROM usuarios WHERE idusuario = ?");
+            $stmt->execute([$id]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if (!$row) jsonError('Usuario no encontrado', 404);
+            jsonResponse($row);
+            break;
         case 'users/create':
             $authUser = validateToken();
-            requirePermission('usuarios');
+            if ($authUser['rol'] !== 'superadmin') {
+                requirePermission('usuarios');
+            }
             $login = $body['login'] ?? '?';
             registrarActividad(getDB(), $authUser['idusuario'], 'crear_usuario', 'Creó usuario: ' . $login);
-            createUser($body);
+            createUser($body, $authUser);
             break;
         // USERS update — admin (cargo 1) O el propio usuario
         case 'users/update':
             $authUser = validateToken();
             $targetId = (int)($body['idusuario'] ?? 0);
+            // SA actualiza en universal
+            if ($authUser['rol'] === 'superadmin') {
+                updateUser($body);
+                break;
+            }
             // Permitir si es admin o si es el mismo usuario
             if ((int)$authUser['idcargo'] !== 1 && (int)$authUser['idusuario'] !== $targetId) {
                 jsonError('No tienes permiso para modificar este usuario', 403);

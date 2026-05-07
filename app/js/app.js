@@ -1000,7 +1000,7 @@ function saGuardarEmpresa(id){
 }
 
 function saUsuariosHTML(){
-    return '<div class="pg act" id="p-sa-usuarios"><div class="container-fluid p-4"><h4><i class="bi bi-people-fill"></i> '+__('sa_usuarios_globales')+'</h4><div class="table-responsive mt-3"><table class="table table-hover"><thead><tr><th>#</th><th>'+__('sa_nombre')+'</th><th>Login</th><th>Email</th><th>'+__('sa_empresa')+'</th><th>'+__('sa_rol')+'</th><th>'+__('sa_estado')+'</th></tr></thead><tbody id="saUserBody"><tr><td colspan="7" class="text-muted text-center">'+__('cargando')+'...</td></tr></tbody></table></div></div></div>';
+    return '<div class="pg act" id="p-sa-usuarios"><div class="container-fluid p-4"><div class="d-flex justify-content-between mb-3"><h4><i class="bi bi-people-fill"></i> '+__('sa_usuarios_globales')+'</h4><button class="btn btn-primary btn-sm" onclick="saUsuarioModal(0)"><i class="bi bi-plus"></i> '+__('sa_nuevo')+'</button></div><div class="table-responsive"><table class="table table-hover"><thead><tr><th>#</th><th>'+__('sa_nombre')+'</th><th>Login</th><th>Email</th><th>'+__('sa_empresa')+'</th><th>'+__('sa_rol')+'</th><th>'+__('sa_estado')+'</th></tr></thead><tbody id="saUserBody"><tr><td colspan="7" class="text-muted text-center">'+__('cargando')+'...</td></tr></tbody></table></div></div></div>';
 }
 function saUsuariosLoad(){
     g("users/list",function(e,d){
@@ -1019,4 +1019,49 @@ function saUsuariosLoad(){
         });
         document.getElementById("saUserBody").innerHTML=h||'<tr><td colspan="7" class="text-muted text-center">Sin usuarios</td></tr>';
     });
+}
+function saUsuarioModal(id){
+    var _n=__('sa_nuevo'),_g=__('guardar'),_c=__('cancelar'),_t=__('sa_nombre');
+    var t=id?__('editar')+' #'+id:_n;
+    var html='<div class="modal fade" id="saUserModal"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5>'+t+'</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">'+
+        '<div class="mb-3"><label>'+_t+'</label><input class="form-control" id="saUNombre" value=""></div>'+
+        '<div class="mb-3"><label>Apellido</label><input class="form-control" id="suAApellido" value=""></div>'+
+        '<div class="mb-3"><label>Login</label><input class="form-control" id="saULogin" value=""></div>'+
+        '<div class="mb-3"><label>Clave</label><input type="password" class="form-control" id="saUClave" value=""></div>'+
+        '<div class="mb-3"><label>Email</label><input type="email" class="form-control" id="saUEmail" value=""></div>'+
+        '<div class="mb-3"><label>Empresa</label><select class="form-select" id="saUEmpresa"><option value="0">Sin empresa</option></select></div>'+
+        '<div class="mb-3"><label>Rol</label><select class="form-select" id="saURol"><option value="usuario">Usuario</option><option value="superadmin">Superadmin</option></select></div>'+
+        '<div class="mb-3"><label>Activo</label><select class="form-select" id="saUActivo"><option value="1">Si</option><option value="0">No</option></select></div>'+
+        '</div><div class="modal-footer"><button class="btn btn-success" onclick="saGuardarUsuario('+id+')"><i class="bi bi-check"></i> '+_g+'</button></div></div></div></div>';
+    var old=document.getElementById('saUserModal');
+    if(old)old.remove();
+    document.body.insertAdjacentHTML('beforeend',html);
+    // Cargar empresas en el select
+    g("empresas/list",function(e2,d2){
+        var sel=document.getElementById('saUEmpresa');
+        if(!sel)return;
+        if(!e2&&d2){
+            d2.forEach(function(r){sel.innerHTML+='<option value="'+r.idempresa+'">'+r.nombre+'</option>';});
+        }
+        if(id>0){
+            g("users/get&id="+id,function(e3,d3){
+                if(e3||!d3)return;
+                document.getElementById('saUNombre').value=d3.nombre||'';
+                document.getElementById('suAApellido').value=d3.apellido||'';
+                document.getElementById('saULogin').value=d3.login||'';
+                document.getElementById('saUEmail').value=d3.email||'';
+                document.getElementById('saUEmpresa').value=d3.idempresa||0;
+                document.getElementById('saURol').value=d3.rol||'usuario';
+                document.getElementById('saUActivo').value=d3.activo||1;
+            });
+        }
+    });
+    new bootstrap.Modal(document.getElementById('saUserModal')).show();
+}
+function saGuardarUsuario(id){
+    var data={nombre:document.getElementById('saUNombre').value,login:document.getElementById('saULogin').value,email:document.getElementById('saUEmail').value,idempresa:document.getElementById('saUEmpresa').value,rol:document.getElementById('saURol').value};
+    var clv=document.getElementById('saUClave').value;
+    if(clv)data.clave=clv;
+    if(id>0){data.idusuario=id;g('users/update',function(e,d){if(!e){saUsuariosLoad();document.querySelector('.btn-close').click();}else{alert(e);}},data,'POST');}
+    else{g('users/create',function(e,d){if(!e){saUsuariosLoad();document.querySelector('.btn-close').click();}else{alert(e);}},data,'POST');}
 }

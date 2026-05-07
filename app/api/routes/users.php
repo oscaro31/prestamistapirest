@@ -12,7 +12,7 @@ function listUsers() {
     jsonResponse($users);
 }
 
-function createUser($body) {
+function createUser($body, $authUser = null) {
     $nombre = trim($body['nombre'] ?? '');
     $login = trim($body['login'] ?? '');
     $clave = trim($body['clave'] ?? '');
@@ -23,20 +23,29 @@ function createUser($body) {
     $nrodocumento = trim($body['num_documento'] ?? $body['NroDocumento'] ?? '');
     $telefono = trim($body['telefono'] ?? '');
     $direccion = trim($body['direccion'] ?? '');
+    $idempresa = isset($body['idempresa']) ? (int)$body['idempresa'] : null;
+    $rol = trim($body['rol'] ?? '');
 
     if (empty($nombre) || empty($login) || empty($clave)) {
         jsonError('Nombre, login y clave requeridos');
     }
 
-    $pdo = getDB();
+    // SA crea en universal, admin de empresa crea en BD empresa
+    $pdo = ($authUser && $authUser['rol'] === 'superadmin') ? getDB(null) : getDB();
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM usuarios WHERE login = ?");
     $stmt->execute([$login]);
     if ($stmt->fetchColumn() > 0) jsonError('El login ya existe');
 
     $claveHash = password_hash($clave, PASSWORD_BCRYPT);
-    $stmt = $pdo->prepare("INSERT INTO usuarios (nombre, apellido, login, clave, email, idcargo, idtipodocumento, num_documento, telefono, direccion, idtipoestadosusuarios, idtipoestatususuarios)
-                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 2)");
-    $stmt->execute([$nombre, $apellido, $login, $claveHash, $email, $idcargo ?: null, $idtipodocumento, $nrodocumento ?: null, $telefono ?: null, $direccion ?: null]);
+    if ($authUser && $authUser['rol'] === 'superadmin') {
+        $stmt = $pdo->prepare("INSERT INTO usuarios (nombre, apellido, login, clave, email, idcargo, idtipodocumento, num_documento, telefono, direccion, idempresa, rol, idtipoestadosusuarios, idtipoestatususuarios)
+                               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 2)");
+        $stmt->execute([$nombre, $apellido, $login, $claveHash, $email, $idcargo ?: null, $idtipodocumento, $nrodocumento ?: null, $telefono ?: null, $direccion ?: null, $idempresa, $rol ?: 'usuario']);
+    } else {
+        $stmt = $pdo->prepare("INSERT INTO usuarios (nombre, apellido, login, clave, email, idcargo, idtipodocumento, num_documento, telefono, direccion, idtipoestadosusuarios, idtipoestatususuarios)
+                               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 2)");
+        $stmt->execute([$nombre, $apellido, $login, $claveHash, $email, $idcargo ?: null, $idtipodocumento, $nrodocumento ?: null, $telefono ?: null, $direccion ?: null]);
+    }
     jsonResponse(['idusuario' => (int)$pdo->lastInsertId()], 201);
 }
 
@@ -57,6 +66,9 @@ function updateUser($body) {
     $dir = $body['direccion'] ?? $body['Direccion'] ?? null;
     if ($dir !== null) { $fields[] = "direccion = ?"; $params[] = $dir; }
     if (isset($body['preferencias'])) { $fields[] = "preferencias = ?"; $params[] = $body['preferencias']; }
+    if (isset($body['idempresa'])) { $fields[] = "idempresa = ?"; $params[] = max(0,(int)$body['idempresa']); }
+    if (isset($body['rol'])) { $fields[] = "rol = ?"; $params[] = $body['rol']; }
+    if (isset($body['activo'])) { $fields[] = "activo = ?"; $params[] = (int)$body['activo']; }
 
     if (empty($fields)) jsonError('Nada que actualizar');
     $params[] = $idusuario;
