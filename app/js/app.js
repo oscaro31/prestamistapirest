@@ -548,7 +548,7 @@ function sp(pg){
     var n=document.querySelector('.ni[data-p="'+pg+'"]');
     if(n)n.classList.add('act');
     var titles={dashboard:'dashboard',prestamos:'registro',reimprimir:'historial',clientes:'clientes',monedas:'monedas',usuarios:'usuarios',config:'preferencias',perfil:'perfil','plan-cuentas':'plan_cuentas',asientos:'asientos_contables','config-contable':'config_contable','reportes-contables':'reportes_contables',
-        'sa-dashboard':'sa_dashboard','sa-empresas':'sa_empresas','sa-usuarios':'sa_usuarios_globales'};
+        'sa-dashboard':'Dashboard Global','sa-empresas':'Empresas','sa-usuarios':'Usuarios Globales'};
     document.getElementById('pt').textContent=__(titles[pg]||pg);
     if(typeof aplicarIdioma==='function')aplicarIdioma();
     if(pg==='prestamos'){
