@@ -81,7 +81,7 @@ function changePassword($body) {
 
     $claveHash = password_hash($clave, PASSWORD_BCRYPT);
     $pdo = getDB();
-    $pdo->prepare("UPDATE usuario SET clave = ? WHERE idusuario = ?")->execute([$claveHash, $idusuario]);
+    $pdo->prepare("UPDATE usuarios SET clave = ? WHERE idusuario = ?")->execute([$claveHash, $idusuario]);
     $pdo->prepare("DELETE FROM tokens WHERE idusuario = ?")->execute([$idusuario]);
     jsonResponse(['success' => true]);
 }
