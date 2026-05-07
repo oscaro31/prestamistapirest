@@ -36,7 +36,7 @@ function requirePermission($permiso) {
     $idcargo = (int)($authUser['idcargo'] ?? 0);
     if ($idcargo <= 0) jsonError('Acceso denegado', 403);
 
-    $pdo = getDB();
+    $pdo = getDB(null);
     $stmt = $pdo->prepare("SELECT valor FROM usuario_cargo WHERE idcargo = ? AND permiso = ?");
     $stmt->execute([$idcargo, $permiso]);
     $row = $stmt->fetch();
