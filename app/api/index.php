@@ -403,7 +403,7 @@ try {
         case 'sp_listaUsuario':
             $authUser = validateToken();
             $pdo = getDB();
-            jsonResponse($pdo->query("SELECT * FROM usuario WHERE activo = 1 ORDER BY nombre")->fetchAll());
+            jsonResponse($pdo->query("SELECT * FROM usuarios WHERE activo = 1 ORDER BY nombre")->fetchAll());
             break;
         case 'sp_listaTipoDocumento':
             $authUser = validateToken();
