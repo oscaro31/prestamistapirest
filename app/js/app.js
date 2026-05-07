@@ -732,7 +732,7 @@ aplicarIdioma();
                     cargarTemaGlobal();aplicarPermisos();
     setTimeout(aplicarSidebarCompactGlobal,200);
                     cargarIdiomaGlobal();aplicarIdioma();
-                    setTimeout(function(){injectDashboardHTML();if(typeof aplicarIdioma==='function')aplicarIdioma();ld();cargarNotificaciones();},100);
+                    setTimeout(function(){if(user.rol!=='superadmin'){injectDashboardHTML();if(typeof aplicarIdioma==='function')aplicarIdioma();ld();cargarNotificaciones();}},100);
                     (function(){
                         var xx=new XMLHttpRequest();
                         xx.open('GET',API+'config/list',true);
@@ -877,12 +877,13 @@ function injectReportesContablesHTML(){
 // Called by index.html after all page content loaded
 window._initApp=function(){
     var last=localStorage.getItem('lastPage');
-    injectDashboardHTML();
-    // Superadmin: ir a dashboard global
+    // Superadmin: ir a dashboard global, no inyectar nada
     if(user && user.rol==='superadmin'){
         sp('sa-dashboard');
         return;
     }
+    // Solo inyectar dashboard normal si NO es superadmin
+    injectDashboardHTML();
     // Verificar si la última página está permitida según el cargo
     if(last && document.getElementById('p-'+last)){
         var restringidas=['usuarios','config','monedas'];
