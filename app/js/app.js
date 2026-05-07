@@ -1032,6 +1032,10 @@ function saUsuarioModal(id){
         '<div class="mb-3"><label>'+__('sa_empresa')+'</label><select class="form-select" id="saUEmpresa"><option value="0">'+__('ninguno')+'</option></select></div>'+
         '<div class="mb-3"><label>'+__('sa_rol')+'</label><select class="form-select" id="saURol"><option value="usuario">Usuario</option><option value="superadmin">Superadmin</option></select></div>'+
         '<div class="mb-3"><label>Cargo</label><select class="form-select" id="saUCargo"><option value="0">Sin cargo</option></select></div>'+
+        '<div class="mb-3"><label>'+__('telefono')+'</label><input class="form-control" id="saUTelefono" value=""></div>'+
+        '<div class="mb-3"><label>'+__('direccion')+'</label><input class="form-control" id="saUDireccion" value=""></div>'+
+        '<div class="mb-3"><label>'+__('tipo_doc')+'</label><select class="form-select" id="saUTipoDoc"><option value="">Ninguno</option><option value="1">Cedula</option><option value="2">Pasaporte</option><option value="3">RNC</option></select></div>'+
+        '<div class="mb-3"><label>'+__('num_documento')+'</label><input class="form-control" id="saUNumDoc" value=""></div>'+
         '<div class="mb-3"><label>'+__('sa_avatar')+'</label><input type="file" class="form-control" id="saUAvatar" accept="image/*"></div>'+
         (id>0?'<div class="mb-3"><img id="saUAvatarPreview" style="width:60px;height:60px;border-radius:50%;object-fit:cover;display:none"></div>':'')+
         '<div class="mb-3"><label>'+__('sa_activo')+'</label><select class="form-select" id="saUActivo"><option value="1">'+__('sa_si')+'</option><option value="0">'+__('sa_no')+'</option></select></div>'+
@@ -1063,6 +1067,10 @@ function saUsuarioModal(id){
                 document.getElementById('saUEmpresa').value=d3.idempresa||0;
                 document.getElementById('saURol').value=d3.rol||'usuario';
                 if(d3.idcargo)document.getElementById('saUCargo').value=d3.idcargo;
+                document.getElementById('saUTelefono').value=d3.telefono||'';
+                document.getElementById('saUDireccion').value=d3.direccion||'';
+                if(d3.idtipodocumento)document.getElementById('saUTipoDoc').value=d3.idtipodocumento;
+                document.getElementById('saUNumDoc').value=d3.num_documento||'';
                 document.getElementById('saUActivo').value=d3.activo||1;
                 if(d3.avatar){document.getElementById('saUAvatarPreview').src=avatarUrl(d3.avatar);document.getElementById('saUAvatarPreview').style.display='';}
             });
@@ -1071,7 +1079,7 @@ function saUsuarioModal(id){
     new bootstrap.Modal(document.getElementById('saUserModal')).show();
 }
 function saGuardarUsuario(id){
-    var data={nombre:document.getElementById('saUNombre').value,apellido:document.getElementById('suAApellido').value,login:document.getElementById('saULogin').value,email:document.getElementById('saUEmail').value,idempresa:parseInt(document.getElementById('saUEmpresa').value)||null,rol:document.getElementById('saURol').value,idcargo:parseInt(document.getElementById('saUCargo').value)||null};
+    var data={nombre:document.getElementById('saUNombre').value,apellido:document.getElementById('suAApellido').value,login:document.getElementById('saULogin').value,email:document.getElementById('saUEmail').value,telefono:document.getElementById('saUTelefono').value,direccion:document.getElementById('saUDireccion').value,idtipodocumento:parseInt(document.getElementById('saUTipoDoc').value)||null,num_documento:document.getElementById('saUNumDoc').value,idempresa:parseInt(document.getElementById('saUEmpresa').value)||null,rol:document.getElementById('saURol').value,idcargo:parseInt(document.getElementById('saUCargo').value)||null};
     var clv=document.getElementById('saUClave').value;
     if(clv)data.clave=clv;
     if(id>0){data.idusuario=id;p('users/update',data,function(e,d){if(!e){subirAvatarSA(id);saUsuariosLoad();document.querySelector('.btn-close').click();}else{alert(e);}});}
