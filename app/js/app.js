@@ -56,6 +56,7 @@ document.getElementById('lbtn').onclick=function(){
         // Limpiar el otro storage
         if(rm){sessionStorage.removeItem('prestamist_token');sessionStorage.removeItem('prestamist_user');}
         else{localStorage.removeItem('prestamist_token');localStorage.removeItem('prestamist_user');}
+        localStorage.removeItem('lastPage');
         ea();
     });
 };
