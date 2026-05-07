@@ -90,7 +90,7 @@ function guardarMoneda(){
             else{
                 bootstrap.Modal.getInstance(document.getElementById('modalMoneda')).hide();
                 saToast('Moneda '+n+' actualizada');
-                setTimeout(cargarMonedas,500);
+                setTimeout(lm,500);
             }
         });
     }else{
@@ -99,7 +99,7 @@ function guardarMoneda(){
             else{
                 bootstrap.Modal.getInstance(document.getElementById('modalMoneda')).hide();
                 saToast('Moneda creada');
-                setTimeout(cargarMonedas,500);
+                setTimeout(lm,500);
             }
         });
     }
