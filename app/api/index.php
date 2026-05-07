@@ -346,13 +346,17 @@ try {
         // CONFIG
         case 'config/list':
             $authUser = validateToken();
-            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
+            if ($authUser['rol'] !== 'superadmin') {
+                $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
+            }
             listConfig();
             break;
         case 'config/update':
             $authUser = validateToken();
-            $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
-            requirePermission('config');
+            if ($authUser['rol'] !== 'superadmin') {
+                $GLOBALS['_EMPRESA_PDO'] = getEmpresaDB($authUser['idempresa']);
+                requirePermission('config');
+            }
             updateConfig($body);
             break;
 
