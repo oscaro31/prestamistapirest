@@ -749,22 +749,6 @@ aplicarIdioma();
                             }
                         };
                         xx.send();
-                    (function(){
-                        var xx=new XMLHttpRequest();
-                        xx.open('GET',API+'config/list',true);
-                        xx.setRequestHeader('Authorization','Bearer '+st);
-                        xx.onreadystatechange=function(){
-                            if(xx.readyState===4&&xx.status===200){
-                                try{var j=JSON.parse(xx.responseText);
-                                    if(j.data)for(var i=0;i<j.data.length;i++){
-                                        var c=j.data[i].Clave.toLowerCase();
-                                        if(c==='empresa_nombre')empresaNombre=j.data[i].valor;
-                                        if(c==='empresa_direccion')empresaDir=j.data[i].valor;
-                                        if(c==='empresa_telefono')empresaTel=j.data[i].valor;
-                                    }}catch(e){}
-                            }
-                        };
-                        xx.send();
                     })();
                     // Refrescar preferencias del usuario desde BD (recarga)
                     (function(){
