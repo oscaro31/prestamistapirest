@@ -552,6 +552,10 @@ html[data-tema="cereza"] .tb .ub i, html[data-tema="tinta"] .tb .ub i {
   from { opacity: 0; transform: translateX(-20px); }
   to { opacity: 1; transform: translateX(0); }
 }
+@keyframes notifSlideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 .notif-item {
   transition: opacity 0.3s ease, transform 0.3s ease;
 }

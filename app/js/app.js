@@ -328,16 +328,77 @@ function ea(){
 // ===== NOTIFICACIONES MEJORADAS =====
 var _notifAbierto = false;
 var _notifTimer = null;
+var _notifUltimoConteo = 0;
 
-function animarBadgeNotif(){
+// Sonido de notificacion via Web Audio API
+function sonarNotif() {
+    try {
+        var ctx = new (window.AudioContext || window.webkitAudioContext)();
+        var osc = ctx.createOscillator();
+        var gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.setValueAtTime(800, ctx.currentTime);
+        osc.frequency.setValueAtTime(1200, ctx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.15, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.2);
+    } catch(e) {}
+}
+
+function animarCampana(){
+    var btn = document.getElementById('notifBtn');
+    if(!btn) return;
+    var icon = btn.querySelector('i');
+    if(!icon) return;
+    icon.style.transition = 'none';
+    icon.style.transform = 'rotate(15deg)';
+    setTimeout(function(){ icon.style.transform = 'rotate(-15deg)'; }, 100);
+    setTimeout(function(){ icon.style.transform = 'rotate(10deg)'; }, 200);
+    setTimeout(function(){ icon.style.transform = 'rotate(-10deg)'; }, 300);
+    setTimeout(function(){ icon.style.transform = 'rotate(0deg)'; icon.style.transition = 'transform 0.15s ease'; }, 400);
+}
+
+function mostrarNotifToast(mensaje, tipo){
+    var old = document.getElementById('notifToast');
+    if(old) old.remove();
+    var icon = tipo==='vencida' ? 'bi-exclamation-triangle-fill text-danger' : (tipo==='proxima' ? 'bi-clock-fill text-warning' : 'bi-info-circle-fill text-primary');
+    var bg = tipo==='vencida' ? 'bg-danger' : (tipo==='proxima' ? 'bg-warning' : 'bg-primary');
+    var html = '<div id="notifToast" style="position:fixed;bottom:20px;right:20px;z-index:10000;animation:notifSlideUp 0.4s ease"><div class="toast show align-items-center text-white '+bg+' border-0 shadow-lg" role="alert"><div class="d-flex"><div class="toast-body"><i class="bi '+icon+' me-2"></i>'+mensaje+'</div><button class="btn-close btn-close-white me-2 m-auto" onclick="this.closest(\'#notifToast\').remove()"></button></div></div></div>';
+    document.body.insertAdjacentHTML('beforeend', html);
+    setTimeout(function(){
+        var el = document.getElementById('notifToast');
+        if(el) { el.style.transition = 'opacity 0.5s ease, transform 0.5s ease'; el.style.opacity = '0'; el.style.transform = 'translateY(30px)'; setTimeout(function(){ el.remove(); }, 600); }
+    }, 5000);
+}
+
+function animarBadgeNotif(conteoNuevo){
     var badge = document.getElementById('notifBadge');
     if(!badge || badge.style.display==='none') return;
+    // Efecto de pulso con escala
     badge.style.transition='none';
-    badge.style.transform='scale(1.3)';
+    badge.style.transform='scale(1.4)';
     setTimeout(function(){
-        badge.style.transition='transform 0.3s ease';
+        badge.style.transition='transform 0.2s cubic-bezier(0.34,1.56,0.64,1)';
         badge.style.transform='scale(1)';
-    },50);
+    }, 50);
+    // Vibrar la campana
+    animarCampana();
+    // Sonido
+    sonarNotif();
+    // Mostrar toast de la primera notificacion no leida
+    if(conteoNuevo > 0){
+        // Tomar la mas reciente
+        g('notificaciones/list', function(e,d){
+            if(e || !d || d.length===0) return;
+            var noLeidas = d.filter(function(n){ return !n.leida; });
+            if(noLeidas.length > 0){
+                var ultima = noLeidas[0];
+                mostrarNotifToast(ultima.mensaje, ultima.tipo);
+            }
+        });
+    }
 }
 
 function cargarNotificaciones(){
@@ -354,9 +415,14 @@ function cargarNotificaciones(){
             if(noLeidas > 0){
                 badge.textContent = noLeidas;
                 badge.style.display = 'inline';
-                animarBadgeNotif();
+                // Si hay nuevas desde la ultima carga, animar
+                if(noLeidas > _notifUltimoConteo){
+                    animarBadgeNotif(noLeidas - _notifUltimoConteo);
+                }
+                _notifUltimoConteo = noLeidas;
             } else {
                 badge.style.display = 'none';
+                _notifUltimoConteo = 0;
             }
         }
         if(drop){
