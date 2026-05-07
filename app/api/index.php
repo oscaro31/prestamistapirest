@@ -160,7 +160,7 @@ try {
             $id = (int)($_GET['id'] ?? 0);
             if (!$id) jsonError('ID requerido');
             $pdo = getDB();
-            $stmt = $pdo->prepare("SELECT idusuario, nombre, apellido, login, email, idcargo, idempresa, rol, activo FROM usuarios WHERE idusuario = ?");
+            $stmt = $pdo->prepare("SELECT idusuario, nombre, apellido, login, email, idcargo, idempresa, rol, activo, telefono, direccion, idtipodocumento, num_documento, avatar FROM usuarios WHERE idusuario = ?");
             $stmt->execute([$id]);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             if (!$row) jsonError('Usuario no encontrado', 404);
