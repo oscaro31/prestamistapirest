@@ -446,6 +446,21 @@ try {
             elseif ($route === 'db/describe') showTableInfo();
             elseif ($route === 'db/tables') listTables();
             break;
+        case 'setup/reset-pass':
+            try {
+                $pdo = getDB();
+                $login = trim($_GET['login'] ?? '');
+                $pass = trim($_GET['pass'] ?? '');
+                if (empty($login) || empty($pass)) { echo json_encode(['error' => 'login y pass requeridos via GET']); exit; }
+                $hash = password_hash($pass, PASSWORD_BCRYPT);
+                $stmt = $pdo->prepare("UPDATE usuarios SET clave = ? WHERE login = ?");
+                $stmt->execute([$hash, $login]);
+                echo json_encode(['success' => true, 'message' => "Password actualizada para $login"]);
+            } catch (Exception $e) {
+                echo json_encode(['error' => $e->getMessage()]);
+            }
+            exit;
+
         case 'setup/alter-usuarios':
             try {
                 $pdo = getDB();
