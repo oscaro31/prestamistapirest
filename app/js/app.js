@@ -1000,7 +1000,7 @@ function saGuardarEmpresa(id){
 }
 
 function saUsuariosHTML(){
-    return '<div class="pg act" id="p-sa-usuarios"><div class="container-fluid p-4"><div class="d-flex justify-content-between mb-3"><h4><i class="bi bi-people-fill"></i> '+__('sa_usuarios_globales')+'</h4><button class="btn btn-primary btn-sm" onclick="saUsuarioModal(0)"><i class="bi bi-plus"></i> '+__('sa_nuevo')+'</button></div><div class="table-responsive"><table class="table table-hover"><thead><tr><th>#</th><th>'+__('sa_nombre')+'</th><th>Login</th><th>Email</th><th>'+__('sa_empresa')+'</th><th>'+__('sa_rol')+'</th><th>'+__('sa_estado')+'</th></tr></thead><tbody id="saUserBody"><tr><td colspan="7" class="text-muted text-center">'+__('cargando')+'...</td></tr></tbody></table></div></div></div>';
+    return '<div class="pg act" id="p-sa-usuarios"><div class="container-fluid p-4"><div class="d-flex justify-content-between mb-3"><h4><i class="bi bi-people-fill"></i> '+__('sa_usuarios_globales')+'</h4><button class="btn btn-primary btn-sm" onclick="saUsuarioModal(0)"><i class="bi bi-plus"></i> '+__('sa_nuevo')+'</button></div><div class="table-responsive"><table class="table table-hover"><thead><tr><th>#</th><th>'+__('sa_nombre')+'</th><th>Login</th><th>Email</th><th>'+__('sa_empresa')+'</th><th>'+__('sa_rol')+'</th><th>'+__('sa_estado')+'</th><th>'+__('sa_acciones')+'</th></tr></thead><tbody id="saUserBody"><tr><td colspan="8" class="text-muted text-center">'+__('cargando')+'...</td></tr></tbody></table></div></div></div>';
 }
 function saUsuariosLoad(){
     g("users/list",function(e,d){
@@ -1015,7 +1015,7 @@ function saUsuariosLoad(){
             var rRol=r.rol||'usuario';
             var bAct=r.activo==1||r.activo==='1'?'success':'secondary';
             var tAct=r.activo==1||r.activo==='1'?__('sa_activo'):__('sa_inactivo');
-            h+='<tr><td>'+r.idusuario+'</td><td>'+rNom+' '+rApe+'</td><td>'+r.login+'</td><td>'+rEml+'</td><td>'+rEmp+'</td><td><span class="badge bg-'+bRol+'">'+rRol+'</span></td><td><span class="badge bg-'+bAct+'">'+tAct+'</span></td></tr>';
+            h+='<tr><td>'+r.idusuario+'</td><td>'+rNom+' '+rApe+'</td><td>'+r.login+'</td><td>'+rEml+'</td><td>'+rEmp+'</td><td><span class="badge bg-'+bRol+'">'+rRol+'</span></td><td><span class="badge bg-'+bAct+'">'+tAct+'</span></td><td><button class="btn btn-sm btn-outline-primary" onclick="saUsuarioModal('+r.idusuario+')"><i class="bi bi-pencil"></i></button></td></tr>';
         });
         document.getElementById("saUserBody").innerHTML=h||'<tr><td colspan="7" class="text-muted text-center">Sin usuarios</td></tr>';
     });
