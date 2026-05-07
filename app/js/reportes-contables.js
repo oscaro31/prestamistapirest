@@ -58,7 +58,8 @@ function loadBalance() {
     var fdesde = document.getElementById('repFDesde').value;
     var fhasta = document.getElementById('repFHasta').value;
     p('reportes/balance-comprobacion', {fecha_desde: fdesde, fecha_hasta: fhasta}, function(err, rows) {
-        if (err) { mostrarToast(err, 'danger'); return; }
+        if (err) { saToast(err, 'danger'); return; }
+        if(rows && rows.data && Array.isArray(rows.data)) rows=rows.data;
         var list = (Array.isArray(rows)?rows:[]) || [];
         var h = '<table class="table table-sm table-hover"><thead><tr><th>' + __('codigo') + '</th><th>' + __('cuenta') + '</th><th>' + __('tipo') + '</th><th class="text-end">' + __('debe') + '</th><th class="text-end">' + __('haber') + '</th><th class="text-end">' + __('saldo') + '</th></tr></thead><tbody>';
         var td=0, th=0;
@@ -85,7 +86,8 @@ function loadDiario() {
     var fdesde = document.getElementById('repFDesde').value;
     var fhasta = document.getElementById('repFHasta').value;
     p('reportes/libro-diario', {fecha_desde: fdesde, fecha_hasta: fhasta}, function(err, rows) {
-        if (err) { mostrarToast(err, 'danger'); return; }
+        if (err) { saToast(err, 'danger'); return; }
+        if(rows && rows.data && Array.isArray(rows.data)) rows=rows.data;
         var list = (Array.isArray(rows)?rows:[]) || [];
         var h = '';
         var gDebe=0, gHaber=0;
@@ -121,8 +123,8 @@ function loadMayor() {
     var fdesde = document.getElementById('repFDesde').value;
     var fhasta = document.getElementById('repFHasta').value;
     p('reportes/libro-mayor', {idcuenta: 0, fecha_desde: fdesde, fecha_hasta: fhasta}, function(err, d) {
-        if (err) { mostrarToast(err, 'danger'); return; }
-        var data = d || {};
+        if (err) { saToast(err, 'danger'); return; }
+        var data = (d && d.data) || d || {};
         if (data.cuentas) {
             var h = '';
             data.cuentas.forEach(function(c) {
@@ -164,8 +166,8 @@ function loadResultados() {
     var fdesde = document.getElementById('repFDesde').value;
     var fhasta = document.getElementById('repFHasta').value;
     p('reportes/estado-resultados', {fecha_desde: fdesde, fecha_hasta: fhasta}, function(err, d) {
-        if (err) { mostrarToast(err, 'danger'); return; }
-        var data = d || {};
+        if (err) { saToast(err, 'danger'); return; }
+        var data = (d && d.data) || d || {};
         var h = '';
         h += '<h6>' + __('ingresos') + '</h6><table class="table table-sm"><thead><tr><th>' + __('codigo') + '</th><th>' + __('cuenta') + '</th><th class="text-end">' + 'Total' + '</th></tr></thead><tbody>';
         (data.ingresos||[]).forEach(function(r) { h += '<tr><td>' + r.codigo + '</td><td>' + r.nombre + '</td><td class="text-end">' + _fmt(r.total) + '</td></tr>'; });
@@ -186,8 +188,8 @@ function renderGeneral() {
 }
 function loadGeneral() {
     p('reportes/balance-general', {}, function(err, d) {
-        if (err) { mostrarToast(err, 'danger'); return; }
-        var data = d || {};
+        if (err) { saToast(err, 'danger'); return; }
+        var data = (d && d.data) || d || {};
         var h = '';
         h += '<h6>' + __('activos') + '</h6><table class="table table-sm"><thead><tr><th>' + __('codigo') + '</th><th>' + __('cuenta') + '</th><th class="text-end">' + 'Total' + '</th></tr></thead><tbody>';
         (data.activos||[]).forEach(function(r) { h += '<tr><td>' + r.codigo + '</td><td>' + r.nombre + '</td><td class="text-end">' + _fmt(r.total) + '</td></tr>'; });
