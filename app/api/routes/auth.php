@@ -86,6 +86,7 @@ function login($body) {
             'idcargo' => (int)$user['idcargo'],
             'cargo_nombre' => $user['cargo_nombre'],
             'rol' => $user['rol'],
+            'preferencias' => $user['preferencias'] ?? '{}',
             'permisos' => $permisos,
         ],
         'remember' => $remember,
