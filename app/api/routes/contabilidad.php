@@ -145,7 +145,7 @@ function listAsientos($body) {
     $sql = "SELECT a.*, tc.nombre AS tipocomprobante_nombre, tc.abreviatura, u.nombre AS usuario_nombre
             FROM asiento_contable a
             LEFT JOIN tipo_comprobante tc ON a.idtipocomprobante = tc.idtipocomprobante
-            LEFT JOIN usuario u ON u.idusuario = a.idusuarioregistro
+            LEFT JOIN usuarios u ON u.idusuario = a.idusuarioregistro
             $whereSQL
             ORDER BY a.fecha DESC, a.idasiento DESC
             LIMIT $limit OFFSET $offset";
