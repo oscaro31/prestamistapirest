@@ -142,10 +142,9 @@ function listAsientos($body) {
     $limit = max(1, min(100, (int)($body['limit'] ?? 50)));
     $offset = ($page - 1) * $limit;
     
-    $sql = "SELECT a.*, tc.nombre AS tipocomprobante_nombre, tc.abreviatura, u.nombre AS usuario_nombre
+    $sql = "SELECT a.*, tc.nombre AS tipocomprobante_nombre, tc.abreviatura
             FROM asiento_contable a
             LEFT JOIN tipo_comprobante tc ON a.idtipocomprobante = tc.idtipocomprobante
-            LEFT JOIN usuarios u ON u.idusuario = a.idusuarioregistro
             $whereSQL
             ORDER BY a.fecha DESC, a.idasiento DESC
             LIMIT $limit OFFSET $offset";
